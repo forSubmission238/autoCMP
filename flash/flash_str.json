@@ -1,0 +1,706 @@
+[
+    {
+        "enum_typs": [
+            "CACHE_STATE",
+            "NODE_CMD",
+            "UNI_CMD",
+            "INV_CMD",
+            "RP_CMD",
+            "WB_CMD",
+            "SHWB_CMD",
+            "NAKC_CMD"
+        ]
+    },
+    {
+        "ruleset": "PI_Remote_Get",
+        "strengthen": [],
+        "answer": "PI_Remote_Get_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "PI_Remote_Get_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "PI_Local_Get_Get",
+        "strengthen": [],
+        "answer": "PI_Local_Get_Get_ref",
+        "abstract": []
+    },
+    {
+        "rule": "PI_Local_Get_Put",
+        "strengthen": [],
+        "answer": "PI_Local_Get_Put_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "PI_Remote_GetX",
+        "strengthen": [],
+        "answer": "PI_Remote_GetX_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "PI_Remote_GetX_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "PI_Local_GetX_GetX",
+        "strengthen": [],
+        "answer": "PI_Local_GetX_GetX_ref",
+        "abstract": []
+    },
+    {
+        "rule": "PI_Local_GetX_PutX",
+        "strengthen": [],
+        "answer": "PI_Local_GetX_PutX_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "PI_Remote_PutX",
+        "strengthen": [
+            "Lemma_1"
+        ],
+        "answer": "PI_Remote_PutX_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "PI_Remote_PutX_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_PI_Remote_PutX"
+            }
+        ]
+    },
+    {
+        "rule": "PI_Local_PutX",
+        "strengthen": [],
+        "answer": "PI_Local_PutX_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "PI_Remote_Replace",
+        "strengthen": [],
+        "answer": "PI_Remote_Replace_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "PI_Remote_Replace_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "PI_Local_Replace",
+        "strengthen": [],
+        "answer": "PI_Local_Replace_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "NI_Nak",
+        "strengthen": [],
+        "answer": "NI_Nak_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Nak_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "NI_Nak_Home",
+        "strengthen": [],
+        "answer": "NI_Nak_Home_ref",
+        "abstract": []
+    },
+    {
+        "rule": "NI_Nak_Clear",
+        "strengthen": [],
+        "answer": "NI_Nak_Clear_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "NI_Local_Get_Nak",
+        "strengthen": [],
+        "answer": "NI_Local_Get_Nak_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_Get_Nak_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_Get_Get",
+        "strengthen": [],
+        "answer": "NI_Local_Get_Get_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_Get_Get_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_Get_Get"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_Get_Put",
+        "strengthen": [],
+        "answer": "NI_Local_Get_Put_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_Get_Put_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_Get_Put"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_Get_Nak",
+        "strengthen": [
+            "Lemma_2a"
+        ],
+        "answer": "NI_Remote_Get_Nak_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "src": true,
+                    "dst": true
+                },
+                "answer": "NI_Remote_Get_Nak_ref"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": true
+                },
+                "answer": "ABS_NI_Remote_Get_Nak_src"
+            },
+            {
+                "cond": {
+                    "src": true,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_Get_Nak_dst"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_Get_Nak_src_dst"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_Get_Nak_Home",
+        "strengthen": [
+            "Lemma_2b"
+        ],
+        "answer": "NI_Remote_Get_Nak_Home_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_Get_Nak_Home_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Remote_Get_Nak_Home"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_Get_Put",
+        "strengthen": [
+            "Lemma_1",
+            "Lemma_2a"
+        ],
+        "answer": "NI_Remote_Get_Put_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "src": true,
+                    "dst": true
+                },
+                "answer": "NI_Remote_Get_Put_ref"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": true
+                },
+                "answer": "ABS_NI_Remote_Get_Put_src"
+            },
+            {
+                "cond": {
+                    "src": true,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_Get_Put_dst"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_Get_Put_src_dst"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_Get_Put_Home",
+        "strengthen": [
+            "Lemma_1",
+            "Lemma_2b"
+        ],
+        "answer": "NI_Remote_Get_Put_Home_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_Get_Put_Home_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Remote_Get_Put_Home"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_GetX_Nak",
+        "strengthen": [],
+        "answer": "NI_Local_GetX_Nak_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_GetX_Nak_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_GetX_GetX",
+        "strengthen": [],
+        "answer": "NI_Local_GetX_GetX_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_GetX_GetX_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_GetX_GetX"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_GetX_PutX1",
+        "strengthen": [],
+        "answer": "NI_Local_GetX_PutX1_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_GetX_PutX1_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_GetX_PutX1"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_GetX_PutX2",
+        "strengthen": [],
+        "answer": "NI_Local_GetX_PutX2_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_GetX_PutX2_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_GetX_PutX2"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Local_GetX_PutX3",
+        "strengthen": [],
+        "answer": "NI_Local_GetX_PutX3_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Local_GetX_PutX3_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Local_GetX_PutX3"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_GetX_Nak",
+        "strengthen": [
+            "Lemma_3a"
+        ],
+        "answer": "NI_Remote_GetX_Nak_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "src": true,
+                    "dst": true
+                },
+                "answer": "NI_Remote_GetX_Nak_ref"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": true
+                },
+                "answer": "ABS_NI_Remote_GetX_Nak_src"
+            },
+            {
+                "cond": {
+                    "src": true,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_GetX_Nak_dst"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_GetX_Nak_src_dst"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_GetX_Nak_Home",
+        "strengthen": [
+            "Lemma_3b"
+        ],
+        "answer": "NI_Remote_GetX_Nak_Home_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_GetX_Nak_Home_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Remote_GetX_Nak_Home"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_GetX_PutX",
+        "strengthen": [
+            "Lemma_1",
+            "Lemma_3a"
+        ],
+        "answer": "NI_Remote_GetX_PutX_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "src": true,
+                    "dst": true
+                },
+                "answer": "NI_Remote_GetX_PutX_ref"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": true
+                },
+                "answer": "ABS_NI_Remote_GetX_PutX_src"
+            },
+            {
+                "cond": {
+                    "src": true,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_GetX_PutX_dst"
+            },
+            {
+                "cond": {
+                    "src": false,
+                    "dst": false
+                },
+                "answer": "ABS_NI_Remote_GetX_PutX_src_dst"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Remote_GetX_PutX_Home",
+        "strengthen": [
+            "Lemma_1",
+            "Lemma_3b"
+        ],
+        "answer": "NI_Remote_GetX_PutX_Home_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_GetX_PutX_Home_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_Remote_GetX_PutX_Home"
+            }
+        ]
+    },
+    {
+        "rule": "NI_Local_Put",
+        "strengthen": [],
+        "answer": "NI_Local_Put_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "NI_Remote_Put",
+        "strengthen": [],
+        "answer": "NI_Remote_Put_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_Put_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "NI_Local_PutXAcksDone",
+        "strengthen": [],
+        "answer": "NI_Local_PutXAcksDone_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "NI_Remote_PutX",
+        "strengthen": [],
+        "answer": "NI_Remote_PutX_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Remote_PutX_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Inv",
+        "strengthen": [],
+        "answer": "NI_Inv_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Inv_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_InvAck1",
+        "strengthen": [
+            "Lemma_4"
+        ],
+        "answer": "NI_InvAck1_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_InvAck1_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_InvAck1"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_InvAck2",
+        "strengthen": [],
+        "answer": "NI_InvAck2_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_InvAck2_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "rule": "NI_Wb",
+        "strengthen": [],
+        "answer": "NI_Wb_ref",
+        "abstract": []
+    },
+    {
+        "rule": "NI_FAck",
+        "strengthen": [],
+        "answer": "NI_FAck_ref",
+        "abstract": []
+    },
+    {
+        "ruleset": "NI_ShWb",
+        "strengthen": [],
+        "answer": "NI_ShWb_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_ShWb_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_NI_ShWb"
+            }
+        ]
+    },
+    {
+        "ruleset": "NI_Replace",
+        "strengthen": [],
+        "answer": "NI_Replace_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "NI_Replace_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    }
+]

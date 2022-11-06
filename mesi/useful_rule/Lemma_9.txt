@@ -1,0 +1,7 @@
+invariant "Lemma_9"
+  forall p : NODE do forall i : NODE do
+    state[i] = MM ->
+    forall j : NODE do j != i -> state[j] != S
+end
+end 
+end;

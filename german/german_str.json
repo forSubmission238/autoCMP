@@ -1,0 +1,238 @@
+[
+    {
+        "enum_typs": [
+            "CACHE_STATE",
+            "MSG_CMD"
+        ]
+    },
+    {
+        "ruleset": "RecvGntE",
+        "strengthen": [],
+        "answer": "RecvGntE_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvGntE_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "RecvGntS",
+        "strengthen": [],
+        "answer": "RecvGntS_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvGntS_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendGntE",
+        "strengthen": [],
+        "answer": "SendGntE_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendGntE_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_SendGntE"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendGntS",
+        "strengthen": [],
+        "answer": "SendGntS_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendGntS_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_SendGntS"
+            }
+        ]
+    },
+    {
+        "ruleset": "RecvInvAck1",
+        "strengthen": [
+            "Lemma_1"
+        ],
+        "answer": "RecvInvAck1_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvInvAck1_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_RecvInvAck1"
+            }
+        ]
+    },
+    {
+        "ruleset": "RecvInvAck2",
+        "strengthen": [],
+        "answer": "RecvInvAck2_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvInvAck2_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendInvAck",
+        "strengthen": [],
+        "answer": "SendInvAck_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendInvAck_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendInv",
+        "strengthen": [],
+        "answer": "SendInv_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendInv_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "RecvReqE",
+        "strengthen": [],
+        "answer": "RecvReqE_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvReqE_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_RecvReqE"
+            }
+        ]
+    },
+    {
+        "ruleset": "RecvReqS",
+        "strengthen": [],
+        "answer": "RecvReqS_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "RecvReqS_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_RecvReqS"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendReqE",
+        "strengthen": [],
+        "answer": "SendReqE_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendReqE_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "SendReqS",
+        "strengthen": [],
+        "answer": "SendReqS_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "SendReqS_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    }
+]

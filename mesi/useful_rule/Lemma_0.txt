@@ -1,0 +1,7 @@
+invariant "Lemma_0"
+  forall p : NODE do forall i : NODE do
+    state[i] = MM ->
+    forall j : NODE do j != i -> state[j] != MM 
+end
+end 
+end;

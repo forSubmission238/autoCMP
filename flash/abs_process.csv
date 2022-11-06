@@ -1,0 +1,10 @@
+PI_Remote_PutX,Lemma_1
+NI_Remote_Get_Nak,Lemma_2a
+NI_Remote_Get_Nak_Home,Lemma_2b
+NI_Remote_Get_Put,Lemma_2a,Lemma_1
+NI_Remote_Get_Put_Home,Lemma_2b,Lemma_1
+NI_Remote_GetX_Nak,Lemma_3a
+NI_Remote_GetX_Nak_Home,Lemma_3b
+NI_Remote_GetX_PutX,Lemma_3a,Lemma_1
+NI_Remote_GetX_PutX_Home,Lemma_3b,Lemma_1
+NI_InvAck1,Lemma_4

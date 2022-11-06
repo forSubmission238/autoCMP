@@ -1,0 +1,85 @@
+[
+    {
+        "enum_typs": [
+            "state"
+        ]
+    },
+    {
+        "ruleset": "Try",
+        "strengthen": [],
+        "answer": "Try_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Try_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "Crit",
+        "strengthen": [],
+        "answer": "Crit_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Crit_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_Crit"
+            }
+        ]
+    },
+    {
+        "ruleset": "Exit",
+        "strengthen": [],
+        "answer": "Exit_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Exit_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "Idle",
+        "strengthen": [
+            "Lemma_1"
+        ],
+        "answer": "Idle_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Idle_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_Idle"
+            }
+        ]
+    }
+]

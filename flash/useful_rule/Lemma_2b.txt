@@ -1,0 +1,8 @@
+invariant "Lemma_2b"
+  forall src : NODE do forall dst : NODE do
+    Sta.HomeUniMsg.Cmd = UNI_Get &
+    !Sta.HomeUniMsg.HomeProc & Sta.HomeUniMsg.Proc = dst ->
+    Sta.Dir.Pending & !Sta.Dir.Local &
+    Sta.HomePendReqSrc & Sta.FwdCmd = UNI_Get
+end 
+end;

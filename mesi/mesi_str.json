@@ -1,0 +1,91 @@
+[
+    {
+        "enum_typs": [
+            "LOCATION"
+        ]
+    },
+    {
+        "ruleset": "t1",
+        "strengthen": [],
+        "answer": "t1_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "t1_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "t2",
+        "strengthen": [],
+        "answer": "t2_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "t2_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_t2"
+            }
+        ]
+    },
+    {
+        "ruleset": "t3",
+        "strengthen": [
+            "Lemma_4",
+            "Lemma_5"
+        ],
+        "answer": "t3_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "t3_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_t3"
+            }
+        ]
+    },
+    {
+        "ruleset": "t4",
+        "strengthen": [
+            "Lemma_0",
+            "Lemma_6",
+            "Lemma_3",
+            "Lemma_9"
+        ],
+        "answer": "t4_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "t4_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_t4"
+            }
+        ]
+    }
+]

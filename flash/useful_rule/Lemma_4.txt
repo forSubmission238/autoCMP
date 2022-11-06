@@ -1,0 +1,13 @@
+invariant "Lemma_4"
+  forall dst : NODE do forall src : NODE do 
+    Sta.InvMsg[src].Cmd = INV_InvAck ->
+    forall q : NODE do q != src ->
+    Sta.Collecting &
+    Sta.NakcMsg.Cmd = NAKC_None & Sta.ShWbMsg.Cmd = SHWB_None &
+    (( Sta.UniMsg[q].Cmd = UNI_Get | Sta.UniMsg[q].Cmd = UNI_GetX ->
+      Sta.UniMsg[q].HomeProc ) &
+    ( Sta.UniMsg[q].Cmd = UNI_PutX ->
+      Sta.UniMsg[q].HomeProc & !Sta.HomePendReqSrc & Sta.PendReqSrc = q ))
+end
+end 
+end;

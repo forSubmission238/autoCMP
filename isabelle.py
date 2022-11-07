@@ -544,19 +544,14 @@ class isabelleLemma:
         attribStr=""if self.attribs==[] else \
             "[%s]"%(",".join(attrib for attrib in self.attribs))
         if self.inLemmas==None:
-            res = "lemma %s %s: \n  \
-                \"%s \n \
-                %s %s\"\n \
-                %s\ndone\n" % ( \
+            res = "lemma %s %s: \n \"%s %s %s\"\n %s\ndone\n" % ( \
                 self.name, attribStr, \
                 assmPart, \
                 "==>" if len(self.assms)>0 else "", concPart, \
                 "" if self.proof ==None else '\n'.join(str(proof) for proof in self.proof) \
                 )
         else:
-            res = "\"%s \n \
-                %s %s\"\n \
-                %s\n" % ( \
+            res = "\"%s %s %s\"\n %s\n" % ( \
                 assmPart, \
                 "==>" if len(self.assms)>0 else "", concPart, \
                 "" if self.proof ==None else '\n'.join(str(proof) for proof in self.proof) \
@@ -577,19 +572,14 @@ class isabelleLemma:
         attribStr=""if self.attribs==[] else \
             "[%s]"%(",".join(attrib for attrib in self.attribs))
         if self.inLemmas==None:
-            res = "lemma %s %s: \n  \
-                \"%s \n \
-                %s %s\"\n \
-                %s\ndone\n" % ( \
+            res = "lemma %s %s: \n \"%s %s %s\"\n %s\ndone\n" % ( \
                 self.name, attribStr, \
                 assmPart, \
                 "==>" if len(self.assms)>0 else "", concPart, \
                 "" if self.proof ==None else '\n'.join(str(proof) for proof in self.proof) \
                 )
         else:
-            res = "\"%s \n \
-                %s %s\"\n \
-                %s\n" % ( \
+            res = "\"%s %s %s\"\n %s\n" % ( \
                 assmPart, \
                 "==>" if len(self.assms)>0 else "", concPart, \
                 "" if self.proof ==None else '\n'.join(str(proof) for proof in self.proof) \
@@ -606,9 +596,7 @@ class isabelleLemmas:
 
     def __str__(self):
          
-        res = "lemma %s : \n \
-            %s \n \
-            %s\ndone\n" % ( \
+        res = "lemma %s : \n %s \n %s\ndone\n" % ( \
             self.name, \
             '\n'.join(str(lemma) for lemma in self.lemmas), \
             '\n'.join(str(proof) for proof in self.proof)\
@@ -621,9 +609,7 @@ class isabelleLemmas:
             (self.name, repr(self.lemmas),repr(self.proof))
 
     def export(self):
-        res = "lemma %s : \n \
-            %s \n \
-            %s\ndone\n" % ( \
+        res = "lemma %s : \n %s \n %s\ndone\n" % ( \
             self.name, \
             '\n'.join(str(lemma) for lemma in self.lemmas), \
             '\n'.join(str(proof) for proof in self.proof)\

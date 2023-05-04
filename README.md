@@ -1,14 +1,16 @@
 # auto-CMP
+we only need provide two input files in a case study:
+1.  prot.m: the protocol file im Murphi, which is under parameterized verification.
 
-We implemented a framework auto-CMP to automate the CMP method for parameterized verification, including automated guard strengthening and abstraction procedures. Moreover, our tool murphiGen can automatically generate the abstract protocol model and invariants for observation in a file absProt.m with the information for strengthening and abstraction; on the other side, tool proofGen can automatically generate a proof script Prot.thy certificating the correctness of the protocol.
+2. abs_process.csv: the CMP-abstraction information lines for the protocol. Each line records a  Murphi rule and the non-interference lemmas which are used for guard strengthening the rule
+
+Output files are as follows:
+1. Our tool murphiGen can automatically generate the abstract protocol model and invariants for observation in a file absProt.m 
+
+2. The Tool proofGen can automatically generate a proof script Prot.thy certificating the correctness of the CMP-abstraction.
 
 
-
-# Workflow
-
-Firstly, we abstract the Murphi model of a parameter protocol, and then find the counterexample of this abstract protocol with the Model Checking method. For the counterexample, the auxiliary invariants are obtained by hand. These invariants are combined with the original protocol to form a CMP process. Repeat the above steps until no counterexamples generate. Finally, the proof file is automatically generated and put into Iasbelle theorem prover to complete verification.
-
-# System Frame Work
+# System FrameWork
 
 Our method uses Murphi for model check, and the results are processed in Python program. Finally, we use Python to generate Prot.thy file and put it into Isabelle for proof.
 
@@ -52,13 +54,6 @@ Note that these programs runs on MAC or Linux system
 
 The ABSprot.m is an abstraction of the original protocol. It contains the original and abstracted rules, as well as variable definitions, initializations, and invariants, etc.
 
-## abs_process.csv
-
-The abs_process.csv file records the protocol strengthening information, including which rules were strengthened and which lemmas were used in the process. Notice that these processes are recorded in sequence.
-
-![img](./images/clip_image002.jpg)
-
-As shown above, flash_ctc_10_origin is strengthened in order: ‘NI_Remote_Get_Put’, ‘PI_Remote_PutX’… For ‘NI_Remote_Get_Put’, using Lemma1,Lemma2,… to strengthen it.
 
 ## prot_str.json
 

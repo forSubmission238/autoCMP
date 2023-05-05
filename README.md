@@ -199,4 +199,45 @@ In the main directory, we place the main results of our work:
 
     (4)  Flash.thy
 
+3. By our experiments, we have found some errors in the classical work of CMP field [1].  
+
+# C Unsound abstraction of Rule $\mathtt{NI\_Local\_Get\_Get}$
+
+For rule $\mathtt{NI\_Local\_Get\_Get}$ (Figure 12), its guard contains the conjunct $\mathit{Dir.HeadPtr}\neq \mathit{src}$, and this was abstracted to $\mathit{Dir.HeadPtr}\neq \mathit{Other}$ in [1](result in Figure 13). However, this is not a conservative abstraction: it neglects the case where $\mathit{Dir.HeadPtr}$ and $\mathit{src}$ are different indices greater than $M$. In this case, both would be abstracted to $\mathit{Other}$, so that $\mathit{Dir.HeadPtr}\neq \mathit{src}$ is $\mathsf{True}$ but $\mathit{Dir.HeadPtr}\neq \mathit{Other}$ is $\mathsf{False}$. We removed this conjunct from the abstraction of the rule (equivalent to abstracting it to $\mathsf{True}$).
+
+<center>
+    <img src="./img/Rule_NI_Local_Get_Get.png">
+</center>
+
+# D rule $\mathtt{NI\_InvAck}$
+
+In [1], rule $\mathtt{NI\_InvAck}$ and its abstraction $\mathtt{Abs\_NI\_InvAck}$ are shown in Figure 14 and Figure 15. Here $\mathtt{NODE}$ in Figure 14 represents parameter list $[1\cdots N]$, while that in  Figure 15 represents parameter list $[1\cdots M]$.
+Here statement if $b$ then $S$ endif abbreviates if $b$ then $S$ else $\mathsf{skip}$. This abstraction is not correct because $\bigvee_{p=1}^{N} p \neq i \land \mathit{Sta.Dir.InvSet}[p]$  is not $\mathit{safe}$, and $\bigvee_{p=1}^{M} \mathit{ Sta.Dir.InvSet }[p]$  is not the abstraction of $\bigvee_{p=1}^{N} p \neq i \land \mathit{Sta.Dir.InvSet}[p]$ too. Therefore, the $\mathsf{CMP}$ result in [1] is problematic. In order to solve this problem, we split the rule into two rules $\mathtt{NI\_InvAck_1}$ and $\mathtt{NI\_InvAck_2}$, which are shown in Figure 16 and Figure 17. Notice that $\bigwedge_{p=1}^{N} p \ne i \longrightarrow \neg \mathit{Sta.Dir.InvSet}[𝑝]$ is the negation of  $\bigvee_{p=1}^{N} p \neq i \land \mathit{Sta.Dir.InvSet}[p]$. Besides, we find that variable $\mathit{Sta.LastOtherInvAck}$ is not read in any statement or guard but only modified in the FLASH protocol, we remove this variable and the corresponding assignments. 
+
+<center>
+    <img src="./img/Rule_NI_InvAck.png">
+</center>
+
+<center>
+    <img src="./img/Rule_NI_InvAck_1_3.png">
+</center>
+
+
+# E Rule $\mathtt{NI\_ShWb}$
+Rule $\mathtt{NI\_ShWb}$ and its abstraction $\mathtt{ABS\_NI\_ShWb}$ are shown in Figure 18 and Figure 19. This abstraction is highly irregular. We rewrite the rule $\mathtt{NI\_ShWb}$ into a form that can be abstracted following our syntax-directed procedure, and so can be processed by {\sf autoCMP}. It involves adding a parameter $\mathit{src}$ and requiring it to equal $\mathit{Sta.ShWbMsg.Proc}$ in the conditions, so that within the rule $\mathit{Sta.ShWbMsg.Proc}$ can be replaced by $\mathit{src}$. Further, the loop of assignments is split into assignments over $p\neq \mathit{src}$ and assignment on $\mathit{src}$. The result is shown in Figure 20, and the result of abstraction according to syntax-directed procedure is shown in Figure 21, which is equivalent to the result in Figure 19.
+
+<center>
+    <img src="./img/Rule_NI_ShWb.png">
+</center>
+
+<center>
+    <img src="./img/Our_NI_ShWb.png">
+</center>
+
+
+
+[1]Ching-Tsun Chou, Phanindra K. Mannava, and Seungjoon Park. 2004. A Simple Method for Parameterized Verification
+of Cache Coherence Protocols. In Proc. 5th International Conference on Formal Methods in Computer-Aided Design
+(FMCAD’04) (Lecture Notes in Computer Science, Vol. 3312). Springer, 382–398
+
  

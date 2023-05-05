@@ -199,4 +199,4 @@ In the main directory, we place the main results of our work:
 
     (4)  Flash.thy
 
-3. By our experiments, we have found some errors in the classical work of CMP field [1].  Please refer to for details. 
+3. By our experiments, we have found some errors in the classical work of CMP field [1].  Please refer to [](./SomeErrors.pdf) for details. 

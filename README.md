@@ -1,8 +1,10 @@
 # auto-CMP
-we only need provide two input files in a case study:
+we only need provide three input files in a case study:
 1.  prot.m: the protocol file im Murphi, which is under parameterized verification.
 
-2. abs_process.csv: the CMP-abstraction information lines for the protocol. Each line records a  Murphi rule and the non-interference lemmas which are used for guard strengthening the rule
+2. abs_process.csv: the CMP-abstraction information lines for the protocol. Each line records a  Murphi rule and the non-interference lemmas which are used for guard strengthening the rule.
+
+3. useful_rule: the file includes all definitions of auxiliary invariants (or non-interference lemmas).
 
 Output files are as follows:
 1. Our tool murphiGen can automatically generate the abstract protocol model and invariants for observation in a file absProt.m 

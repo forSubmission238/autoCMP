@@ -722,9 +722,10 @@ class IsabelleApplyEruleProof(Proof):
         return "ApplyErule(%s, %s, %s, %s)" % \
             (self.name, repr(self.unfolds), repr(self.usings), repr(self.plus))
 
-class AutoProof(Proof):
-    def __init__(self, *, unfolds=[], usings=[], introITag=None,
+class GenericProof(Proof):
+    def __init__(self, tactic_name: str, *, unfolds=[], usings=[], introITag=None,
                  intros=[],simpadds=[], simpdels=[],plus=None,goalNum=None): 
+        self.tactic_name = tactic_name
         self.usings=usings
         self.unfolds=unfolds
         self.plus=plus
@@ -751,61 +752,29 @@ class AutoProof(Proof):
         goalStr = ""  if (self.goalNum==None) else "[%s]"%self.goalNum
         
         if introStr or simpaddStr or simpdelStr or goalStr:
-            res= "apply (auto%s%s%s)%s"   % \
-            ( '' if introStr=='' else " " + introStr, \
+            res= "apply (%s%s%s%s)%s"   % \
+            ( self.tactic_name, '' if introStr=='' else " " + introStr, \
                 '' if simpaddStr=='' else " " + simpaddStr, \
                 '' if simpdelStr=='' else " " + simpdelStr, \
                 '' if goalStr=='' else goalStr)
         else:
-            res = "apply auto"
+            res = "apply %s" % self.tactic_name
 
-        # return unfoldStr + ' ' + usingStr + ' ' + res + plusStr
         return unfoldStr + usingStr + res + plusStr
 
     def __repr__(self): 
-        return "auto ( %s, %s, %s,%s,%s,%s)" % \
-            (repr(self.unfolds),  \
+        return "%s ( %s, %s, %s,%s,%s,%s)" % \
+            (self.tactic_name, repr(self.unfolds),  \
             repr(self.usings),repr(self.plus),repr(self.intros), \
             repr(self.simpadds),repr(self.simpdels))
 
-class blastProof(Proof):
-    def __init__(self, *, unfolds=[], usings=[], introITag=None,
-        intros=[],simpadds=[], simpdels=[],plus=None): 
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.intros =intros 
-        self.simpadds=simpadds
-        self.simpdels=simpdels
-        self.introITag=introITag
+class AutoProof(GenericProof):
+    def __init__(self, **kwargs):
+        super().__init__("auto", **kwargs)
 
-    def __str__(self):
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
-
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
-
-        plusStr = '' if self.plus==None else "+" 
-        introStr = '' if self.introITag==None else (self.introITag + " " + (" ".join(str(intro) for intro in self.intros)))
-
-        simpdelStr = '' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
-
-        simpaddStr = '' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)))
-
-        res= "apply (blast%s%s%s)%s"   % \
-            ( '' if introStr=='' else " " + introStr, \
-                '' if simpaddStr=='' else " " + simpaddStr, \
-                '' if simpdelStr=='' else " " + simpdelStr, \
-                '' if plusStr=='' else plusStr)
-
-        return unfoldStr + usingStr + res
-
-    def __repr__(self): 
-        return "auto ( %s, %s,%s,%s,%s,%s)" % \
-            (repr(self.unfolds),  \
-            repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.simpadds),repr(self.simpdels))
+class blastProof(GenericProof):
+    def __init__(self, **kwargs):
+        super().__init__("blast", **kwargs)
 
 class introProof(Proof):
     def __init__(self, *, unfolds=[], usings=[], 

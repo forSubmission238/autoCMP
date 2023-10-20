@@ -1,6 +1,6 @@
 
 theory flash
-  imports ECMP
+  imports "../ECMP"
 begin
 
 definition CACHE_I :: "scalrValueType" where [simp]:
@@ -577,95 +577,95 @@ lemma symPreds [intro]:
   "symPredSet' N (allInitSpecs N)"
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
-  apply (blast)
+  apply blast
+  apply blast
   done
 
 lemma deriveFormAllInitSpec : 
@@ -2300,6 +2300,15 @@ definition ABS_NI_InvAck1 :: "nat \<Rightarrow> rule" where
 definition ABS_NI_InvAck1s :: "nat \<Rightarrow> rule set" where
   "ABS_NI_InvAck1s N \<equiv> {ABS_NI_InvAck1 N}"
 
+definition Lemma_3b :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_3b N src dst \<equiv> IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_GetX \<and>\<^sub>f
+  IVar (Ident ''Sta.HomeUniMsg.HomeProc'') =\<^sub>f Const false \<and>\<^sub>f
+  IVar (Ident ''Sta.HomeUniMsg.Proc'') =\<^sub>f Const (index dst) \<longrightarrow>\<^sub>f
+  IVar (Ident ''Sta.Dir.Pending'') =\<^sub>f Const true \<and>\<^sub>f
+  IVar (Ident ''Sta.Dir.Local'') =\<^sub>f Const false \<and>\<^sub>f
+  IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const true \<and>\<^sub>f
+  IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_GetX"
+
 definition Lemma_3a :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_3a N src dst \<equiv> \<not>\<^sub>f Const (index src) =\<^sub>f Const (index dst) \<and>\<^sub>f
   IVar (Para ''Sta.UniMsg.Cmd'' src) =\<^sub>f Const UNI_GetX \<and>\<^sub>f
@@ -2311,6 +2320,17 @@ definition Lemma_3a :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> fo
   IVar (Ident ''Sta.PendReqSrc'') =\<^sub>f Const (index src) \<and>\<^sub>f
   IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_GetX"
 
+definition Lemma_1 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_1 N src dst \<equiv> IVar (Para ''Sta.Proc.CacheState'' dst) =\<^sub>f Const CACHE_E \<longrightarrow>\<^sub>f
+  forallFormExcl (\<lambda>p. IVar (Ident ''Sta.Dir.Dirty'') =\<^sub>f Const true \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.WbMsg.Cmd'') =\<^sub>f Const WB_Wb \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.ShWbMsg.Cmd'') =\<^sub>f Const SHWB_ShWb \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''Sta.Proc.CacheState'' p) =\<^sub>f Const CACHE_E \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeProc.CacheState'') =\<^sub>f Const CACHE_E \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_Put \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''Sta.UniMsg.Cmd'' p) =\<^sub>f Const UNI_PutX \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_PutX) dst N"
+
 definition Lemma_2a :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_2a N src dst \<equiv> \<not>\<^sub>f Const (index src) =\<^sub>f Const (index dst) \<and>\<^sub>f
   IVar (Para ''Sta.UniMsg.Cmd'' src) =\<^sub>f Const UNI_Get \<and>\<^sub>f
@@ -2321,15 +2341,6 @@ definition Lemma_2a :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> fo
   IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const false \<and>\<^sub>f
   IVar (Ident ''Sta.PendReqSrc'') =\<^sub>f Const (index src) \<and>\<^sub>f
   IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_Get"
-
-definition Lemma_3b :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_3b N src dst \<equiv> IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_GetX \<and>\<^sub>f
-  IVar (Ident ''Sta.HomeUniMsg.HomeProc'') =\<^sub>f Const false \<and>\<^sub>f
-  IVar (Ident ''Sta.HomeUniMsg.Proc'') =\<^sub>f Const (index dst) \<longrightarrow>\<^sub>f
-  IVar (Ident ''Sta.Dir.Pending'') =\<^sub>f Const true \<and>\<^sub>f
-  IVar (Ident ''Sta.Dir.Local'') =\<^sub>f Const false \<and>\<^sub>f
-  IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const true \<and>\<^sub>f
-  IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_GetX"
 
 definition Lemma_2b :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_2b N src dst \<equiv> IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_Get \<and>\<^sub>f
@@ -2352,17 +2363,6 @@ definition Lemma_4 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> for
   IVar (Para ''Sta.UniMsg.HomeProc'' q) =\<^sub>f Const true \<and>\<^sub>f
   IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const false \<and>\<^sub>f
   IVar (Ident ''Sta.PendReqSrc'') =\<^sub>f Const (index q))) src N"
-
-definition Lemma_1 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_1 N src dst \<equiv> IVar (Para ''Sta.Proc.CacheState'' dst) =\<^sub>f Const CACHE_E \<longrightarrow>\<^sub>f
-  forallFormExcl (\<lambda>p. IVar (Ident ''Sta.Dir.Dirty'') =\<^sub>f Const true \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.WbMsg.Cmd'') =\<^sub>f Const WB_Wb \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.ShWbMsg.Cmd'') =\<^sub>f Const SHWB_ShWb \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''Sta.Proc.CacheState'' p) =\<^sub>f Const CACHE_E \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeProc.CacheState'') =\<^sub>f Const CACHE_E \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_Put \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''Sta.UniMsg.Cmd'' p) =\<^sub>f Const UNI_PutX \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_PutX) dst N"
 
 definition rules :: "nat \<Rightarrow> rule set" where
   "rules N = (PI_Remote_Gets N \<union> (PI_Local_Get_Gets \<union> (PI_Local_Get_Puts \<union> (PI_Remote_GetXs N \<union> (PI_Local_GetX_GetXs \<union> (PI_Local_GetX_PutXs N \<union> (PI_Remote_PutXs N \<union> (PI_Local_PutXs \<union> (PI_Remote_Replaces N \<union> (PI_Local_Replaces \<union> (NI_Naks N \<union> (NI_Nak_Homes \<union> (NI_Nak_Clears \<union> (NI_Local_Get_Naks N \<union> (NI_Local_Get_Gets N \<union> (NI_Local_Get_Puts N \<union> (NI_Remote_Get_Naks N \<union> (NI_Remote_Get_Nak_Homes N \<union> (NI_Remote_Get_Puts N \<union> (NI_Remote_Get_Put_Homes N \<union> (NI_Local_GetX_Naks N \<union> (NI_Local_GetX_GetXs N \<union> (NI_Local_GetX_PutX1s N \<union> (NI_Local_GetX_PutX2s N \<union> (NI_Local_GetX_PutX3s N \<union> (NI_Remote_GetX_Naks N \<union> (NI_Remote_GetX_Nak_Homes N \<union> (NI_Remote_GetX_PutXs N \<union> (NI_Remote_GetX_PutX_Homes N \<union> (NI_Local_Puts \<union> (NI_Remote_Puts N \<union> (NI_Local_PutXAcksDones \<union> (NI_Remote_PutXs N \<union> (NI_Invs N \<union> (NI_InvAck1s N \<union> (NI_InvAck2s N \<union> (NI_Wbs \<union> (NI_FAcks \<union> (NI_ShWbs N \<union> NI_Replaces N)))))))))))))))))))))))))))))))))))))))"
@@ -2578,6 +2578,15 @@ lemma symCacheStateProp_Home :
   apply auto
   done
 
+lemma symLemma_3b : 
+  "symParamForm2 N (Lemma_3b N)"
+  unfolding Lemma_3b_def
+  apply auto
+  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  unfolding symParamForm2_def
+  apply auto
+  done
+
 lemma symLemma_3a : 
   "symParamForm2 N (Lemma_3a N)"
   unfolding Lemma_3a_def
@@ -2587,18 +2596,18 @@ lemma symLemma_3a :
   apply auto
   done
 
-lemma symLemma_2a : 
-  "symParamForm2 N (Lemma_2a N)"
-  unfolding Lemma_2a_def
+lemma symLemma_1 : 
+  "symParamForm2 N (Lemma_1 N)"
+  unfolding Lemma_1_def
   apply auto
   apply (intro  symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
 
-lemma symLemma_3b : 
-  "symParamForm2 N (Lemma_3b N)"
-  unfolding Lemma_3b_def
+lemma symLemma_2a : 
+  "symParamForm2 N (Lemma_2a N)"
+  unfolding Lemma_2a_def
   apply auto
   apply (intro  symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
@@ -2617,15 +2626,6 @@ lemma symLemma_2b :
 lemma symLemma_4 : 
   "symParamForm2 N (Lemma_4 N)"
   unfolding Lemma_4_def
-  apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
-  unfolding symParamForm2_def
-  apply auto
-  done
-
-lemma symLemma_1 : 
-  "symParamForm2 N (Lemma_1 N)"
-  unfolding Lemma_1_def
   apply auto
   apply (intro  symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
@@ -4434,14 +4434,14 @@ lemma PI_Local_Get_GetStrengthRel :
   "strengthenRel (PI_Local_Get_Gets) (set (InvS N)) (PI_Local_Get_Get_refs) N"
   unfolding PI_Local_Get_Gets_def PI_Local_Get_Get_refs_def PI_Local_Get_Get_def PI_Local_Get_Get_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma PI_Local_Get_PutStrengthRel : 
   "strengthenRel (PI_Local_Get_Puts) (set (InvS N)) (PI_Local_Get_Put_refs) N"
   unfolding PI_Local_Get_Puts_def PI_Local_Get_Put_refs_def PI_Local_Get_Put_def PI_Local_Get_Put_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma PI_Remote_GetXStrengthRel : 
@@ -4458,14 +4458,14 @@ lemma PI_Local_GetX_GetXStrengthRel :
   "strengthenRel (PI_Local_GetX_GetXs) (set (InvS N)) (PI_Local_GetX_GetX_refs) N"
   unfolding PI_Local_GetX_GetXs_def PI_Local_GetX_GetX_refs_def PI_Local_GetX_GetX_def PI_Local_GetX_GetX_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma PI_Local_GetX_PutXStrengthRel : 
   "strengthenRel (PI_Local_GetX_PutXs N) (set (InvS N)) (PI_Local_GetX_PutX_refs N) N"
   unfolding PI_Local_GetX_PutXs_def PI_Local_GetX_PutX_refs_def PI_Local_GetX_PutX_def PI_Local_GetX_PutX_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma PI_Remote_PutXStrengthRel : 
@@ -4482,7 +4482,7 @@ lemma PI_Local_PutXStrengthRel :
   "strengthenRel (PI_Local_PutXs) (set (InvS N)) (PI_Local_PutX_refs) N"
   unfolding PI_Local_PutXs_def PI_Local_PutX_refs_def PI_Local_PutX_def PI_Local_PutX_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma PI_Remote_ReplaceStrengthRel : 
@@ -4499,7 +4499,7 @@ lemma PI_Local_ReplaceStrengthRel :
   "strengthenRel (PI_Local_Replaces) (set (InvS N)) (PI_Local_Replace_refs) N"
   unfolding PI_Local_Replaces_def PI_Local_Replace_refs_def PI_Local_Replace_def PI_Local_Replace_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_NakStrengthRel : 
@@ -4516,14 +4516,14 @@ lemma NI_Nak_HomeStrengthRel :
   "strengthenRel (NI_Nak_Homes) (set (InvS N)) (NI_Nak_Home_refs) N"
   unfolding NI_Nak_Homes_def NI_Nak_Home_refs_def NI_Nak_Home_def NI_Nak_Home_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_Nak_ClearStrengthRel : 
   "strengthenRel (NI_Nak_Clears) (set (InvS N)) (NI_Nak_Clear_refs) N"
   unfolding NI_Nak_Clears_def NI_Nak_Clear_refs_def NI_Nak_Clear_def NI_Nak_Clear_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_Local_Get_NakStrengthRel : 
@@ -4690,7 +4690,7 @@ lemma NI_Local_PutStrengthRel :
   "strengthenRel (NI_Local_Puts) (set (InvS N)) (NI_Local_Put_refs) N"
   unfolding NI_Local_Puts_def NI_Local_Put_refs_def NI_Local_Put_def NI_Local_Put_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_Remote_PutStrengthRel : 
@@ -4707,7 +4707,7 @@ lemma NI_Local_PutXAcksDoneStrengthRel :
   "strengthenRel (NI_Local_PutXAcksDones) (set (InvS N)) (NI_Local_PutXAcksDone_refs) N"
   unfolding NI_Local_PutXAcksDones_def NI_Local_PutXAcksDone_refs_def NI_Local_PutXAcksDone_def NI_Local_PutXAcksDone_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_Remote_PutXStrengthRel : 
@@ -4754,14 +4754,14 @@ lemma NI_WbStrengthRel :
   "strengthenRel (NI_Wbs) (set (InvS N)) (NI_Wb_refs) N"
   unfolding NI_Wbs_def NI_Wb_refs_def NI_Wb_def NI_Wb_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_FAckStrengthRel : 
   "strengthenRel (NI_FAcks) (set (InvS N)) (NI_FAck_refs) N"
   unfolding NI_FAcks_def NI_FAck_refs_def NI_FAck_def NI_FAck_ref_def
   using strengthenRefl
-  apply (blast)
+  apply blast
   done
 
 lemma NI_ShWbStrengthRel : 
@@ -5273,6 +5273,33 @@ lemma ABS_all :
   apply (auto simp add: Abs_PI_Local_Get_Gets Abs_PI_Local_Get_Puts Abs_PI_Local_GetX_GetXs Abs_PI_Local_GetX_PutXs Abs_PI_Local_PutXs Abs_PI_Local_Replaces Abs_NI_Nak_Homes Abs_NI_Nak_Clears Abs_NI_Local_Puts Abs_NI_Local_PutXAcksDones Abs_NI_Wbs Abs_NI_FAcks Abs_PI_Remote_Get_refs Abs_PI_Remote_GetX_refs Abs_PI_Remote_PutX_refs Abs_PI_Remote_Replace_refs Abs_NI_Nak_refs Abs_NI_Local_Get_Nak_refs Abs_NI_Local_Get_Get_refs Abs_NI_Local_Get_Put_refs Abs_NI_Remote_Get_Nak_refs Abs_NI_Remote_Get_Nak_Home_refs Abs_NI_Remote_Get_Put_refs Abs_NI_Remote_Get_Put_Home_refs Abs_NI_Local_GetX_Nak_refs Abs_NI_Local_GetX_GetX_refs Abs_NI_Local_GetX_PutX1_refs Abs_NI_Local_GetX_PutX2_refs Abs_NI_Local_GetX_PutX3_refs Abs_NI_Remote_GetX_Nak_refs Abs_NI_Remote_GetX_Nak_Home_refs Abs_NI_Remote_GetX_PutX_refs Abs_NI_Remote_GetX_PutX_Home_refs Abs_NI_Remote_Put_refs Abs_NI_Remote_PutX_refs Abs_NI_Inv_refs Abs_NI_InvAck1_refs Abs_NI_InvAck2_refs Abs_NI_ShWb_refs Abs_NI_Replace_refs)
   done
 
+definition Lemma_3b' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_3b' N src dst \<equiv> IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_GetX \<and>\<^sub>f
+  IVar (Ident ''Sta.HomeUniMsg.HomeProc'') =\<^sub>f Const false \<and>\<^sub>f
+  IVar (Ident ''Sta.HomeUniMsg.Proc'') =\<^sub>f Const (index dst) \<longrightarrow>\<^sub>f
+  IVar (Ident ''Sta.Dir.Pending'') =\<^sub>f Const true \<and>\<^sub>f
+  IVar (Ident ''Sta.Dir.Local'') =\<^sub>f Const false \<and>\<^sub>f
+  IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const true \<and>\<^sub>f
+  IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_GetX"
+
+lemma absTransfLemma_3b' : 
+  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_3b' N 0 l) = Lemma_3b' N 0 l"
+  unfolding Lemma_3b'_def
+  apply auto
+  done
+
+lemma strengthenVsObsLemma_3b : 
+  "strengthenVsObs (Lemma_3b N) (Lemma_3b' N) N"
+  unfolding Lemma_3b_def Lemma_3b'_def
+  apply (rule strengthenVsObsSame)
+  done
+
+lemma SafeAndderiveFormLemma_3b' : 
+  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_3b' N k l) & deriveForm (env N) (Lemma_3b' N k l)"
+  unfolding Lemma_3b'_def
+  apply auto
+  done
+
 definition Lemma_3a' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_3a' N src dst \<equiv> \<not>\<^sub>f Const (index src) =\<^sub>f Const (index dst) \<and>\<^sub>f
   IVar (Para ''Sta.UniMsg.Cmd'' src) =\<^sub>f Const UNI_GetX \<and>\<^sub>f
@@ -5302,6 +5329,38 @@ lemma SafeAndderiveFormLemma_3a' :
   apply auto
   done
 
+definition Lemma_1' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_1' N dst p \<equiv> \<not>\<^sub>f Const (index dst) =\<^sub>f Const (index p) \<and>\<^sub>f
+  IVar (Para ''Sta.Proc.CacheState'' dst) =\<^sub>f Const CACHE_E \<longrightarrow>\<^sub>f
+  IVar (Ident ''Sta.Dir.Dirty'') =\<^sub>f Const true \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.WbMsg.Cmd'') =\<^sub>f Const WB_Wb \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.ShWbMsg.Cmd'') =\<^sub>f Const SHWB_ShWb \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''Sta.Proc.CacheState'' p) =\<^sub>f Const CACHE_E \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeProc.CacheState'') =\<^sub>f Const CACHE_E \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_Put \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''Sta.UniMsg.Cmd'' p) =\<^sub>f Const UNI_PutX \<and>\<^sub>f
+  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_PutX"
+
+lemma absTransfLemma_1' : 
+  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_1' N 0 l) = Lemma_1' N 0 l"
+  unfolding Lemma_1'_def
+  apply auto
+  done
+
+lemma strengthenVsObsLemma_1 : 
+  "strengthenVsObs (Lemma_1 N) (Lemma_1' N) N"
+  unfolding Lemma_1_def Lemma_1'_def
+  apply (rule strengthenVsObsDiff)
+  unfolding symParamForm_def
+  apply auto
+  done
+
+lemma SafeAndderiveFormLemma_1' : 
+  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_1' N k l) & deriveForm (env N) (Lemma_1' N k l)"
+  unfolding Lemma_1'_def
+  apply auto
+  done
+
 definition Lemma_2a' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_2a' N src dst \<equiv> \<not>\<^sub>f Const (index src) =\<^sub>f Const (index dst) \<and>\<^sub>f
   IVar (Para ''Sta.UniMsg.Cmd'' src) =\<^sub>f Const UNI_Get \<and>\<^sub>f
@@ -5328,33 +5387,6 @@ lemma strengthenVsObsLemma_2a :
 lemma SafeAndderiveFormLemma_2a' : 
   "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_2a' N k l) & deriveForm (env N) (Lemma_2a' N k l)"
   unfolding Lemma_2a'_def
-  apply auto
-  done
-
-definition Lemma_3b' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_3b' N src dst \<equiv> IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_GetX \<and>\<^sub>f
-  IVar (Ident ''Sta.HomeUniMsg.HomeProc'') =\<^sub>f Const false \<and>\<^sub>f
-  IVar (Ident ''Sta.HomeUniMsg.Proc'') =\<^sub>f Const (index dst) \<longrightarrow>\<^sub>f
-  IVar (Ident ''Sta.Dir.Pending'') =\<^sub>f Const true \<and>\<^sub>f
-  IVar (Ident ''Sta.Dir.Local'') =\<^sub>f Const false \<and>\<^sub>f
-  IVar (Ident ''Sta.HomePendReqSrc'') =\<^sub>f Const true \<and>\<^sub>f
-  IVar (Ident ''Sta.FwdCmd'') =\<^sub>f Const UNI_GetX"
-
-lemma absTransfLemma_3b' : 
-  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_3b' N 0 l) = Lemma_3b' N 0 l"
-  unfolding Lemma_3b'_def
-  apply auto
-  done
-
-lemma strengthenVsObsLemma_3b : 
-  "strengthenVsObs (Lemma_3b N) (Lemma_3b' N) N"
-  unfolding Lemma_3b_def Lemma_3b'_def
-  apply (rule strengthenVsObsSame)
-  done
-
-lemma SafeAndderiveFormLemma_3b' : 
-  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_3b' N k l) & deriveForm (env N) (Lemma_3b' N k l)"
-  unfolding Lemma_3b'_def
   apply auto
   done
 
@@ -5419,46 +5451,14 @@ lemma SafeAndderiveFormLemma_4' :
   apply auto
   done
 
-definition Lemma_1' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_1' N dst p \<equiv> \<not>\<^sub>f Const (index dst) =\<^sub>f Const (index p) \<and>\<^sub>f
-  IVar (Para ''Sta.Proc.CacheState'' dst) =\<^sub>f Const CACHE_E \<longrightarrow>\<^sub>f
-  IVar (Ident ''Sta.Dir.Dirty'') =\<^sub>f Const true \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.WbMsg.Cmd'') =\<^sub>f Const WB_Wb \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.ShWbMsg.Cmd'') =\<^sub>f Const SHWB_ShWb \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''Sta.Proc.CacheState'' p) =\<^sub>f Const CACHE_E \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeProc.CacheState'') =\<^sub>f Const CACHE_E \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_Put \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''Sta.UniMsg.Cmd'' p) =\<^sub>f Const UNI_PutX \<and>\<^sub>f
-  \<not>\<^sub>f IVar (Ident ''Sta.HomeUniMsg.Cmd'') =\<^sub>f Const UNI_PutX"
-
-lemma absTransfLemma_1' : 
-  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_1' N 0 l) = Lemma_1' N 0 l"
-  unfolding Lemma_1'_def
-  apply auto
-  done
-
-lemma strengthenVsObsLemma_1 : 
-  "strengthenVsObs (Lemma_1 N) (Lemma_1' N) N"
-  unfolding Lemma_1_def Lemma_1'_def
-  apply (rule strengthenVsObsDiff)
-  unfolding symParamForm_def
-  apply auto
-  done
-
-lemma SafeAndderiveFormLemma_1' : 
-  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_1' N k l) & deriveForm (env N) (Lemma_1' N k l)"
-  unfolding Lemma_1'_def
-  apply auto
-  done
-
 lemma symInvs : 
-  "symParamForm2 N (Lemma_3a' N)"
-  "symParamForm2 N (Lemma_2a' N)"
   "symParamForm2 N (Lemma_3b' N)"
+  "symParamForm2 N (Lemma_3a' N)"
+  "symParamForm2 N (Lemma_1' N)"
+  "symParamForm2 N (Lemma_2a' N)"
   "symParamForm2 N (Lemma_2b' N)"
   "symParamForm2 N (Lemma_4' N)"
-  "symParamForm2 N (Lemma_1' N)"
-  unfolding Lemma_3a'_def Lemma_2a'_def Lemma_3b'_def Lemma_2b'_def Lemma_4'_def Lemma_1'_def
+  unfolding Lemma_3b'_def Lemma_3a'_def Lemma_1'_def Lemma_2a'_def Lemma_2b'_def Lemma_4'_def
   apply auto
   subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
@@ -6103,7 +6103,7 @@ lemma wellFormedRule_refs :
 lemma SafeAndderiveAll : 
   "[|M < N;M = 1;l <= M;k <= M;pinvL : set (InvS' N);pf : set pinvL|] ==> safeForm (env N) M (pf k l) & deriveForm (env N) (pf k l)"
   unfolding InvS'_def lemmasFor_PI_Remote_Get'_def lemmasFor_PI_Local_Get_Get'_def lemmasFor_PI_Local_Get_Put'_def lemmasFor_PI_Remote_GetX'_def lemmasFor_PI_Local_GetX_GetX'_def lemmasFor_PI_Local_GetX_PutX'_def lemmasFor_PI_Remote_PutX'_def lemmasFor_PI_Local_PutX'_def lemmasFor_PI_Remote_Replace'_def lemmasFor_PI_Local_Replace'_def lemmasFor_NI_Nak'_def lemmasFor_NI_Nak_Home'_def lemmasFor_NI_Nak_Clear'_def lemmasFor_NI_Local_Get_Nak'_def lemmasFor_NI_Local_Get_Get'_def lemmasFor_NI_Local_Get_Put'_def lemmasFor_NI_Remote_Get_Nak'_def lemmasFor_NI_Remote_Get_Nak_Home'_def lemmasFor_NI_Remote_Get_Put'_def lemmasFor_NI_Remote_Get_Put_Home'_def lemmasFor_NI_Local_GetX_Nak'_def lemmasFor_NI_Local_GetX_GetX'_def lemmasFor_NI_Local_GetX_PutX1'_def lemmasFor_NI_Local_GetX_PutX2'_def lemmasFor_NI_Local_GetX_PutX3'_def lemmasFor_NI_Remote_GetX_Nak'_def lemmasFor_NI_Remote_GetX_Nak_Home'_def lemmasFor_NI_Remote_GetX_PutX'_def lemmasFor_NI_Remote_GetX_PutX_Home'_def lemmasFor_NI_Local_Put'_def lemmasFor_NI_Remote_Put'_def lemmasFor_NI_Local_PutXAcksDone'_def lemmasFor_NI_Remote_PutX'_def lemmasFor_NI_Inv'_def lemmasFor_NI_InvAck1'_def lemmasFor_NI_InvAck2'_def lemmasFor_NI_Wb'_def lemmasFor_NI_FAck'_def lemmasFor_NI_ShWb'_def lemmasFor_NI_Replace'_def
-  using SafeAndderiveFormLemma_3a' SafeAndderiveFormLemma_2a' SafeAndderiveFormLemma_3b' SafeAndderiveFormLemma_2b' SafeAndderiveFormLemma_4' SafeAndderiveFormLemma_1'
+  using SafeAndderiveFormLemma_3b' SafeAndderiveFormLemma_3a' SafeAndderiveFormLemma_1' SafeAndderiveFormLemma_2a' SafeAndderiveFormLemma_2b' SafeAndderiveFormLemma_4'
   apply auto
   done
 

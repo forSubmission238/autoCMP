@@ -1854,12 +1854,12 @@ def genSterengthenLemmas(prot,strengthenSpec):
               ])
     proof21=isabelle.IsabelleApplyRuleProof(name="strenRelUnion",unfolds=["rules", "rule_refs"])
     proof22s=[
-        [isabelle.blastProof(introITag="intro:",intros=["%sStrengthRel"%(getRuleOrRuleset(item))]),
+        [isabelle.blastProof(introITag="intro",intros=["%sStrengthRel"%(getRuleOrRuleset(item))]),
         isabelle.IsabelleApplyRuleProof(name="strenRelUnion" )]
         for item in strengthenSpec[0:(lenOfSpec-2)]]
 
     proofs=[a for ele in proof22s for a in ele]
-    lastProofs=[isabelle.blastProof(introITag="intro:", \
+    lastProofs=[isabelle.blastProof(introITag="intro", \
     intros=["%sStrengthRel"%(item["ruleset"])]) \
         for item in strengthenSpec[lenOfSpec -2:(lenOfSpec)]]
     #test=(print ("%sStrengthRel"%(item["ruleset"]))  for item in strengthenSpec)
@@ -2041,7 +2041,7 @@ def genAllRuleSetStuff(prot,str_data,initSpecs):
     pred=isabelle.Fun(isabelle.Const("symProtRules'"),[isabelle.Const("N"), \
         isabelle.Fun(isabelle.Const("rules"),[isabelle.Const("N")])])
     proof=[isabelle.IsabelleApplyRuleProof(name="symProtRulesUnion, blast intro:symProtAll",unfolds=["rules"],plus="+"),
-    isabelle.blastProof(unfolds=["rules"],intros=["symProtAll"],introITag="intro:")]
+    isabelle.blastProof(unfolds=["rules"],intros=["symProtAll"],introITag="intro")]
     res.append(isabelle.IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
 
     name="rule_refsIsSym"
@@ -2049,7 +2049,7 @@ def genAllRuleSetStuff(prot,str_data,initSpecs):
         isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")])])
     #proof=isabelle.presburgerProof(usings=["symProtAllRef", "rule_refs_def", "symProtRulesUnion"])
     proof=[isabelle.IsabelleApplyRuleProof(name="symProtRulesUnion, blast intro:symProtAllRef",unfolds=["rule_refs"],plus="+"),
-    isabelle.blastProof(unfolds=["rule_refs"],intros=["symProtAllRef"],introITag="intro:")]
+    isabelle.blastProof(unfolds=["rule_refs"],intros=["symProtAllRef"],introITag="intro")]
     res.append(isabelle.IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
     
     '''lemma rules2WellTyped:

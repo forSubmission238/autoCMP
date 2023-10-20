@@ -1449,6 +1449,36 @@ begin
   Sta.Collecting := false;
 endrule;
 
+invariant "Lemma_3b"
+  forall src : NODE do
+    forall dst : NODE do
+      Sta.HomeUniMsg.Cmd = UNI_GetX &
+      !Sta.HomeUniMsg.HomeProc &
+      Sta.HomeUniMsg.Proc = dst ->
+        Sta.Dir.Pending &
+        !Sta.Dir.Local &
+        Sta.HomePendReqSrc &
+        Sta.FwdCmd = UNI_GetX
+    end
+  end;
+
+
+invariant "Lemma_3a"
+  forall src : NODE do
+    forall dst : NODE do
+      src != dst &
+      Sta.UniMsg[src].Cmd = UNI_GetX &
+      !Sta.UniMsg[src].HomeProc &
+      Sta.UniMsg[src].Proc = dst ->
+        Sta.Dir.Pending &
+        !Sta.Dir.Local &
+        !Sta.HomePendReqSrc &
+        Sta.PendReqSrc = src &
+        Sta.FwdCmd = UNI_GetX
+    end
+  end;
+
+
 invariant "Lemma_1"
   forall src : NODE do
     forall dst : NODE do
@@ -1464,20 +1494,6 @@ invariant "Lemma_1"
             Sta.UniMsg[p].Cmd != UNI_PutX &
             Sta.HomeUniMsg.Cmd != UNI_PutX
         end
-    end
-  end;
-
-
-invariant "Lemma_3b"
-  forall src : NODE do
-    forall dst : NODE do
-      Sta.HomeUniMsg.Cmd = UNI_GetX &
-      !Sta.HomeUniMsg.HomeProc &
-      Sta.HomeUniMsg.Proc = dst ->
-        Sta.Dir.Pending &
-        !Sta.Dir.Local &
-        Sta.HomePendReqSrc &
-        Sta.FwdCmd = UNI_GetX
     end
   end;
 
@@ -1508,22 +1524,6 @@ invariant "Lemma_2b"
         !Sta.Dir.Local &
         Sta.HomePendReqSrc &
         Sta.FwdCmd = UNI_Get
-    end
-  end;
-
-
-invariant "Lemma_3a"
-  forall src : NODE do
-    forall dst : NODE do
-      src != dst &
-      Sta.UniMsg[src].Cmd = UNI_GetX &
-      !Sta.UniMsg[src].HomeProc &
-      Sta.UniMsg[src].Proc = dst ->
-        Sta.Dir.Pending &
-        !Sta.Dir.Local &
-        !Sta.HomePendReqSrc &
-        Sta.PendReqSrc = src &
-        Sta.FwdCmd = UNI_GetX
     end
   end;
 

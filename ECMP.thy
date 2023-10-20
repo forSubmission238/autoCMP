@@ -1,5 +1,5 @@
 theory ECMP
-  imports Main "HOL-Library.Permutations"
+  imports Main "HOL-Combinatorics.Permutations"
 begin
 
 subsection \<open>Datatypes for variables, values, expressions, and formulas\<close>

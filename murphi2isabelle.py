@@ -2223,6 +2223,8 @@ def translateFile(filename, str_file, theory_name):
         extLemma=extMurphiInvariant(val)
         extLemma.test()
         print((extLemma.genLemma1().export()))'''
+
+
 if __name__ == "__main__":
     # translateFile("mutualEx1.m", "mutualEx1.json", "mutualEx_str.json", "MutualEx")
     # translateFile("german.m", "german.json","german_str.json", "German")

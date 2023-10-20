@@ -10,24 +10,25 @@ args = arg_parser.parse_args()
 
 data_dir = '.'
 protocol_name = args.task
-#对协议文件格式上的修改以适应证明生成程序
+
+# Adapt protocol file to proof-generating program
 inv_2forall(filename="{0}/{1}/ABS{1}.m".format(data_dir, protocol_name))
 trans_ref(data_dir, args.task)
 
-#获取抽象过程
+# Obtain abstract process
 csv_f = open('{}/{}/abs_process.csv'.format(data_dir, protocol_name), 'r')
 reader = csv.reader(csv_f)
 abs_result = dict()
 for line in reader:
     abs_result[line[0]] = line[1:]
 
-#生成json信息
+# Generate JSON info
 filename = '{0}/{1}/ABS_ref_{1}.m'.format(data_dir, protocol_name)
 assert os.path.exists(filename)
 enum_type, rule_dict = json_str_gen(filename = filename)
 os.remove(filename)
 
-#加上加强的lemma
+# Add strengthening lemmas
 data = []
 data.append(enum_type)
 for k,v in rule_dict.items():
@@ -41,7 +42,14 @@ for d in data:
 with open('{0}/{1}/{1}_str.json'.format(data_dir, protocol_name), 'w') as f:
     json.dump(data, f, indent=4)
 
-#生成证明文件
-translateFile("{0}/{1}/ABS{1}.m".format(data_dir, protocol_name), "{0}/{1}/{1}_str.json".format(data_dir, protocol_name), "{}".format(protocol_name))
+# Produce proof file
+translateFile("{0}/{1}/ABS{1}.m".format(data_dir, protocol_name),
+              "{0}/{1}/{1}_str.json".format(data_dir, protocol_name),
+              "{}".format(protocol_name))
 
-os.system('mv {0}/{1}.thy {0}/{1}/'.format(data_dir, protocol_name))
+# Delete the old theory file
+if os.path.exists('{0}/{1}/{1}.thy'.format(data_dir, protocol_name)):
+    os.remove('./{0}/{1}/{1}.thy'.format(data_dir, protocol_name))
+
+os.rename('./{0}/{1}.thy'.format(data_dir, protocol_name),
+          './{0}/{1}/{1}.thy'.format(data_dir, protocol_name))

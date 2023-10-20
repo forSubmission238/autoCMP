@@ -360,7 +360,6 @@ def topTransfForm(e, limits):
         return f
 
 def absTransfRule(rule, limits, suffix=""):
-    # print(rule.name, limits)
     abs_cond = topTransfForm(rule.cond, limits)
     abs_cmds = absTransfStatements(rule.cmds, limits)
     if len(abs_cmds) == 0:
@@ -388,14 +387,14 @@ def list_conj(es):
 def is_imp(e):
     return isinstance(e, murphi.OpExpr) and e.op == '->'
 
-def destruct_lemma(lemma):
+def destruct_lemma(lemma: murphi.BaseExpr):
     if isinstance(lemma, murphi.ForallExpr):
         decls, assms, concls = destruct_lemma(lemma.expr)
         return [lemma.var_decl] + decls, assms, concls
     elif is_imp(lemma):
         return [], split_conj(lemma.expr1), lemma.expr2
 
-def strengthen(rule, lemma):
+def strengthen(rule: murphi.MurphiRule, lemma: murphi.BaseExpr):
     _, assms, concl = destruct_lemma(lemma)
     cond_assms = split_conj(rule.cond)
     new_cond = list_conj(cond_assms + [concl])
@@ -524,13 +523,10 @@ def absStrenthfRule(rule, limits, suffix=""):
         abs_name = rule.name + suffix
         return murphi.MurphiRule(abs_name, abs_cond, abs_cmds)
 
-def abs_strengthen(filename,  output_filename=None, rulename = ''):   
+def abs_strengthen(filename,  output_filename=None, rulename = ''):
     print("you wanna reading \"{}\"".format(filename)) 
-    # print("forall_expr is {}".format(forall_info))
     prot = parser.parse_file(filename)
-    # print(prot)
     suffix=''
-    absffix='ABS_'
     ori_abs_map = copy.deepcopy(prot.abs_rule_map)
     for k,r in ori_abs_map.items():
         if isinstance(r,murphi.MurphiRuleSet) and str(k) == rulename:
@@ -597,12 +593,10 @@ def test_abs_str(flag, name, lemmas):
     string_list = []
     rulefile = ''
     for lemma in lemmas:
-        print("reading {}".format(lemma))
         with open('./{}/useful_rule/{}.txt'.format(protocol_name,lemma), 'r') as f:
             rulefile = f.read()
         string_list.append(rulefile)
     assert len(string_list) != 0
-    print("read success!, useful_rules'len : {}".format(len(string_list)))
     rest_string_list = string_list
     if os.path.exists('./ABS{0}.m'.format(protocol_name)):
         with open('./ABS{0}.m'.format(protocol_name), 'r') as f:
@@ -610,6 +604,7 @@ def test_abs_str(flag, name, lemmas):
             assert text != ''
     else:
         print('reading ABS_file failed!')
+
     str_info = ''
     pattern = re.compile(r'ruleset(.*?)do(.*?)endruleset\s*;', re.S)
     rulesets = pattern.findall(text)
@@ -626,6 +621,7 @@ def test_abs_str(flag, name, lemmas):
                 #加强结束
     assert len(rest_string_list) != 0
     assert str_info != ''
+
     #填入加强结果
     if os.path.exists("ABS{}.m".format(name)):
         with open("ABS{}.m".format(name), 'r') as f:

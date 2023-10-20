@@ -201,6 +201,8 @@ class MurphiTransformer(Transformer):
 
 murphi_parser = Lark(grammar, start="protocol", parser="lalr", transformer=MurphiTransformer())
 
+invariant_parser = Lark(grammar, start="invariant", parser="lalr", transformer=MurphiTransformer())
+
 def parse_file(filename) -> murphi.MurphiProtocol:
     with open(filename, "r") as f:
         return murphi_parser.parse(f.read())

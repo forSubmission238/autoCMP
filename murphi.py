@@ -720,7 +720,23 @@ class MurphiProtocol:
             else:
                 raise NotImplementedError
 
-        #refine abs_r_src etc
+    def add_lemma(self, decl: MurphiInvariant):
+        assert isinstance(decl, MurphiInvariant)
+        self.decls.append(decl)
+        self.inv_map[decl.name] = decl
+        self.lemma_map[decl.name] = decl
+
+    def add_abs_rule(self, decl: MurphiRule | MurphiRuleSet):
+        assert isinstance(decl, (MurphiRule, MurphiRuleSet))
+        self.decls.append(decl)
+
+        if isinstance(decl, MurphiRule):
+            self.rule_map[decl.name] = decl
+            self.abs_rule_map[decl.name] = decl
+        elif isinstance(decl, MurphiRuleSet):
+            self.rule_map[decl.rule.name] = decl
+            self.abs_rule_map[decl.rule.name] = decl
+
     def addition(self):
         for k in self.ori_rule_map.keys():
             r = self.ori_rule_map[k]
@@ -737,8 +753,6 @@ class MurphiProtocol:
                             ar.rule.addSpecialGuard(addf)
                         else:
                             pass
-            
-                    
 
     def __str__(self):
         res = "const\n\n"

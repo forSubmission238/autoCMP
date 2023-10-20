@@ -6,7 +6,7 @@ import os
 import copy
 import argparse
 
-from analyser import Protocol, analyzeParams, inv_strengthen, number_type
+from analyser import inv_strengthen
 
 class DontCareExpr(murphi.BaseExpr):
     def __init__(self):
@@ -108,7 +108,6 @@ def boundExp(e, i):
         raise NotImplementedError("boundExp on %s" % e)
 
 def boundForm(e, i):
-    # print(e)
     if isinstance(e, murphi.OpExpr):
         if e.op in ('=', '!='):
             return boundVar(e.expr1, i) and boundExp(e.expr2, i)
@@ -219,7 +218,6 @@ def absTransfForm(e, limits):
     if isinstance(e, murphi.OpExpr):
         if e.op == '=':
             abs_e1, abs_e2 = absTransfExp(e.expr1, limits), absTransfExp(e.expr2, limits)
-            # print(abs_e1, abs_e2)
             if isinstance(abs_e1, DontCareExpr) or isinstance(abs_e2, DontCareExpr):
                 return DontCareExpr()
             else:
@@ -249,7 +247,6 @@ def absTransfForm(e, limits):
             abs_e1, abs_e2 = absTransfForm(e.expr1, limits), absTransfForm(e.expr2, limits)
             if isinstance(abs_e1, DontCareExpr) or isinstance(abs_e2, DontCareExpr) or \
                 not safeForm(e.expr1, limits):
-                # print(isinstance(abs_e1, DontCareExpr), isinstance(abs_e2, DontCareExpr), safeForm(e.expr1, limits))
                 return DontCareExpr()
             else:
                 return murphi.OpExpr(e.op, abs_e1, abs_e2)
@@ -264,13 +261,9 @@ def absTransfForm(e, limits):
     elif isinstance(e, murphi.ForallExpr):
         # First, check for ForallExcl case
         excl_form = check_forall_exclude_form(e)
-        # print(excl_form)
-        # print('e is {}'.format(e))
-        # print("forall exp : {}".format(excl_form))
         if excl_form:
             excl_var, concl = excl_form
             if excl_var in limits and boundForm(concl, e.var):
-                # print("panduan : True")
                 if limits[excl_var]:
                     return e
                 else:
@@ -361,7 +354,6 @@ def absTransfStatements(cmds, limits):
 
 def topTransfForm(e, limits):
     f = absTransfForm(e, limits)
-    # f = abs_str_Form(e, limits)
     if isinstance(f, DontCareExpr):
         return murphi.BooleanExpr(True)
     else:
@@ -542,8 +534,6 @@ def abs_strengthen(filename,  output_filename=None, rulename = ''):
     ori_abs_map = copy.deepcopy(prot.abs_rule_map)
     for k,r in ori_abs_map.items():
         if isinstance(r,murphi.MurphiRuleSet) and str(k) == rulename:
-            if (rulename in ('ABS_NI_Remote_Get_Nak', 'ABS_NI_Remote_Get_put','ABS_NI_Remote_GetX_PutX', 'ABS_NI_Remote_GetX_Nak')):
-                print(str(r))
             limits=dict()
             if len(r.var_decls)==1:
                 limits[r.var_decls[0].name]=False
@@ -553,8 +543,6 @@ def abs_strengthen(filename,  output_filename=None, rulename = ''):
                 if absr!=None and absr != r:
                     prot.decls.append(absr)
                     prot.abs_rule_map.update({absr.name:absr})
-                if (rulename in ('ABS_NI_Remote_Get_Nak', 'ABS_NI_Remote_Get_put','ABS_NI_Remote_GetX_PutX', 'ABS_NI_Remote_GetX_Nak')):
-                    print('absr is :\n' + str(absr))
 
             elif len(r.var_decls)==2:
                 ori_r = r
@@ -569,10 +557,7 @@ def abs_strengthen(filename,  output_filename=None, rulename = ''):
                 if absr!=None and absr != r:
                     absruleset=murphi.MurphiRuleSet(absrulesetdecls,absr)
                     prot.abs_rule_map.update({absr.name:absr})
-                    prot.decls.append(absruleset)
-                    if (rulename in ('ABS_NI_Remote_Get_Nak', 'ABS_NI_Remote_Get_put','ABS_NI_Remote_GetX_PutX', 'ABS_NI_Remote_GetX_Nak')):
-                        print('absr is :\n' + str(absr))
-            
+                    prot.decls.append(absruleset)            
 
                 limits=dict()
                 limits[ori_r.var_decls[1].name]=False
@@ -584,8 +569,6 @@ def abs_strengthen(filename,  output_filename=None, rulename = ''):
                     absruleset=murphi.MurphiRuleSet(absrulesetdecls,absr)
                     prot.abs_rule_map.update({absr.name:absr})
                     prot.decls.append(absruleset)
-                    if (rulename in ('ABS_NI_Remote_Get_Nak', 'ABS_NI_Remote_Get_put','ABS_NI_Remote_GetX_PutX', 'ABS_NI_Remote_GetX_Nak')):
-                        print('absr is :\n' + str(absr))
 
                 limits=dict()
                 limits[r.var_decls[0].name]=False
@@ -595,8 +578,6 @@ def abs_strengthen(filename,  output_filename=None, rulename = ''):
                 if absr!=None and absr != r:
                     prot.decls.append(absr)
                     prot.abs_rule_map.update({absr.name:absr})
-                    if (rulename in ('ABS_NI_Remote_Get_Nak', 'ABS_NI_Remote_Get_put','ABS_NI_Remote_GetX_PutX', 'ABS_NI_Remote_GetX_Nak')):
-                        print('absr is :\n' + str(absr))
                 
 
         else:
@@ -629,31 +610,26 @@ def test_abs_str(flag, name, lemmas):
             assert text != ''
     else:
         print('reading ABS_file failed!')
-    prot_analyzer = Protocol(data_dir, protocol_name, '{0}/{1}/{1}.m'.format(data_dir,  protocol_name), home = False)
-    all_types = prot_analyzer.collect_atoms()
     str_info = ''
     pattern = re.compile(r'ruleset(.*?)do(.*?)endruleset\s*;', re.S)
     rulesets = pattern.findall(text)
     for params, rules_str in rulesets:
-            param_name_dict , param_name_list= analyzeParams(params)
-            rules = re.findall(r'(rule.*?endrule;)', rules_str, re.S)
-            for each_rule in rules:
-                rulename = re.findall(r'rule\s*\"(.*?)\"\s*.*?==>.*?begin.*?endrule\s*;', each_rule, re.S)[0]
-                if flag == rulename:
-                    _, rev_dict = number_type(param_name_dict)
-                    print("rulename is {}".format(rulename))
-                    # print('rev_dict is {}'.format(rev_dict))
-                    rules_str = re.sub(rulename, 'ABS_'+rulename, rules_str)
-                    ruleset = 'ruleset ' + params + ' do\n' + rules_str + '\nendruleset;'
-                    str_info= inv_strengthen(rest_string_list, ruleset, all_types=all_types, NODE2para_dict=rev_dict)
-                    #加强结束
+        rules = re.findall(r'(rule.*?endrule;)', rules_str, re.S)
+        for each_rule in rules:
+            rulename = re.findall(r'rule\s*\"(.*?)\"\s*.*?==>.*?begin.*?endrule\s*;', each_rule, re.S)[0]
+            if flag == rulename:
+                print("rulename is {}".format(rulename))
+                # print('rev_dict is {}'.format(rev_dict))
+                rules_str = re.sub(rulename, 'ABS_'+rulename, rules_str)
+                ruleset = 'ruleset ' + params + ' do\n' + rules_str + '\nendruleset;'
+                str_info= inv_strengthen(rest_string_list, ruleset)
+                #加强结束
     assert len(rest_string_list) != 0
     assert str_info != ''
     #填入加强结果
     if os.path.exists("ABS{}.m".format(name)):
         with open("ABS{}.m".format(name), 'r') as f:
             protocol = f.read()
-        inv_info = []
         with open("{}/ABS{}.m".format(data_dir, name), 'w') as f:
             protocol_2 = re.sub(r'rule\s*"ABS_%s".*?endrule;'%flag, '', protocol, flags=re.S)
             protocol_3 = re.sub(r'ruleset.*?do\n\nendruleset;', '', protocol_2)

@@ -1,10 +1,7 @@
 import copy
 import json
-import csv
-import re
 import os
 import collections
-from analyser import analyzeParams
 import murphi
 import murphiparser as parser
 
@@ -22,48 +19,6 @@ def trans_ref(data_dir, protocol_name):
 
     with open('{0}/{1}/ABS_ref_{1}.m'.format(data_dir, protocol_name), 'w') as f:
         f.write(str(prot))
-
-def cond_dict(paras, is_skip):
-    para_dict ={}
-    para_list = list(paras.keys())
-    if is_skip:
-        if len(paras) == 1:
-            para_dict.update({para_list[0] : True})
-        elif len(paras) == 2:
-            para_dict.update({para_list[0] : True, para_list[1] : True})
-    else:
-        if len(paras) == 1:
-            para_dict.update({"cond":{para_list[0] : False},"answer":"skipRule"})
-        elif len(paras) == 2:
-            para_dict.update({"cond":{para_list[0] : False, para_list[0] : True},"answer":"skipRule"})
-            para_dict.update({"cond":{para_list[0] : True, para_list[1] : False},"answer":"skipRule"})
-            para_dict.update({"cond":{para_list[0] : False, para_list[1] : False},"answer":"skipRule"})
-    return para_dict
-
-def skip_dict(rule_dict, checked, ABS_set):
-    if os.path.exists('./ABS_ref_{0}.m'.format(protocol_name)):
-        with open('./ABS_ref_{0}.m'.format(protocol_name), 'r') as f:
-            text = f.read()
-            assert text != ''
-    else:
-        print('reading ABS_file failed!')
-    pattern = re.compile(r'ruleset(.*?)do(.*?)endruleset\s*;', re.S)
-    rulesets = pattern.findall(text)
-    # print('length of rulesets is {}'.format(len(rulesets)))
-    for params, rules_str in rulesets:
-            param_name_dict , _ = analyzeParams(params)
-            # print('param_name_dict is {}'.format(param_name_dict))
-            rules = re.findall(r'(rule.*?endrule;)', rules_str, re.S)
-            for each_rule in rules:
-                rulename = re.findall(r'rule\s*\"(.*?)\"\s*.*?==>.*?begin.*?endrule\s*;', each_rule, re.S)[0]
-                if 'ABS' not in rulename:
-                    temp_name = 'ABS_' + rulename.replace('_ref', '')
-                    if  (temp_name not in checked) and (temp_name not in ABS_set):
-                        f_dict = cond_dict(param_name_dict, is_skip=False)
-                        rule_dict[rulename.replace('_ref', '')]['abstract'].append(f_dict)
-                    elif (temp_name not in checked) and (temp_name in ABS_set):
-                        rule_dict[rulename.replace('_ref', '')]['abstract'].append(f_dict)
-    return rule_dict
 
 def json_str_gen(filename):
     print('Reading file {}...'.format(filename))

@@ -28,8 +28,6 @@ with open('{}/{}/abs_process.csv'.format(data_dir, protocol_name)) as csv_f:
     for line in reader:
         lemmas |= set(line[1:])
         abs_result[line[0]] = line[1:]
-print(abs_result)
-print(lemmas)
 
 # Read invariants
 invs = dict()

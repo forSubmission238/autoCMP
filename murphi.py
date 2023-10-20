@@ -716,12 +716,13 @@ class MurphiProtocol:
                     self.ori_inv_map[decl.name] = decl
             else:
                 raise NotImplementedError
+
         #refine abs_r_src etc
     def addition(self):
         for k in self.ori_rule_map.keys():
-            r=self.ori_rule_map[k]
+            r = self.ori_rule_map[k]
             if isinstance(r, MurphiRuleSet):
-                if len(r.var_decls)==2:
+                if len(r.var_decls) == 2:
                     for ak in self.abs_rule_map.keys():
                         if ak==("ABS_"+ k+ "_"+ r.var_decls[0].name ):
                             ar=self.abs_rule_map[ak]

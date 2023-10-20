@@ -1,5 +1,18 @@
-# 在第一行加上 firsr_line 个空格, 在其余行加上 num_space 个空格
+"""Definitions for Isabelle output"""
+
+from typing import Dict, Iterable, Optional
+
+
 def indent(s, num_space, first_line=None):
+    """Indent the given string by adding spaces to each line.
+    
+    Parameters
+    ----------
+    num_space : int
+        Number of spaces to add to each line
+    first_line : int, optional
+        Number of spaces to add to first line
+    """
     if s is None:
         return ""
     lines = s.split('\n')
@@ -12,14 +25,30 @@ def indent(s, num_space, first_line=None):
         return res
 
 class IsabelleType:
-    pass
+    """Base class for all Isabelle types."""
+    def priority(self) -> int:
+        """Priority of the type when converting to Isabelle string."""
+        raise NotImplementedError
+
+    def export(self) -> str:
+        """Convert the type to Isabelle string."""
+        raise NotImplementedError
+    
+    def is_atom(self) -> bool:
+        """Whether the type is an atom."""
+        raise NotImplementedError
 
 class ConstType(IsabelleType):
-    def __init__(self, name, args=None):
+    """Constant types.
+    
+    This includes types with parameters, e.g. 'a list, ('a, 'b) map, etc.
+
+    """
+    def __init__(self, name: str, args: Optional[Iterable[IsabelleType]]=None):
         self.name = name
         self.args = args
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -36,7 +65,7 @@ class ConstType(IsabelleType):
         else:
             return "ConstType(%s, %s)" % (self.name, self.args)
 
-    def export(self):
+    def export(self) -> str:
         if not self.args:
             return self.name
         elif len(self.args) == 1:
@@ -44,15 +73,16 @@ class ConstType(IsabelleType):
         else:
             return "(%s) %s" % (', '.join(arg.export() for arg in self.args), self.name)
     
-    def is_atom(self):
+    def is_atom(self) -> bool:
         return not self.args
 
 class FunType(IsabelleType):
-    def __init__(self, domain, range):
+    """Function type a => b."""
+    def __init__(self, domain: IsabelleType, range: IsabelleType):
         self.domain = domain
         self.range = range
 
-    def priority(self):
+    def priority(self) -> int:
         return 50
 
     def __str__(self):
@@ -66,7 +96,7 @@ class FunType(IsabelleType):
     def __repr__(self):
         return "FunType(%s, %s)" % (repr(self.domain), repr(self.range))
     
-    def export(self):
+    def export(self) -> str:
         s1, s2 = self.domain.export(), self.range.export()
         if self.domain.priority() <= self.priority():
             s1 = "(" + s1 + ")"
@@ -74,14 +104,14 @@ class FunType(IsabelleType):
             s2 = "(" + s2 + ")"
         return "%s \<Rightarrow> %s" % (s1, s2)
 
-    def is_atom(self):
+    def is_atom(self) -> bool:
         return False
 
 class ListType(IsabelleType):
-    def __init__(self, domain):
+    def __init__(self, domain: IsabelleType):
         self.domain = domain 
 
-    def priority(self):
+    def priority(self) -> int:
         return 40
 
     def __str__(self):
@@ -91,21 +121,29 @@ class ListType(IsabelleType):
     def __repr__(self):
         return "ListType(%s)" % (repr(self.domain))
     
-    def export(self):
+    def export(self) -> str:
         s1 = self.domain.export()
         return "(%s) list" % (s1)
 
-    def is_atom(self):
+    def is_atom(self) -> bool:
         return False
 
 class IsabelleTerm:
-    pass
+    """Base class for all Isabelle terms."""
+    def priority(self) -> int:
+        """Priority of the term when converted to Isabelle string."""
+        raise NotImplementedError
+
+    def export(self) -> str:
+        """Convert the term to Isabelle string."""
+        raise NotImplementedError
 
 class Var(IsabelleTerm):
-    def __init__(self, name):
+    """Isabelle variable."""
+    def __init__(self, name: str):
         self.name = name
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -114,14 +152,15 @@ class Var(IsabelleTerm):
     def __repr__(self):
         return "Var(%s)" % self.name
 
-    def export(self):
+    def export(self) -> str:
         return self.name
 
 class Const(IsabelleTerm):
+    """Isabelle constant."""
     def __init__(self, name):
         self.name = name
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -130,14 +169,15 @@ class Const(IsabelleTerm):
     def __repr__(self):
         return "Const(%s)" % self.name
 
-    def export(self):
+    def export(self) -> str:
         return self.name
 
 class Number(IsabelleTerm):
+    """Isabelle number."""
     def __init__(self, val):
         self.val = val
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -146,14 +186,15 @@ class Number(IsabelleTerm):
     def __repr__(self):
         return "Number(%s)" % self.val
 
-    def export(self):
+    def export(self) -> str:
         return str(self.val)
 
 class String(IsabelleTerm):
+    """Isabelle string."""
     def __init__(self, text):
         self.text = text
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -162,7 +203,7 @@ class String(IsabelleTerm):
     def __repr__(self):
         return "String(%s)" % self.text
 
-    def export(self):
+    def export(self) -> str:
         return "''%s''" % self.text
 
 
@@ -188,32 +229,34 @@ op_map_raw = {
 }
 
 class OpInfo:
-    def __init__(self, name, isa_name, priority, assoc, spec):
+    """Information for Isabelle binary operators."""
+    def __init__(self, name: str, isa_name: str, priority: int, assoc: int, spec: str):
         self.name = name
         self.isa_name = isa_name
         self.priority = priority
         self.assoc = assoc
         self.spec = spec
 
-op_map = dict()
+op_map: Dict[str, OpInfo] = dict()
 for op, (isa_name, priority, assoc, spec) in op_map_raw.items():
     op_map[op] = OpInfo(op, isa_name, priority, assoc, spec)
 
 
 class Op(IsabelleTerm):
-    def __init__(self, op, t1, t2):
+    """Isabelle binary operator application."""
+    def __init__(self, op: str, t1: IsabelleTerm, t2: IsabelleTerm):
         assert op in op_map, "Op: %s not found" % op
         self.op = op
         self.t1 = t1
         self.t2 = t2
 
-    def priority(self):
+    def priority(self) -> int:
         return op_map[self.op].priority
 
-    def assoc(self):
+    def assoc(self) -> int:
         return op_map[self.op].assoc
 
-    def spec(self):
+    def spec(self) -> str:
         return op_map[self.op].spec
 
     def __str__(self):
@@ -231,7 +274,7 @@ class Op(IsabelleTerm):
     def __repr__(self):
         return "Op(%s, %s, %s)" % (self.op, repr(self.t1), repr(self.t2))
 
-    def export(self):
+    def export(self) -> str:
         s1, s2 = self.t1.export(), self.t2.export()
         if self.t1.priority() < self.priority() or \
             (self.t1.priority() == self.priority() and isinstance(self.t1, Op) and
@@ -254,22 +297,24 @@ uop_map_raw = {
 }
 
 class UOpInfo:
-    def __init__(self, name, isa_name, priority):
+    """Information for Isabelle unary operators."""
+    def __init__(self, name: str, isa_name: str, priority: int):
         self.name = name
         self.isa_name = isa_name
         self.priority = priority
 
-uop_map = dict()
+uop_map: Dict[str, UOpInfo] = dict()
 for uop, (isa_name, priority) in uop_map_raw.items():
     uop_map[uop] = UOpInfo(uop, isa_name, priority)
 
 class UOp(IsabelleTerm):
-    def __init__(self, op, t):
+    """Isabelle unary operator application"""
+    def __init__(self, op: str, t: IsabelleTerm):
         assert op in uop_map, "UOp: %s not found" % op
         self.op = op
         self.t = t
 
-    def priority(self):
+    def priority(self) -> int:
         return uop_map[self.op].priority
 
     def __str__(self):
@@ -281,49 +326,51 @@ class UOp(IsabelleTerm):
     def __repr__(self):
         return "UOp(%s, %s)" % (self.op, repr(self.t))
 
-    def export(self):
+    def export(self) -> str:
         s = self.t.export()
         if self.t.priority() < self.priority():
             s = "(" + s + ")"
         return "%s %s" % (uop_map[self.op].isa_name, s)
 
 class Fun(IsabelleTerm):
-    def __init__(self, fun, args):
+    """Isabelle function application"""
+    def __init__(self, fun: IsabelleTerm, args: Iterable[IsabelleTerm]):
         assert isinstance(fun, IsabelleTerm)
         assert isinstance(args, list)
         self.fun = fun
-        self.args = args
+        self.args = tuple(args)
 
-    def priority(self):
+    def priority(self) -> int:
         return 90
 
     def __str__(self):
         str_args = []
-        for arg in [self.fun] + self.args:
+        for arg in (self.fun,) + self.args:
             str_arg = str(arg)
             if arg.priority() <= self.priority():
                 str_arg = "(" + str_arg + ")"
             str_args.append(str_arg)
         
-        return " ".join(str_args) # ("(%s)"%" ".join(str_args))
+        return " ".join(str_args)
 
     def __repr__(self):
         return "Fun(%s, %s)" % (self.fun, self.args)
 
-    def export(self):
+    def export(self) -> str:
         str_args = []
-        for arg in [self.fun] + self.args:
+        for arg in (self.fun,) + self.args:
             str_arg = arg.export()
             if arg.priority() <= self.priority():
                 str_arg = "(" + str_arg + ")"
             str_args.append(str_arg)
         
-        return " ".join(str_args) #return ("(%s)"%" ".join(str_args))
+        return " ".join(str_args)
 
 class Tuple(IsabelleTerm):
-    def __init__(self, *args):
+    """Isabelle tuple."""
+    def __init__(self, *args: IsabelleTerm):
         assert all(isinstance(arg, IsabelleTerm) for arg in args)
-        self.args = args
+        self.args = tuple(args)
 
     def priority(self):
         return 100
@@ -338,11 +385,12 @@ class Tuple(IsabelleTerm):
         return "(%s)" % (', '.join(arg.export() for arg in self.args))
 
 class Set(IsabelleTerm):
-    def __init__(self, *args):
+    """Isabelle set."""
+    def __init__(self, *args: IsabelleTerm):
         assert all(isinstance(arg, IsabelleTerm) for arg in args)
-        self.args = args
+        self.args = tuple(args)
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -351,15 +399,16 @@ class Set(IsabelleTerm):
     def __repr__(self):
         return "Set(%s)" % (', '.join(repr(arg) for arg in self.args))
 
-    def export(self):
+    def export(self) -> str:
         return "{%s}" % (', '.join(arg.export() for arg in self.args))
 
 class CollectSet(IsabelleTerm):
-    def __init__(self, bound_var, body):
+    """Define set by collection in Isabelle."""
+    def __init__(self, bound_var: str, body: IsabelleTerm):
         self.bound_var = bound_var
         self.body = body
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -368,17 +417,16 @@ class CollectSet(IsabelleTerm):
     def __repr__(self):
         return "CollectSet(%s, %s)" % (self.bound_var, repr(self.body))
 
-    def export(self):
+    def export(self) -> str:
         return "{%s. %s}" % (self.bound_var, self.body.export())
 
 class List(IsabelleTerm):
-    def __init__(self, *args):
-        print(type(args))
-        (print(type(arg)) for arg in args)
+    """Isabelle list."""
+    def __init__(self, *args: IsabelleTerm):
         assert all(isinstance(arg, IsabelleTerm) for arg in args)
-        self.args = args
+        self.args = tuple(args)
 
-    def priority(self):
+    def priority(self) -> int:
         return 100
 
     def __str__(self):
@@ -387,7 +435,7 @@ class List(IsabelleTerm):
     def __repr__(self):
         return "List(%s)" % (', '.join(repr(arg) for arg in self.args))
 
-    def export(self):
+    def export(self) -> str:
         return "[%s]" % (', '.join(arg.export() for arg in self.args))
 
 quant_op_map = {
@@ -399,23 +447,23 @@ quant_op_map = {
 }
 
 class Quant(IsabelleTerm):
-    def __init__(self, quant_op, bound_var, t):
+    """Isabelle quantification term."""
+    def __init__(self, quant_op: str, bound_var: str, t: IsabelleTerm):
         assert quant_op in quant_op_map, "Quant: %s not found" % quant_op
         self.quant_op = quant_op
         self.bound_var = bound_var
         self.t = t
 
-    def priority(self):
+    def priority(self) -> int:
         return 10
 
     def __str__(self):
         return "%s%s. %s" % (quant_op_map[self.quant_op], self.bound_var, self.t.export())
-        #return "%s %s. %s" % (self.quant_op, self.bound_var, str(self.t))
 
     def __repr__(self):
         return "Quant(%s, %s, %s)" % (self.quant_op, self.bound_var, repr(self.t))
 
-    def export(self):
+    def export(self) -> str:
         return "%s%s. %s" % (quant_op_map[self.quant_op], self.bound_var, self.t.export())
 
 ite_map = {
@@ -424,14 +472,15 @@ ite_map = {
 }
 
 class ITE(IsabelleTerm):
-    def __init__(self, ite_name, b, t1, t2):
+    """Isabelle if-then-else term"""
+    def __init__(self, ite_name: str, b: IsabelleTerm, t1: IsabelleTerm, t2: IsabelleTerm):
         self.ite_name = ite_name
         assert self.ite_name in ite_map
         self.b = b
         self.t1 = t1
         self.t2 = t2
 
-    def priority(self):
+    def priority(self) -> int:
         return 10
 
     def __str__(self):
@@ -441,7 +490,7 @@ class ITE(IsabelleTerm):
     def __repr__(self):
         return "ITE(%s, %s, %s, %s)" % (self.ite_name, repr(self.b), repr(self.t1), repr(self.t2))
 
-    def export(self):
+    def export(self) -> str:
         str_if, str_do, str_else, str_fi, spec = ite_map[self.ite_name]
         if spec == 'n':
             res = "%s %s %s\n" % (str_if, self.b.export(), str_do)
@@ -455,14 +504,14 @@ class ITE(IsabelleTerm):
 
  
 class IsabelleITE(IsabelleTerm):
-    def __init__(self, ite_name, b, t1, t2):
+    def __init__(self, ite_name: str, b: IsabelleTerm, t1: IsabelleTerm, t2: IsabelleTerm):
         self.ite_name = ite_name
         assert self.ite_name in ite_map
         self.b = b
         self.t1 = t1
         self.t2 = t2
 
-    def priority(self):
+    def priority(self) -> int:
         return 10
 
     def __str__(self):
@@ -473,27 +522,32 @@ class IsabelleITE(IsabelleTerm):
         str_if, str_then, str_else = ite_map[self.ite_name]
         return "%s %s %s %s %s %s %s" % (str_if, self.b, str_then, self.t1, str_else, self.t2)
 
-    def export(self):
+    def export(self) -> str:
         str_if, str_then, str_else = ite_map[self.ite_name]
-        # res = "%s %s %s\n" % (str_if, self.b.export(), str_then)
-        # res += indent(self.t1.export(), 2) + "\n"
-        # res += "%s\n" % str_else
-        # res += indent(self.t2.export(), 2) + "\n"
         res = "%s %s" % (str_if, self.b.export())
         res += " %s %s" % (str_then, self.t1.export())
         res += " %s %s" % (str_else, self.t2.export())
         return res
         
-           
 
-class Definition:
-    def __init__(self, name, typ, val, *, args=None, is_simp=False, is_equiv=False):
+class IsabelleDecl:
+    """Base class for Isabelle declarations."""
+    def export(self) -> str:
+        """Convert declaration to string."""
+        raise NotImplementedError
+
+
+class Definition(IsabelleDecl):
+    """Isabelle definition."""
+    def __init__(self, name: str, typ: IsabelleType, val: IsabelleTerm, *,
+                 args: Optional[Iterable[IsabelleTerm]] = None,
+                 is_simp: bool = False, is_equiv: bool = False):
         self.name = name
         self.typ = typ
         self.val = val
         if args is None:
-            args = []
-        self.args = args
+            args = tuple()
+        self.args = tuple(args)
         self.is_simp = is_simp
         self.is_equiv = is_equiv
         if self.is_equiv:
@@ -513,231 +567,172 @@ class Definition:
         else:
             return "Definition(%s, %s, %s)" % (self.name, repr(self.typ), repr(self.val))
 
-    def export(self):
-        str_typ = self.typ.export()
-        #if not self.typ.is_atom():
-        #    str_typ = "\"" + str_typ + "\""
-        res = "definition %s :: \"%s\" where%s\n" % (self.name, str_typ, " [simp]:" if self.is_simp else "")
-        # res += indent("\"" + self.definition.export() + "\"", 2, first_line=1) + "\n"
+    def export(self) -> str:
+        res = "definition %s :: \"%s\" where%s\n" % (
+            self.name, self.typ.export(), " [simp]:" if self.is_simp else "")
         res += indent("\"" + self.definition.export() + "\"", 2) + "\n"
         return res
 
 class Proof:
+    """Base class of Isabelle proofs."""
     pass
 
-class Lemma:
-    pass
-
-# for lemma in Isabelle style such as [|A1;A2|]==>B 
-class isabelleLemma:
-    def __init__(self,  assms, conclusion, attribs=[],name=None,proof=None,inLemmas=None):
+class IsabelleLemma(IsabelleDecl):
+    """Isabelle lemma."""
+    def __init__(self, assms: Iterable[IsabelleTerm], conclusion: IsabelleTerm, *,
+                 attribs: Optional[Iterable[str]] = None,
+                 name: Optional[str] = None,
+                 proof: Optional[Iterable[Proof]] = None,
+                 inLemmas: bool = False):
         self.name = name
-        self.assms = assms
+        self.assms = tuple(assms)
         self.conclusion = conclusion
-        self.attribs = attribs
-        self.proof = proof
+        if attribs is None:
+            attribs = tuple()
+        self.attribs = tuple(attribs)
+        if proof is None:
+            proof = tuple()
+        self.proof = tuple(proof)
         self.inLemmas = inLemmas
 
     def __str__(self):
-        assmPart = "" if len(self.assms)==0 else \
-                    '[|'+(';'.join(str(assm) for assm in self.assms))+ '|]'
-        concPart = str(self.conclusion) if len(self.assms)==0 else \
-                    str(self.conclusion) 
-        attribStr = ""if self.attribs==[] else \
-                    "[%s]"%(",".join(attrib for attrib in self.attribs))
-        if self.inLemmas==None:
+        assmPart = "" if len(self.assms) == 0 else \
+                    '[|' + (';'.join(str(assm) for assm in self.assms)) + '|]'
+        concPart = str(self.conclusion)
+        attribStr = "" if len(self.attribs) == 0 else \
+                    "[%s]" % (",".join(attrib for attrib in self.attribs))
+        if not self.inLemmas:
             res = "lemma %s %s: \n  \"%s%s%s\"\n%s\n  done\n" % ( \
-                self.name, attribStr, \
-                assmPart, \
-                " ==> " if len(self.assms)>0 else "", concPart.lstrip(), \
-                "" if self.proof==None else indent('\n'.join(str(proof) for proof in self.proof), 2) \
-                ) # TODO: 
-        else:
-            res = "\"%s%s%s\"\n  %s\n" % ( \
-                assmPart, \
-                " ==> " if len(self.assms)>0 else "", concPart.lstrip(), \
-                "" if self.proof==None else indent('\n'.join(str(proof) for proof in self.proof), 2) \
+                    self.name, attribStr,
+                    assmPart,
+                    " ==> " if len(self.assms) > 0 else "", concPart.lstrip(),
+                    "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
-        #res1 = indent(res, 2)
+        else:
+            res = "\"%s%s%s\"\n  %s\n" % (
+                    assmPart,
+                    " ==> " if len(self.assms) > 0 else "", concPart.lstrip(),
+                    "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
+                )
         return res
 
     def __repr__(self): 
         return "IsabelleLemma(%s, %s, %s, %s,%s)" % \
-            (self.name, repr(self.assms), repr(self.conclusion), 
-            repr(self.attribs),repr(self.proof))
+            (self.name, repr(self.assms), repr(self.conclusion),
+             repr(self.attribs),repr(self.proof))
 
     def export(self):
-        assmPart="" if len(self.assms)==0 else \
-                '[|'+(';'.join(str(assm) for assm in self.assms))+ '|]'
-        concPart=str(self.conclusion) if len(self.assms)==0 else \
-            str(self.conclusion) 
-        attribStr=""if self.attribs==[] else \
-            "[%s]"%(",".join(attrib for attrib in self.attribs))
-        if self.inLemmas==None:
-            res = "lemma %s %s: \n  \"%s%s%s\"\n%s\n  done\n" % ( \
-                self.name, attribStr, \
-                assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(), \
-                "" if self.proof ==None else indent('\n'.join(str(proof) for proof in self.proof), 2) \
+        assmPart = "" if len(self.assms) == 0 else \
+                '[|' + (';'.join(str(assm) for assm in self.assms)) + '|]'
+        concPart = str(self.conclusion)
+        attribStr = "" if len(self.attribs) == 0 else \
+                    "[%s]" % (",".join(attrib for attrib in self.attribs))
+        if not self.inLemmas:
+            res = "lemma %s %s: \n  \"%s%s%s\"\n%s\n  done\n" % (
+                    self.name, attribStr,
+                    assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(),
+                    "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
         else:
-            res = "\"%s%s%s\"\n %s\n" % ( \
-                assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(), \
-                "" if self.proof ==None else indent('\n'.join(str(proof) for proof in self.proof), 2) \
+            res = "\"%s%s%s\"\n %s\n" % (
+                    assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(),
+                    "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
-        #res1 = indent(res, 2)
         return res
     
 
-class isabelleLemmas:
-    def __init__(self, name, lemmas,proof):
+class IsabelleLemmas(IsabelleDecl):
+    """Multiple lemmas in one declaration."""
+    def __init__(self, name: str, lemmas: Iterable[IsabelleLemma], proof: Iterable[Proof]):
         self.name = name
-        self.lemmas =lemmas 
-        self.proof=proof
+        self.lemmas = tuple(lemmas)
+        self.proof = tuple(proof)
 
     def __str__(self):
-         
-        res = "lemma %s : \n%s\n%s\n  done\n" % ( \
-            self.name, \
-            indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2), \
-            indent('\n'.join(str(proof) for proof in self.proof), 2)\
-            ) 
-        #%res1 = indent(res,2)
+        res = "lemma %s : \n%s\n%s\n  done\n" % (
+                self.name,
+                indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2),
+                indent('\n'.join(str(proof) for proof in self.proof), 2)
+            )
         return res
 
     def __repr__(self): 
-            return "IsabelleLemmas(%s, %s, %s )" % \
-            (self.name, repr(self.lemmas), repr(self.proof))
+            return "IsabelleLemmas(%s, %s, %s)" % (self.name, repr(self.lemmas), repr(self.proof))
 
     def export(self):
-        # res = "lemma %s : \n  %s \n%s\n  done\n" % ( \
-        #     self.name, \
-        #     '\n'.join(str(lemma) for lemma in self.lemmas), \
-        #     '\n'.join(str(proof) for proof in self.proof)\
-        #     ) 
-        res = "lemma %s : \n%s\n%s\n  done\n" % ( \
-            self.name, \
-            indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2), \
-            indent('\n'.join(str(proof) for proof in self.proof), 2)\
-            ) 
+        res = "lemma %s : \n%s\n%s\n  done\n" % (
+                self.name,
+                indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2),
+                indent('\n'.join(str(proof) for proof in self.proof), 2)
+            )
         return res
 
-# For lemma such as assumes A1 and A2 shows C proof
-class IsarLemma:
-    def __init__(self, name, assms, conclusion, attribs=None,proof=None):
-        self.name = name
-        self.assms = assms
-        self.conclusion = conclusion
-        self.attribs = attribs
-        self.proof = proof
-
-
-    def __str__(self):
-        assmPart = "" if len(self.assms) ==0 else \
-            'assumes \"'+('\";\n\"'.join(str(assm) for assm in self.assms))+'\"'
-        concPart = "shows \"" + str(self.conclusion)  
-       
-        res = "lemma %s [%s]: \n \
-            %s %s %s \n" % ( \
-            self.name, self.attribs, \
-            assmPart, concPart.lstrip(), indent(self.proof, 2) \
-             ) 
-        res1= indent(res, 2)
-        return res1
-
-    def __repr__(self): 
-            return "IsarLemma(%s, %s, %s, %s,%s)" % \
-            (self.name, repr(self.assms), repr(self.conclusion), \
-            repr(self.attribs),repr(self.proof))
-
-def subst2Str(subst):
-    res = "%s=\"%s\"" 
-    return(res)
-
 class IsabelleApplyRuleProof(Proof):
-    def __init__(self, name, substs=[],unfolds=[], usings=[],plus=None,rule_tac=None):
+    """Isabelle apply tactic."""
+    def __init__(self, name: str, *, unfolds=[], usings=[],plus=None,rule_tac=None):
         self.name = name
-        self.substs =substs 
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.rule_tac=rule_tac
+        self.usings = usings
+        self.unfolds = unfolds
+        self.plus = plus
+        self.rule_tac = rule_tac
 
     def __str__(self):
-        unfoldStr = '' if len(self.unfolds)==0 else \
+        unfoldStr = '' if len(self.unfolds) == 0 else \
             "unfolding " + (" ".join(un + "_def" for un in self.unfolds) + "\n")
 
-        usingStr = '' if len(self.usings)==0 else \
+        usingStr = '' if len(self.usings) == 0 else \
             "using " + (" ".join(us for us in self.usings) + "\n") 
 
-        plusStr = '' if self.plus==None else "+" 
+        plusStr = '' if self.plus is None else "+"
 
-        res1 = "apply (rule %s)" % (self.name)
-        
-        res2 = "apply (rule %s in %s)" % \
-            ("and".join(subst2Str(sub) for sub in self.substs), \
-            self.name)
-
-        res3 = "apply (rule_tac " + self.rule_tac + " in "+self.name+")"  if self.rule_tac !=None else ""
-
-        res = (res1 if self.substs==[] else res2) if self.rule_tac==None else res3
-        # return unfoldStr + " " + usingStr + " " + res + plusStr
+        if self.rule_tac is None:
+            res = "apply (rule %s)" % self.name
+        else:
+            res = "apply (rule_tac " + self.rule_tac + " in " + self.name + ")"
         return unfoldStr + usingStr + res + plusStr
 
     def __repr__(self): 
-            return "ApplyRule(%s, %s, %s, %s,%s)" % \
-            (self.name, repr(self.substs), repr(self.unfolds), \
-            repr(self.usings),repr(self.plus))
+        return "ApplyRule(%s, %s, %s, %s)" % \
+            (self.name, repr(self.unfolds), repr(self.usings), repr(self.plus))
 
 class IsabelleApplyEruleProof(Proof):
-    def __init__(self, name, substs=[],unfolds=[], usings=[],plus=None,rule_tac=None):
+    def __init__(self, name, *, unfolds=[], usings=[],plus=None,rule_tac=None):
         self.name = name
-        self.substs =substs 
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.rule_tac=rule_tac
+        self.usings = usings
+        self.unfolds = unfolds
+        self.plus = plus
+        self.rule_tac = rule_tac
 
     def __str__(self):
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(un+"_def" for un in self.unfolds) + "\n")
+        unfoldStr = '' if len(self.unfolds) == 0 else \
+            "unfolding " + (" ".join(un + "_def" for un in self.unfolds) + "\n")
 
-        usingStr = '' if len(self.usings)==0 else \
+        usingStr = '' if len(self.usings) == 0 else \
             "using " + (" ".join(us  for us in self.usings) + "\n") 
 
-         
-        plusStr='' if self.plus==None else "+" 
+        plusStr = '' if self.plus is None else "+" 
 
-        res1 = "apply (erule %s)" % (self.name)
-        
-        res2 = "apply (erule %s in %s)" % \
-            ("and".join(subst2Str(sub) for sub in self.substs), \
-            self.name) # ' '
-
-        res3="apply (erule_tac "+self.rule_tac+" in "+self.name+")"  if self.rule_tac !=None else ""
-
-        res=(res1 if self.substs==[] else res2) if self.rule_tac==None else res3
-        # return unfoldStr+" "+usingStr+" "+res+plusStr
+        if self.rule_tac is None:
+            res = "apply (erule %s)" % self.name
+        else:
+            res = "apply (erule_tac " + self.rule_tac + " in " + self.name + ")"
         return unfoldStr + usingStr + res + plusStr
 
     def __repr__(self): 
-            return "ApplyeRule(%s, %s, %s, %s,%s)" % \
-            (self.name, repr(self.substs), repr(self.unfolds), \
-            repr(self.usings),repr(self.plus))
+        return "ApplyErule(%s, %s, %s, %s)" % \
+            (self.name, repr(self.unfolds), repr(self.usings), repr(self.plus))
 
-class autoProof(Proof):
-    def __init__(self,   unfolds=[], usings=[], introITag=None,
-        intros=[],destITag=None,dests=[],simpadds=[], simpdels=[],plus=None,goalNum=None): 
+class AutoProof(Proof):
+    def __init__(self, *, unfolds=[], usings=[], introITag=None,
+                 intros=[],simpadds=[], simpdels=[],plus=None,goalNum=None): 
         self.usings=usings
         self.unfolds=unfolds
         self.plus=plus
         self.intros =intros 
-        self.dests=dests
         self.simpadds=simpadds
         self.simpdels=simpdels
         self.introITag=introITag
-        self.destITag=destITag
         self.goalNum=goalNum
-
 
     def __str__(self):
         unfoldStr='' if len(self.unfolds)==0 else \
@@ -746,10 +741,8 @@ class autoProof(Proof):
         usingStr = '' if len(self.usings)==0 else \
             "using " + (" ".join(us  for us in self.usings) + "\n") 
 
-        plusStr = '' if self.plus==None else "+" 
-        introStr = '' if   self.introITag==None else (self.introITag+": "+(" ".join(str(intro) for intro in self.intros)))
-
-        destStr = '' if   self.destITag==None else (self.destITag + ": "+(" ".join(str(del0) for del0 in self.dests)))
+        plusStr = '' if self.plus is None else "+" 
+        introStr = '' if self.introITag is None else (self.introITag+": "+(" ".join(str(intro) for intro in self.intros)))
 
         simpdelStr = '' if len(self.simpdels)==0 else ("simp del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
 
@@ -757,15 +750,9 @@ class autoProof(Proof):
 
         goalStr = ""  if (self.goalNum==None) else "[%s]"%self.goalNum
         
-        # res= "apply (auto %s %s   %s %s)%s    \n " % \
-        #     ( introStr, destStr, simpaddStr, simpdelStr,goalStr)
-        # NOTE: '' is not None
-        if introStr or destStr or simpaddStr or simpdelStr or goalStr:
-            # res= "apply (auto %s %s   %s %s)%s" % \
-            #     (introStr, destStr, simpaddStr, simpdelStr, goalStr)
-            res= "apply (auto%s%s%s%s)%s"   % \
+        if introStr or simpaddStr or simpdelStr or goalStr:
+            res= "apply (auto%s%s%s)%s"   % \
             ( '' if introStr=='' else " " + introStr, \
-                '' if destStr=='' else " " + destStr, \
                 '' if simpaddStr=='' else " " + simpaddStr, \
                 '' if simpdelStr=='' else " " + simpdelStr, \
                 '' if goalStr=='' else goalStr)
@@ -776,26 +763,21 @@ class autoProof(Proof):
         return unfoldStr + usingStr + res + plusStr
 
     def __repr__(self): 
-        return "auto ( %s, %s, %s,%s,%s,%s,%s)" % \
+        return "auto ( %s, %s, %s,%s,%s,%s)" % \
             (repr(self.unfolds),  \
             repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.dests),repr(self.simpadds),repr(self.simpdels))
-
-
+            repr(self.simpadds),repr(self.simpdels))
 
 class blastProof(Proof):
-    def __init__(self,   unfolds=[], usings=[], introITag=None,
-        intros=[],destITag=None,dests=[],simpadds=[], simpdels=[],plus=None): 
+    def __init__(self, *, unfolds=[], usings=[], introITag=None,
+        intros=[],simpadds=[], simpdels=[],plus=None): 
         self.usings=usings
         self.unfolds=unfolds
         self.plus=plus
         self.intros =intros 
-        self.dests=dests
         self.simpadds=simpadds
         self.simpdels=simpdels
         self.introITag=introITag
-        self.destITag=destITag
-
 
     def __str__(self):
         unfoldStr='' if len(self.unfolds)==0 else \
@@ -807,37 +789,31 @@ class blastProof(Proof):
         plusStr = '' if self.plus==None else "+" 
         introStr = '' if self.introITag==None else (self.introITag + " " + (" ".join(str(intro) for intro in self.intros)))
 
-        destStr = '' if self.destITag==None else (self.destITag + " " + (" ".join(str(del0) for del0 in self.dests)))
-
         simpdelStr = '' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
 
         simpaddStr = '' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)))
 
-        res= "apply (blast%s%s%s%s)%s"   % \
+        res= "apply (blast%s%s%s)%s"   % \
             ( '' if introStr=='' else " " + introStr, \
-                '' if destStr=='' else " " + destStr, \
                 '' if simpaddStr=='' else " " + simpaddStr, \
                 '' if simpdelStr=='' else " " + simpdelStr, \
                 '' if plusStr=='' else plusStr)
 
-        # return unfoldStr+' '+usingStr+' '+res
         return unfoldStr + usingStr + res
 
     def __repr__(self): 
-        return "auto ( %s, %s, %s,%s,%s,%s,%s)" % \
+        return "auto ( %s, %s,%s,%s,%s,%s)" % \
             (repr(self.unfolds),  \
             repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.dests),repr(self.simpadds),repr(self.simpdels))
-
+            repr(self.simpadds),repr(self.simpdels))
 
 class introProof(Proof):
-    def __init__(self,   unfolds=[], usings=[], 
+    def __init__(self, *, unfolds=[], usings=[], 
         intros=[],plus=None): 
         self.unfolds=unfolds
         self.plus=plus
         self.intros =intros 
         self.usings=usings
-
 
     def __str__(self):
         unfoldStr = '' if len(self.unfolds)==0 else \
@@ -849,13 +825,9 @@ class introProof(Proof):
         plusStr = '' if self.plus==None else "+" 
         introStr = '' if   self.intros==[] else (" "+(" ".join(str(intro) for intro in self.intros)))
 
-        # res= "apply (intro %s )%s"   % \
-        #     ( introStr,plusStr)
         res= "apply (intro%s)%s"   % \
             ( '' if introStr=='' else " " + introStr, \
                 '' if plusStr=='' else plusStr)
-         
-        # return unfoldStr+' '+usingStr+' '+res
         return unfoldStr + usingStr + res
 
     def __repr__(self): 
@@ -868,30 +840,22 @@ class introProof(Proof):
         plusStr = '' if self.plus==None else "+" 
         introStr = '' if self.introITag==None else (" "+(" ".join(str(intro) for intro in self.intros)))
 
-        # res= "apply (intro %s )%s"   % \
-        #     ( introStr,plusStr)
         res= "apply (intro%s)%s"   % \
             ( '' if introStr=='' else " " + introStr, \
                 '' if plusStr=='' else plusStr)
 
-        # return unfoldStr+' '+usingStr+' '+res
         return unfoldStr + usingStr + res
-
-
 
 class presburgerProof(Proof):
     def __init__(self,   unfolds=[], usings=[], introITag=None,
-        intros=[],destITag=None,dests=[],simpadds=[], simpdels=[],plus=None): 
+        intros=[],simpadds=[], simpdels=[],plus=None): 
         self.usings=usings
         self.unfolds=unfolds
         self.plus=plus
         self.intros =intros 
-        self.dests=dests
         self.simpadds=simpadds
         self.simpdels=simpdels
         self.introITag=introITag
-        self.destITag=destITag
-
 
     def __str__(self):
         unfoldStr='' if len(self.unfolds)==0 else \
@@ -904,46 +868,35 @@ class presburgerProof(Proof):
         
         introStr = '' if   self.introITag==None else (self.introITag+" "+(" ".join(str(intro) for intro in self.intros)))
 
-        destStr = '' if   self.destITag==None else (self.destITag + " "+(" ".join(str(del0) for del0 in self.dests)))
-
         simpdelStr = '' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
-
         
         simpaddStr = '' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)) )
-
-        # res= "apply (presburger %s %s   %s %s)%s"   % \
-        #     ( introStr, destStr, simpaddStr, simpdelStr,plusStr)
         
-        res= "apply (presburger%s%s%s%s)%s"   % \
+        res= "apply (presburger%s%s%s)%s"   % \
             ( '' if introStr=='' else " " + introStr, \
-                '' if destStr=='' else " " + destStr, \
                 '' if simpaddStr=='' else " " + simpaddStr, \
                 '' if simpdelStr=='' else " " + simpdelStr, \
                 '' if plusStr=='' else plusStr)
          
-        # return unfoldStr+' '+usingStr+' '+res
         return unfoldStr + usingStr + res
 
     def __repr__(self): 
-        return "auto( %s, %s, %s,%s,%s,%s,%s)" % \
+        return "auto( %s, %s, %s,%s,%s,%s)" % \
             (repr(self.unfolds),  \
             repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.dests),repr(self.simpadds),repr(self.simpdels))
-
+            repr(self.simpadds),repr(self.simpdels))
 
 class substProof(Proof):
     def __init__(self,  name, unfolds=[], usings=[], introITag=None,
-        intros=[],destITag=None,dests=[],simpadds=[], simpdels=[],plus=None): 
+        intros=[],simpadds=[], simpdels=[],plus=None): 
         self.name=name
         self.usings=usings
         self.unfolds=unfolds
         self.plus=plus
         self.intros =intros 
-        self.dests=dests
         self.simpadds=simpadds
         self.simpdels=simpdels
         self.introITag=introITag
-        self.destITag=destITag
 
 
     def __str__(self):
@@ -957,18 +910,15 @@ class substProof(Proof):
 
         introStr='' if   self.introITag==None else (self.introITag+" "+(" ".join(str(intro) for intro in self.intros)))
 
-        destStr='' if   self.destITag==None else (self.destITag + " "+(" ".join(str(del0) for del0 in self.dests)))
-
         simpdelStr='' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
 
         simpaddStr='' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)) )
                  
         # res= "apply (subst %s  %s %s   %s %s)%s"   % \
         #     (self.name, introStr, destStr, simpaddStr, simpdelStr,plusStr)
-        res= "apply (subst%s%s%s%s%s)%s"   % \
+        res= "apply (subst%s%s%s%s)%s"   % \
             ( '' if self.name=='' else " " + self.name, \
                 '' if introStr=='' else " " + introStr, \
-                '' if destStr=='' else " " + destStr, \
                 '' if simpaddStr=='' else " " + simpaddStr, \
                 '' if simpdelStr=='' else " " + simpdelStr, \
                 '' if plusStr=='' else plusStr)
@@ -977,10 +927,10 @@ class substProof(Proof):
         return unfoldStr + usingStr + res
 
     def __repr__(self): 
-        return "subst(%s %s, %s, %s,%s,%s,%s,%s)" % \
+        return "subst(%s %s, %s, %s,%s,%s,%s)" % \
             (self.name,repr(self.unfolds),  \
             repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.dests),repr(self.simpadds),repr(self.simpdels))
+            repr(self.simpadds),repr(self.simpdels))
 
 class subgoalProof(Proof):
     def __init__(self,fors=None,proofs=None): 
@@ -1229,12 +1179,13 @@ test_data = [
         args=["N", "i"],
         is_equiv=True
     ),
-    isabelleLemma([], 
+    IsabelleLemma([], 
         Fun(Const("symPredSet'"), [Const("N"), Const("{initSpec1}")]),
-        ["intro"],
-        "symPreds1",
-        [autoProof(unfolds=["symPredSet'"]),
-        autoProof(unfolds=["symPredSet'"])
+        attribs=["intro"],
+        name="symPreds1",
+        proof=[
+            AutoProof(unfolds=["symPredSet'"]),
+            AutoProof(unfolds=["symPredSet'"])
         ]
     ),
     CollectSet('x', Fun(Var('P'), [Var('x')])),

@@ -2,27 +2,7 @@
 
 from typing import Dict, Iterable, Optional
 
-
-def indent(s, num_space, first_line=None):
-    """Indent the given string by adding spaces to each line.
-    
-    Parameters
-    ----------
-    num_space : int
-        Number of spaces to add to each line
-    first_line : int, optional
-        Number of spaces to add to first line
-    """
-    if s is None:
-        return ""
-    lines = s.split('\n')
-    if first_line is None:
-        return '\n'.join(' ' * num_space + line for line in lines)
-    else:
-        res = ' ' * first_line + lines[0]
-        if len(lines) > 1:
-            res += '\n' + '\n'.join(' ' * num_space + line for line in lines[1:])
-        return res
+from utils import indent
 
 class IsabelleType:
     """Base class for all Isabelle types."""
@@ -985,7 +965,7 @@ def iteS(b, c1, c2):
 def ruleS(conds, stmts):
     return Op("|>", andF(conds), parallelS(stmts))
 
-def enum_def(cl, v):
+def enum_def(cl: str, v: str) -> Definition:
     return Definition(v, scalarValueType, enum(cl, v), is_simp=True, is_equiv=True)
 
 def header(thy_name):

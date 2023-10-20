@@ -63,12 +63,10 @@ for rule_name in prot.rule_map:
         elif len(vars) == 2:
             abs_rule1 = absTransfRule(rule, {vars[0]: False, vars[1]: True}, "_" + vars[0])
             if abs_rule1:
-                new_rules.append(murphi.MurphiRuleSet([murphi.MurphiTypeDecl(vars[1], rule_set.var_map[vars[1]])], abs_rule1))
-
+                new_rules.append(murphi.MurphiRuleSet([murphi.MurphiVarDecl(vars[1], rule_set.var_map[vars[1]])], abs_rule1))
             abs_rule2 = absTransfRule(rule, {vars[0]: True, vars[1]: False}, "_" + vars[1])
             if abs_rule2:
-                new_rules.append(murphi.MurphiRuleSet([murphi.MurphiTypeDecl(vars[0], rule_set.var_map[vars[0]])], abs_rule2))
-
+                new_rules.append(murphi.MurphiRuleSet([murphi.MurphiVarDecl(vars[0], rule_set.var_map[vars[0]])], abs_rule2))
             abs_rule3 = absTransfRule(rule, {vars[0]: False, vars[1]: False}, "_" + vars[0] + "_" + vars[1])
             if abs_rule3:
                 new_rules.append(abs_rule3)

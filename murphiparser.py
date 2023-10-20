@@ -1,5 +1,5 @@
 
-from lark import Lark, Transformer, v_args, exceptions
+from lark import Lark, Transformer, v_args
 
 import murphi
 
@@ -7,8 +7,7 @@ grammar = r"""
     ?const_decl: CNAME ":" INT
     ?consts: "const" (const_decl ";")*                    -> consts
 
-    ?type_constr: CNAME                                   -> var_type        
-        | (INT |CNAME) ".."  (INT |CNAME)                 -> range_type	
+    ?type_constr: CNAME                                   -> var_type
         | "boolean"                                       -> boolean_type
         | "scalarset" "(" CNAME ")"                       -> scalarset_type
         | "union" "{" type_constr ("," type_constr)* "}"  -> union_type
@@ -89,21 +88,8 @@ class MurphiTransformer(Transformer):
     def consts(self, *decls):
         return decls
 
-    def int_const_rng(self,val):
-        return(murphi.IntRngConst(int(val)))
-
-    def name_const_rng(self,name):
-        return(murphi.NameRngConst(name))
-
     def var_type(self, name):
         return murphi.VarType(str(name))
-
-    def range_type(self, downRng,upRng):
-        '''if downRng.isdigit():
-            downRng=int(downRng)
-        if upRng.isdigit():
-            upRng=int(upRng)'''
-        return murphi.RngType(str(downRng),str(upRng))
 
     def boolean_type(self):
         return murphi.BooleanType()

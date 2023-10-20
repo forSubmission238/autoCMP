@@ -4,13 +4,10 @@ from lark import Lark, Transformer, v_args, exceptions
 import murphi
 
 grammar = r"""
+    ?const_decl: CNAME ":" INT
+    ?consts: "const" (const_decl ";")*                    -> consts
 
-    ?const_decl:CNAME ":" INT
-    ?consts:"const" (const_decl ";")*                     -> consts
-
-    
-
-    ?type_constr:CNAME                                    -> var_type        
+    ?type_constr: CNAME                                   -> var_type        
         | (INT |CNAME) ".."  (INT |CNAME)                 -> range_type	
         | "boolean"                                       -> boolean_type
         | "scalarset" "(" CNAME ")"                       -> scalarset_type
@@ -142,7 +139,7 @@ class MurphiTransformer(Transformer):
         return murphi.UnknownExpr(str(name))
 
     def field_name(self, v, field):
-        return murphi.FieldName(v, field)
+        return murphi.FieldName(v, str(field))
 
     def array_index(self, v, idx):
         return murphi.ArrayIndex(v, idx)

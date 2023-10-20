@@ -688,7 +688,7 @@ lemma symPI_Remote_Get :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_Get src)"
   unfolding PI_Remote_Get_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -761,7 +761,7 @@ lemma symPI_Remote_GetX :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_GetX src)"
   unfolding PI_Remote_GetX_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -853,7 +853,7 @@ lemma symPI_Remote_PutX :
   "[|dst <= N|] ==> wellFormedRule (env N) N (PI_Remote_PutX dst)"
   unfolding PI_Remote_PutX_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -897,7 +897,7 @@ lemma symPI_Remote_Replace :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_Replace src)"
   unfolding PI_Remote_Replace_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -936,7 +936,7 @@ lemma symNI_Nak :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Nak dst)"
   unfolding NI_Nak_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1000,7 +1000,7 @@ lemma symNI_Local_Get_Nak :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Nak src)"
   unfolding NI_Local_Get_Nak_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1031,7 +1031,7 @@ lemma symNI_Local_Get_Get :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Get src)"
   unfolding NI_Local_Get_Get_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1074,7 +1074,7 @@ lemma symNI_Local_Get_Put :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Put N src)"
   unfolding NI_Local_Get_Put_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1100,7 +1100,7 @@ lemma symNI_Remote_Get_Nak :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Nak src dst)"
   unfolding NI_Remote_Get_Nak_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1125,7 +1125,7 @@ lemma symNI_Remote_Get_Nak_Home :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Nak_Home dst)"
   unfolding NI_Remote_Get_Nak_Home_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1153,7 +1153,7 @@ lemma symNI_Remote_Get_Put :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Put src dst)"
   unfolding NI_Remote_Get_Put_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1178,7 +1178,7 @@ lemma symNI_Remote_Get_Put_Home :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Put_Home dst)"
   unfolding NI_Remote_Get_Put_Home_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1205,7 +1205,7 @@ lemma symNI_Local_GetX_Nak :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_Nak src)"
   unfolding NI_Local_GetX_Nak_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1235,7 +1235,7 @@ lemma symNI_Local_GetX_GetX :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_GetX src)"
   unfolding NI_Local_GetX_GetX_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1268,7 +1268,7 @@ lemma symNI_Local_GetX_PutX1 :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX1 N src)"
   unfolding NI_Local_GetX_PutX1_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1314,7 +1314,7 @@ lemma symNI_Local_GetX_PutX2 :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX2 N src)"
   unfolding NI_Local_GetX_PutX2_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1370,7 +1370,7 @@ lemma symNI_Local_GetX_PutX3 :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX3 N src)"
   unfolding NI_Local_GetX_PutX3_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1396,7 +1396,7 @@ lemma symNI_Remote_GetX_Nak :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_Nak src dst)"
   unfolding NI_Remote_GetX_Nak_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1421,7 +1421,7 @@ lemma symNI_Remote_GetX_Nak_Home :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_Nak_Home dst)"
   unfolding NI_Remote_GetX_Nak_Home_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1449,7 +1449,7 @@ lemma symNI_Remote_GetX_PutX :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_PutX src dst)"
   unfolding NI_Remote_GetX_PutX_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1474,7 +1474,7 @@ lemma symNI_Remote_GetX_PutX_Home :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_PutX_Home dst)"
   unfolding NI_Remote_GetX_PutX_Home_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1522,7 +1522,7 @@ lemma symNI_Remote_Put :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Put dst)"
   unfolding NI_Remote_Put_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1567,7 +1567,7 @@ lemma symNI_Remote_PutX :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_PutX dst)"
   unfolding NI_Remote_PutX_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1587,7 +1587,7 @@ lemma symNI_Inv :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Inv dst)"
   unfolding NI_Inv_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1617,7 +1617,7 @@ lemma symNI_InvAck1 :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_InvAck1 N src)"
   unfolding NI_InvAck1_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1638,7 +1638,7 @@ lemma symNI_InvAck2 :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_InvAck2 src)"
   unfolding NI_InvAck2_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1703,7 +1703,7 @@ lemma symNI_ShWb :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_ShWb N src)"
   unfolding NI_ShWb_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1727,7 +1727,7 @@ lemma symNI_Replace :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Replace src)"
   unfolding NI_Replace_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -2479,92 +2479,92 @@ lemma symProtAll :
   "symProtRules' N (NI_ShWbs N)"
   "symProtRules' N (NI_Replaces N)"
   using symPI_Remote_Get(1) PI_Remote_Gets_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_Get_Get(1) PI_Local_Get_Gets_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_Get_Put(1) PI_Local_Get_Puts_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Remote_GetX(1) PI_Remote_GetXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_GetX_GetX(1) PI_Local_GetX_GetXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_GetX_PutX(1) PI_Local_GetX_PutXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Remote_PutX(1) PI_Remote_PutXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_PutX(1) PI_Local_PutXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Remote_Replace(1) PI_Remote_Replaces_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symPI_Local_Replace(1) PI_Local_Replaces_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Nak(1) NI_Naks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Nak_Home(1) NI_Nak_Homes_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Nak_Clear(1) NI_Nak_Clears_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_Get_Nak(1) NI_Local_Get_Naks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_Get_Get(1) NI_Local_Get_Gets_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_Get_Put(1) NI_Local_Get_Puts_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_Get_Nak(1) NI_Remote_Get_Naks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_Get_Nak_Home(1) NI_Remote_Get_Nak_Homes_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_Get_Put(1) NI_Remote_Get_Puts_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_Get_Put_Home(1) NI_Remote_Get_Put_Homes_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_GetX_Nak(1) NI_Local_GetX_Naks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_GetX_GetX(1) NI_Local_GetX_GetXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_GetX_PutX1(1) NI_Local_GetX_PutX1s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_GetX_PutX2(1) NI_Local_GetX_PutX2s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_GetX_PutX3(1) NI_Local_GetX_PutX3s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_GetX_Nak(1) NI_Remote_GetX_Naks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_GetX_Nak_Home(1) NI_Remote_GetX_Nak_Homes_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_GetX_PutX(1) NI_Remote_GetX_PutXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_GetX_PutX_Home(1) NI_Remote_GetX_PutX_Homes_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_Put(1) NI_Local_Puts_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_Put(1) NI_Remote_Puts_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Local_PutXAcksDone(1) NI_Local_PutXAcksDones_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Remote_PutX(1) NI_Remote_PutXs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Inv(1) NI_Invs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_InvAck1(1) NI_InvAck1s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_InvAck2(1) NI_InvAck2s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Wb(1) NI_Wbs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_FAck(1) NI_FAcks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_ShWb(1) NI_ShWbs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symNI_Replace(1) NI_Replaces_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   done
 
 lemma symCacheStateProp : 
   "symParamForm2 N (CacheStateProp N)"
   unfolding CacheStateProp_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2573,7 +2573,7 @@ lemma symCacheStateProp_Home :
   "symParamForm2 N (CacheStateProp_Home N)"
   unfolding CacheStateProp_Home_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2582,7 +2582,7 @@ lemma symLemma_3b :
   "symParamForm2 N (Lemma_3b N)"
   unfolding Lemma_3b_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2591,7 +2591,7 @@ lemma symLemma_3a :
   "symParamForm2 N (Lemma_3a N)"
   unfolding Lemma_3a_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2600,7 +2600,7 @@ lemma symLemma_1 :
   "symParamForm2 N (Lemma_1 N)"
   unfolding Lemma_1_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2609,7 +2609,7 @@ lemma symLemma_2a :
   "symParamForm2 N (Lemma_2a N)"
   unfolding Lemma_2a_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2618,7 +2618,7 @@ lemma symLemma_2b :
   "symParamForm2 N (Lemma_2b N)"
   unfolding Lemma_2b_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2627,7 +2627,7 @@ lemma symLemma_4 :
   "symParamForm2 N (Lemma_4 N)"
   unfolding Lemma_4_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -2649,7 +2649,7 @@ lemma symPI_Remote_Get_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_Get_ref src)"
   unfolding PI_Remote_Get_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -2768,7 +2768,7 @@ lemma symPI_Remote_GetX_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_GetX_ref src)"
   unfolding PI_Remote_GetX_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -2914,7 +2914,7 @@ lemma symPI_Remote_PutX_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (PI_Remote_PutX_ref N dst)"
   unfolding PI_Remote_PutX_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -2989,7 +2989,7 @@ lemma symPI_Remote_Replace_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (PI_Remote_Replace_ref src)"
   unfolding PI_Remote_Replace_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3059,7 +3059,7 @@ lemma symNI_Nak_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Nak_ref dst)"
   unfolding NI_Nak_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3169,7 +3169,7 @@ lemma symNI_Local_Get_Nak_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Nak_ref src)"
   unfolding NI_Local_Get_Nak_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3216,7 +3216,7 @@ lemma symNI_Local_Get_Get_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Get_ref src)"
   unfolding NI_Local_Get_Get_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3275,7 +3275,7 @@ lemma symNI_Local_Get_Put_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_Get_Put_ref N src)"
   unfolding NI_Local_Get_Put_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3322,7 +3322,7 @@ lemma symNI_Remote_Get_Nak_ref :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Nak_ref src dst)"
   unfolding NI_Remote_Get_Nak_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3369,7 +3369,7 @@ lemma symNI_Remote_Get_Nak_Home_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Nak_Home_ref dst)"
   unfolding NI_Remote_Get_Nak_Home_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3426,7 +3426,7 @@ lemma symNI_Remote_Get_Put_ref :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Put_ref N src dst)"
   unfolding NI_Remote_Get_Put_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3481,7 +3481,7 @@ lemma symNI_Remote_Get_Put_Home_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Get_Put_Home_ref N dst)"
   unfolding NI_Remote_Get_Put_Home_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3524,7 +3524,7 @@ lemma symNI_Local_GetX_Nak_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_Nak_ref src)"
   unfolding NI_Local_GetX_Nak_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3570,7 +3570,7 @@ lemma symNI_Local_GetX_GetX_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_GetX_ref src)"
   unfolding NI_Local_GetX_GetX_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3619,7 +3619,7 @@ lemma symNI_Local_GetX_PutX1_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX1_ref N src)"
   unfolding NI_Local_GetX_PutX1_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3681,7 +3681,7 @@ lemma symNI_Local_GetX_PutX2_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX2_ref N src)"
   unfolding NI_Local_GetX_PutX2_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3753,7 +3753,7 @@ lemma symNI_Local_GetX_PutX3_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Local_GetX_PutX3_ref N src)"
   unfolding NI_Local_GetX_PutX3_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3800,7 +3800,7 @@ lemma symNI_Remote_GetX_Nak_ref :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_Nak_ref src dst)"
   unfolding NI_Remote_GetX_Nak_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3847,7 +3847,7 @@ lemma symNI_Remote_GetX_Nak_Home_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_Nak_Home_ref dst)"
   unfolding NI_Remote_GetX_Nak_Home_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3904,7 +3904,7 @@ lemma symNI_Remote_GetX_PutX_ref :
   "[|src <= N;dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_PutX_ref N src dst)"
   unfolding NI_Remote_GetX_PutX_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamForm2And symParamForm2Forall1 symParamForm2Forall2 symParamFormForallExcl2 symParamForm2Imply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -3959,7 +3959,7 @@ lemma symNI_Remote_GetX_PutX_Home_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_GetX_PutX_Home_ref N dst)"
   unfolding NI_Remote_GetX_PutX_Home_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4038,7 +4038,7 @@ lemma symNI_Remote_Put_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_Put_ref dst)"
   unfolding NI_Remote_Put_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4114,7 +4114,7 @@ lemma symNI_Remote_PutX_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Remote_PutX_ref dst)"
   unfolding NI_Remote_PutX_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4150,7 +4150,7 @@ lemma symNI_Inv_ref :
   "[|dst <= N|] ==> wellFormedRule (env N) N (NI_Inv_ref dst)"
   unfolding NI_Inv_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4206,7 +4206,7 @@ lemma symNI_InvAck1_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_InvAck1_ref N src)"
   unfolding NI_InvAck1_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4243,7 +4243,7 @@ lemma symNI_InvAck2_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_InvAck2_ref src)"
   unfolding NI_InvAck2_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4354,7 +4354,7 @@ lemma symNI_ShWb_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_ShWb_ref N src)"
   unfolding NI_ShWb_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4394,7 +4394,7 @@ lemma symNI_Replace_ref :
   "[|src <= N|] ==> wellFormedRule (env N) N (NI_Replace_ref src)"
   unfolding NI_Replace_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -4425,7 +4425,7 @@ lemma PI_Remote_GetStrengthRel :
   unfolding PI_Remote_Gets_def PI_Remote_Get_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_PI_Remote_Get" in strengthenExt1)
   using PI_Remote_Get_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4449,7 +4449,7 @@ lemma PI_Remote_GetXStrengthRel :
   unfolding PI_Remote_GetXs_def PI_Remote_GetX_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_PI_Remote_GetX" in strengthenExt1)
   using PI_Remote_GetX_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4473,7 +4473,7 @@ lemma PI_Remote_PutXStrengthRel :
   unfolding PI_Remote_PutXs_def PI_Remote_PutX_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_PI_Remote_PutX" in strengthenExt1)
   using PI_Remote_PutX_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4490,7 +4490,7 @@ lemma PI_Remote_ReplaceStrengthRel :
   unfolding PI_Remote_Replaces_def PI_Remote_Replace_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_PI_Remote_Replace" in strengthenExt1)
   using PI_Remote_Replace_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4507,7 +4507,7 @@ lemma NI_NakStrengthRel :
   unfolding NI_Naks_def NI_Nak_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Nak" in strengthenExt1)
   using NI_Nak_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4531,7 +4531,7 @@ lemma NI_Local_Get_NakStrengthRel :
   unfolding NI_Local_Get_Naks_def NI_Local_Get_Nak_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_Get_Nak" in strengthenExt1)
   using NI_Local_Get_Nak_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4541,7 +4541,7 @@ lemma NI_Local_Get_GetStrengthRel :
   unfolding NI_Local_Get_Gets_def NI_Local_Get_Get_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_Get_Get" in strengthenExt1)
   using NI_Local_Get_Get_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4551,7 +4551,7 @@ lemma NI_Local_Get_PutStrengthRel :
   unfolding NI_Local_Get_Puts_def NI_Local_Get_Put_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_Get_Put" in strengthenExt1)
   using NI_Local_Get_Put_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4561,7 +4561,7 @@ lemma NI_Remote_Get_NakStrengthRel :
   unfolding NI_Remote_Get_Naks_def NI_Remote_Get_Nak_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_Get_Nak" in strengthenExt2)
   using NI_Remote_Get_Nak_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4571,7 +4571,7 @@ lemma NI_Remote_Get_Nak_HomeStrengthRel :
   unfolding NI_Remote_Get_Nak_Homes_def NI_Remote_Get_Nak_Home_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_Get_Nak_Home" in strengthenExt1)
   using NI_Remote_Get_Nak_Home_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4581,7 +4581,7 @@ lemma NI_Remote_Get_PutStrengthRel :
   unfolding NI_Remote_Get_Puts_def NI_Remote_Get_Put_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_Get_Put" in strengthenExt2)
   using NI_Remote_Get_Put_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4591,7 +4591,7 @@ lemma NI_Remote_Get_Put_HomeStrengthRel :
   unfolding NI_Remote_Get_Put_Homes_def NI_Remote_Get_Put_Home_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_Get_Put_Home" in strengthenExt1)
   using NI_Remote_Get_Put_Home_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4601,7 +4601,7 @@ lemma NI_Local_GetX_NakStrengthRel :
   unfolding NI_Local_GetX_Naks_def NI_Local_GetX_Nak_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_GetX_Nak" in strengthenExt1)
   using NI_Local_GetX_Nak_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4611,7 +4611,7 @@ lemma NI_Local_GetX_GetXStrengthRel :
   unfolding NI_Local_GetX_GetXs_def NI_Local_GetX_GetX_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_GetX_GetX" in strengthenExt1)
   using NI_Local_GetX_GetX_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4621,7 +4621,7 @@ lemma NI_Local_GetX_PutX1StrengthRel :
   unfolding NI_Local_GetX_PutX1s_def NI_Local_GetX_PutX1_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_GetX_PutX1" in strengthenExt1)
   using NI_Local_GetX_PutX1_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4631,7 +4631,7 @@ lemma NI_Local_GetX_PutX2StrengthRel :
   unfolding NI_Local_GetX_PutX2s_def NI_Local_GetX_PutX2_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_GetX_PutX2" in strengthenExt1)
   using NI_Local_GetX_PutX2_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4641,7 +4641,7 @@ lemma NI_Local_GetX_PutX3StrengthRel :
   unfolding NI_Local_GetX_PutX3s_def NI_Local_GetX_PutX3_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Local_GetX_PutX3" in strengthenExt1)
   using NI_Local_GetX_PutX3_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4651,7 +4651,7 @@ lemma NI_Remote_GetX_NakStrengthRel :
   unfolding NI_Remote_GetX_Naks_def NI_Remote_GetX_Nak_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_GetX_Nak" in strengthenExt2)
   using NI_Remote_GetX_Nak_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4661,7 +4661,7 @@ lemma NI_Remote_GetX_Nak_HomeStrengthRel :
   unfolding NI_Remote_GetX_Nak_Homes_def NI_Remote_GetX_Nak_Home_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_GetX_Nak_Home" in strengthenExt1)
   using NI_Remote_GetX_Nak_Home_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4671,7 +4671,7 @@ lemma NI_Remote_GetX_PutXStrengthRel :
   unfolding NI_Remote_GetX_PutXs_def NI_Remote_GetX_PutX_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_GetX_PutX" in strengthenExt2)
   using NI_Remote_GetX_PutX_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4681,7 +4681,7 @@ lemma NI_Remote_GetX_PutX_HomeStrengthRel :
   unfolding NI_Remote_GetX_PutX_Homes_def NI_Remote_GetX_PutX_Home_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_GetX_PutX_Home" in strengthenExt1)
   using NI_Remote_GetX_PutX_Home_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4698,7 +4698,7 @@ lemma NI_Remote_PutStrengthRel :
   unfolding NI_Remote_Puts_def NI_Remote_Put_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_Put" in strengthenExt1)
   using NI_Remote_Put_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4715,7 +4715,7 @@ lemma NI_Remote_PutXStrengthRel :
   unfolding NI_Remote_PutXs_def NI_Remote_PutX_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Remote_PutX" in strengthenExt1)
   using NI_Remote_PutX_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4725,7 +4725,7 @@ lemma NI_InvStrengthRel :
   unfolding NI_Invs_def NI_Inv_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Inv" in strengthenExt1)
   using NI_Inv_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4735,7 +4735,7 @@ lemma NI_InvAck1StrengthRel :
   unfolding NI_InvAck1s_def NI_InvAck1_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_InvAck1" in strengthenExt1)
   using NI_InvAck1_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4745,7 +4745,7 @@ lemma NI_InvAck2StrengthRel :
   unfolding NI_InvAck2s_def NI_InvAck2_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_InvAck2" in strengthenExt1)
   using NI_InvAck2_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4769,7 +4769,7 @@ lemma NI_ShWbStrengthRel :
   unfolding NI_ShWbs_def NI_ShWb_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_ShWb" in strengthenExt1)
   using NI_ShWb_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -4779,7 +4779,7 @@ lemma NI_ReplaceStrengthRel :
   unfolding NI_Replaces_def NI_Replace_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_NI_Replace" in strengthenExt1)
   using NI_Replace_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -5269,7 +5269,7 @@ lemma ABS_all :
   "[|M < N|] ==> (absTransfRule (env N) M ` rule_refs N) = ABS_rules M"
   apply (subst ABS_rules_eq_rules')
   unfolding rule_refs_def ABS_rules'_def
-  apply (intro  image_UnI)
+  apply (intro image_UnI)
   apply (auto simp add: Abs_PI_Local_Get_Gets Abs_PI_Local_Get_Puts Abs_PI_Local_GetX_GetXs Abs_PI_Local_GetX_PutXs Abs_PI_Local_PutXs Abs_PI_Local_Replaces Abs_NI_Nak_Homes Abs_NI_Nak_Clears Abs_NI_Local_Puts Abs_NI_Local_PutXAcksDones Abs_NI_Wbs Abs_NI_FAcks Abs_PI_Remote_Get_refs Abs_PI_Remote_GetX_refs Abs_PI_Remote_PutX_refs Abs_PI_Remote_Replace_refs Abs_NI_Nak_refs Abs_NI_Local_Get_Nak_refs Abs_NI_Local_Get_Get_refs Abs_NI_Local_Get_Put_refs Abs_NI_Remote_Get_Nak_refs Abs_NI_Remote_Get_Nak_Home_refs Abs_NI_Remote_Get_Put_refs Abs_NI_Remote_Get_Put_Home_refs Abs_NI_Local_GetX_Nak_refs Abs_NI_Local_GetX_GetX_refs Abs_NI_Local_GetX_PutX1_refs Abs_NI_Local_GetX_PutX2_refs Abs_NI_Local_GetX_PutX3_refs Abs_NI_Remote_GetX_Nak_refs Abs_NI_Remote_GetX_Nak_Home_refs Abs_NI_Remote_GetX_PutX_refs Abs_NI_Remote_GetX_PutX_Home_refs Abs_NI_Remote_Put_refs Abs_NI_Remote_PutX_refs Abs_NI_Inv_refs Abs_NI_InvAck1_refs Abs_NI_InvAck2_refs Abs_NI_ShWb_refs Abs_NI_Replace_refs)
   done
 
@@ -5460,36 +5460,36 @@ lemma symInvs :
   "symParamForm2 N (Lemma_4' N)"
   unfolding Lemma_3b'_def Lemma_3a'_def Lemma_1'_def Lemma_2a'_def Lemma_2b'_def Lemma_4'_def
   apply auto
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
+  done
   done
 
 definition lemmasFor_PI_Remote_Get' :: "nat \<Rightarrow> ((nat \<Rightarrow> nat \<Rightarrow> formula) list)" where
@@ -6137,210 +6137,143 @@ lemma ReachStafitEnv :
     unfolding fitEnv_def
     apply (rule allI)
     apply (rule impI)
-    apply (case_tac   "v")
-    
+    apply (case_tac "v")
     subgoal for v x1
-      apply (case_tac   "x1 = ''Sta.Dir.Pending''")
-      
-      apply (subgoal_tac  "formEval (initSpec0) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Dir.Local''")
-      
-      apply (subgoal_tac  "formEval (initSpec1) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Dir.Dirty''")
-      
-      apply (subgoal_tac  "formEval (initSpec2) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Dir.HeadVld''")
-      
-      apply (subgoal_tac  "formEval (initSpec3) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Dir.ShrVld''")
-      
-      apply (subgoal_tac  "formEval (initSpec4) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Dir.HeadPtr''")
-      
-      apply (subgoal_tac  "formEval (initSpec5 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.WbMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec6) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.WbMsg.Proc''")
-      
-      apply (subgoal_tac  "formEval (initSpec7 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.ShWbMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec8) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.ShWbMsg.Proc''")
-      
-      apply (subgoal_tac  "formEval (initSpec9 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.NakcMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec10) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeProc.ProcCmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec21) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeProc.InvMarked''")
-      
-      apply (subgoal_tac  "formEval (initSpec22) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeProc.CacheState''")
-      
-      apply (subgoal_tac  "formEval (initSpec23) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeUniMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec24) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeUniMsg.HomeProc''")
-      
-      apply (subgoal_tac  "formEval (initSpec25) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomeUniMsg.Proc''")
-      
-      apply (subgoal_tac  "formEval (initSpec26 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.HomePendReqSrc''")
-      
-      apply (subgoal_tac  "formEval (initSpec27) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.Collecting''")
-      
-      apply (subgoal_tac  "formEval (initSpec28) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.FwdCmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec29) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''Sta.PendReqSrc''")
-      
-      apply (subgoal_tac  "formEval (initSpec30 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
+      apply (case_tac "x1 = ''Sta.Dir.Pending''")
+      apply (subgoal_tac "formEval (initSpec0) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Dir.Local''")
+      apply (subgoal_tac "formEval (initSpec1) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Dir.Dirty''")
+      apply (subgoal_tac "formEval (initSpec2) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Dir.HeadVld''")
+      apply (subgoal_tac "formEval (initSpec3) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Dir.ShrVld''")
+      apply (subgoal_tac "formEval (initSpec4) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Dir.HeadPtr''")
+      apply (subgoal_tac "formEval (initSpec5 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.WbMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec6) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.WbMsg.Proc''")
+      apply (subgoal_tac "formEval (initSpec7 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.ShWbMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec8) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.ShWbMsg.Proc''")
+      apply (subgoal_tac "formEval (initSpec9 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.NakcMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec10) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeProc.ProcCmd''")
+      apply (subgoal_tac "formEval (initSpec21) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeProc.InvMarked''")
+      apply (subgoal_tac "formEval (initSpec22) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeProc.CacheState''")
+      apply (subgoal_tac "formEval (initSpec23) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeUniMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec24) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeUniMsg.HomeProc''")
+      apply (subgoal_tac "formEval (initSpec25) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomeUniMsg.Proc''")
+      apply (subgoal_tac "formEval (initSpec26 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.HomePendReqSrc''")
+      apply (subgoal_tac "formEval (initSpec27) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.Collecting''")
+      apply (subgoal_tac "formEval (initSpec28) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.FwdCmd''")
+      apply (subgoal_tac "formEval (initSpec29) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''Sta.PendReqSrc''")
+      apply (subgoal_tac "formEval (initSpec30 N) s0")
+      apply auto[1]
+      apply auto[1]
       apply auto
-      done
-    
-    subgoal for v x21 x22
-      apply (case_tac   "x21 = ''Sta.Proc.ProcCmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec11 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.Proc.InvMarked''")
-      
-      apply (subgoal_tac  "formEval (initSpec12 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.Proc.CacheState''")
-      
-      apply (subgoal_tac  "formEval (initSpec13 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.Dir.ShrSet''")
-      
-      apply (subgoal_tac  "formEval (initSpec14 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.Dir.InvSet''")
-      
-      apply (subgoal_tac  "formEval (initSpec15 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.InvMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec16 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.RpMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec17 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.UniMsg.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec18 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.UniMsg.HomeProc''")
-      
-      apply (subgoal_tac  "formEval (initSpec19 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Sta.UniMsg.Proc''")
-      
-      apply (subgoal_tac  "formEval (initSpec20 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply auto
-      done
-    
-    apply auto
     done
-  
+    subgoal for v x21 x22
+      apply (case_tac "x21 = ''Sta.Proc.ProcCmd''")
+      apply (subgoal_tac "formEval (initSpec11 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.Proc.InvMarked''")
+      apply (subgoal_tac "formEval (initSpec12 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.Proc.CacheState''")
+      apply (subgoal_tac "formEval (initSpec13 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.Dir.ShrSet''")
+      apply (subgoal_tac "formEval (initSpec14 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.Dir.InvSet''")
+      apply (subgoal_tac "formEval (initSpec15 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.InvMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec16 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.RpMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec17 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.UniMsg.Cmd''")
+      apply (subgoal_tac "formEval (initSpec18 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.UniMsg.HomeProc''")
+      apply (subgoal_tac "formEval (initSpec19 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Sta.UniMsg.Proc''")
+      apply (subgoal_tac "formEval (initSpec20 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply auto
+    done
+    apply auto
+  done
   subgoal for r sk
     unfolding rule_refs_def
     apply (auto intro: Un_iff lemmaPI_Remote_Get_fitEnv lemmaPI_Local_Get_Get_fitEnv lemmaPI_Local_Get_Put_fitEnv lemmaPI_Remote_GetX_fitEnv lemmaPI_Local_GetX_GetX_fitEnv lemmaPI_Local_GetX_PutX_fitEnv lemmaPI_Remote_PutX_fitEnv lemmaPI_Local_PutX_fitEnv lemmaPI_Remote_Replace_fitEnv lemmaPI_Local_Replace_fitEnv lemmaNI_Nak_fitEnv lemmaNI_Nak_Home_fitEnv lemmaNI_Nak_Clear_fitEnv lemmaNI_Local_Get_Nak_fitEnv lemmaNI_Local_Get_Get_fitEnv lemmaNI_Local_Get_Put_fitEnv lemmaNI_Remote_Get_Nak_fitEnv lemmaNI_Remote_Get_Nak_Home_fitEnv lemmaNI_Remote_Get_Put_fitEnv lemmaNI_Remote_Get_Put_Home_fitEnv lemmaNI_Local_GetX_Nak_fitEnv lemmaNI_Local_GetX_GetX_fitEnv lemmaNI_Local_GetX_PutX1_fitEnv lemmaNI_Local_GetX_PutX2_fitEnv lemmaNI_Local_GetX_PutX3_fitEnv lemmaNI_Remote_GetX_Nak_fitEnv lemmaNI_Remote_GetX_Nak_Home_fitEnv lemmaNI_Remote_GetX_PutX_fitEnv lemmaNI_Remote_GetX_PutX_Home_fitEnv lemmaNI_Local_Put_fitEnv lemmaNI_Remote_Put_fitEnv lemmaNI_Local_PutXAcksDone_fitEnv lemmaNI_Remote_PutX_fitEnv lemmaNI_Inv_fitEnv lemmaNI_InvAck1_fitEnv lemmaNI_InvAck2_fitEnv lemmaNI_Wb_fitEnv lemmaNI_FAck_fitEnv lemmaNI_ShWb_fitEnv lemmaNI_Replace_fitEnv)
-    done
-  
+  done
   done
 
 lemma absProtSim : 
@@ -6349,214 +6282,213 @@ lemma absProtSim :
   subgoal for r
     using wellFormedRule_refs
     apply auto
-    done
-  
-  subgoal  unfolding InvS'_def lemmasFor_PI_Remote_Get'_def lemmasFor_PI_Local_Get_Get'_def lemmasFor_PI_Local_Get_Put'_def lemmasFor_PI_Remote_GetX'_def lemmasFor_PI_Local_GetX_GetX'_def lemmasFor_PI_Local_GetX_PutX'_def lemmasFor_PI_Remote_PutX'_def lemmasFor_PI_Local_PutX'_def lemmasFor_PI_Remote_Replace'_def lemmasFor_PI_Local_Replace'_def lemmasFor_NI_Nak'_def lemmasFor_NI_Nak_Home'_def lemmasFor_NI_Nak_Clear'_def lemmasFor_NI_Local_Get_Nak'_def lemmasFor_NI_Local_Get_Get'_def lemmasFor_NI_Local_Get_Put'_def lemmasFor_NI_Remote_Get_Nak'_def lemmasFor_NI_Remote_Get_Nak_Home'_def lemmasFor_NI_Remote_Get_Put'_def lemmasFor_NI_Remote_Get_Put_Home'_def lemmasFor_NI_Local_GetX_Nak'_def lemmasFor_NI_Local_GetX_GetX'_def lemmasFor_NI_Local_GetX_PutX1'_def lemmasFor_NI_Local_GetX_PutX2'_def lemmasFor_NI_Local_GetX_PutX3'_def lemmasFor_NI_Remote_GetX_Nak'_def lemmasFor_NI_Remote_GetX_Nak_Home'_def lemmasFor_NI_Remote_GetX_PutX'_def lemmasFor_NI_Remote_GetX_PutX_Home'_def lemmasFor_NI_Local_Put'_def lemmasFor_NI_Remote_Put'_def lemmasFor_NI_Local_PutXAcksDone'_def lemmasFor_NI_Remote_PutX'_def lemmasFor_NI_Inv'_def lemmasFor_NI_InvAck1'_def lemmasFor_NI_InvAck2'_def lemmasFor_NI_Wb'_def lemmasFor_NI_FAck'_def lemmasFor_NI_ShWb'_def lemmasFor_NI_Replace'_def
+  done
+  subgoal
+    unfolding InvS'_def lemmasFor_PI_Remote_Get'_def lemmasFor_PI_Local_Get_Get'_def lemmasFor_PI_Local_Get_Put'_def lemmasFor_PI_Remote_GetX'_def lemmasFor_PI_Local_GetX_GetX'_def lemmasFor_PI_Local_GetX_PutX'_def lemmasFor_PI_Remote_PutX'_def lemmasFor_PI_Local_PutX'_def lemmasFor_PI_Remote_Replace'_def lemmasFor_PI_Local_Replace'_def lemmasFor_NI_Nak'_def lemmasFor_NI_Nak_Home'_def lemmasFor_NI_Nak_Clear'_def lemmasFor_NI_Local_Get_Nak'_def lemmasFor_NI_Local_Get_Get'_def lemmasFor_NI_Local_Get_Put'_def lemmasFor_NI_Remote_Get_Nak'_def lemmasFor_NI_Remote_Get_Nak_Home'_def lemmasFor_NI_Remote_Get_Put'_def lemmasFor_NI_Remote_Get_Put_Home'_def lemmasFor_NI_Local_GetX_Nak'_def lemmasFor_NI_Local_GetX_GetX'_def lemmasFor_NI_Local_GetX_PutX1'_def lemmasFor_NI_Local_GetX_PutX2'_def lemmasFor_NI_Local_GetX_PutX3'_def lemmasFor_NI_Remote_GetX_Nak'_def lemmasFor_NI_Remote_GetX_Nak_Home'_def lemmasFor_NI_Remote_GetX_PutX'_def lemmasFor_NI_Remote_GetX_PutX_Home'_def lemmasFor_NI_Local_Put'_def lemmasFor_NI_Remote_Put'_def lemmasFor_NI_Local_PutXAcksDone'_def lemmasFor_NI_Remote_PutX'_def lemmasFor_NI_Inv'_def lemmasFor_NI_InvAck1'_def lemmasFor_NI_InvAck2'_def lemmasFor_NI_Wb'_def lemmasFor_NI_FAck'_def lemmasFor_NI_ShWb'_def lemmasFor_NI_Replace'_def
     using symInvs
     apply auto
-    done
-  
-  subgoal  using rulesIsSym
+  done
+  subgoal
+    using rulesIsSym
     apply auto
-    done
-  
-  subgoal  using symPreds
+  done
+  subgoal
+    using symPreds
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using SafeAndderiveAll
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using StrengthRelRules2Rule_refs
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using rule_refsIsSym
+  done
+  subgoal
+    using SafeAndderiveAll
     apply auto
-    done
-  
-  subgoal  using rule_refsWellTyped
+  done
+  subgoal
+    using StrengthRelRules2Rule_refs
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using ReachStafitEnv
+  done
+  subgoal
+    using rule_refsIsSym
     apply auto
-    done
-  
-  subgoal  unfolding InvS_def InvS'_def
+  done
+  subgoal
+    using rule_refsWellTyped
     apply auto
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Remote_Get
+  done
+  subgoal
+    apply auto
+  done
+  subgoal
+    using ReachStafitEnv
+    apply auto
+  done
+  subgoal
+    unfolding InvS_def InvS'_def
+    apply auto
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Remote_Get
       apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_Get_Get
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_Get_Put
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Remote_GetX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_GetX_GetX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_GetX_PutX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Remote_PutX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_PutX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Remote_Replace
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_PI_Local_Replace
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Nak
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Nak_Home
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Nak_Clear
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_Get_Nak
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_Get_Get
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_Get_Put
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Nak
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Nak_Home
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Put
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Put_Home
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_GetX_Nak
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_GetX_GetX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX1
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX2
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX3
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_Nak
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_Nak_Home
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_PutX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_PutX_Home
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_Put
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_Put
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Local_PutXAcksDone
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Remote_PutX
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Inv
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_InvAck1
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_InvAck2
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Wb
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_FAck
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_ShWb
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_NI_Replace
-      apply auto
-      done
-    
     done
-  
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_Get_Get
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_Get_Put
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Remote_GetX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_GetX_GetX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_GetX_PutX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Remote_PutX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_PutX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Remote_Replace
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_PI_Local_Replace
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Nak
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Nak_Home
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Nak_Clear
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_Get_Nak
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_Get_Get
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_Get_Put
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Nak
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Nak_Home
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Put
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_Get_Put_Home
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_GetX_Nak
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_GetX_GetX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX1
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX2
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_GetX_PutX3
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_Nak
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_Nak_Home
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_PutX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_GetX_PutX_Home
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_Put
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_Put
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Local_PutXAcksDone
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Remote_PutX
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Inv
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_InvAck1
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_InvAck2
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Wb
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_FAck
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_ShWb
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_NI_Replace
+      apply auto
+    done
+  done
   apply (rule equivRuleSetReflex)
   using ABS_all 
   apply auto

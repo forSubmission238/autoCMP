@@ -1,6 +1,6 @@
 
 theory mutualEx
-  imports ECMP
+  imports "../ECMP"
 begin
 
 definition I :: "scalrValueType" where [simp]:
@@ -69,8 +69,8 @@ lemma symPreds [intro]:
   "symPredSet' N (allInitSpecs N)"
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
-  apply (blast)
+  apply blast
+  apply blast
   done
 
 lemma deriveFormAllInitSpec : 
@@ -90,7 +90,7 @@ lemma symTry :
   "[|i <= N|] ==> wellFormedRule (env N) N (Try i)"
   unfolding Try_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -110,7 +110,7 @@ lemma symCrit :
   "[|i <= N|] ==> wellFormedRule (env N) N (Crit i)"
   unfolding Crit_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -128,7 +128,7 @@ lemma symExit :
   "[|i <= N|] ==> wellFormedRule (env N) N (Exit i)"
   unfolding Exit_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -147,7 +147,7 @@ lemma symIdle :
   "[|i <= N|] ==> wellFormedRule (env N) N (Idle i)"
   unfolding Idle_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -203,20 +203,20 @@ lemma symProtAll :
   "symProtRules' N (Exits N)"
   "symProtRules' N (Idles N)"
   using symTry(1) Trys_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symCrit(1) Crits_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symExit(1) Exits_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symIdle(1) Idles_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   done
 
 lemma symmutualEx : 
   "symParamForm2 N (mutualEx N)"
   unfolding mutualEx_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -225,7 +225,7 @@ lemma symLemma_1 :
   "symParamForm2 N (Lemma_1 N)"
   unfolding Lemma_1_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -244,7 +244,7 @@ lemma symTry_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (Try_ref i)"
   unfolding Try_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -280,7 +280,7 @@ lemma symCrit_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (Crit_ref i)"
   unfolding Crit_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -314,7 +314,7 @@ lemma symExit_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (Exit_ref i)"
   unfolding Exit_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -351,7 +351,7 @@ lemma symIdle_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (Idle_ref N i)"
   unfolding Idle_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -382,7 +382,7 @@ lemma TryStrengthRel :
   unfolding Trys_def Try_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_Try" in strengthenExt1)
   using Try_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -392,7 +392,7 @@ lemma CritStrengthRel :
   unfolding Crits_def Crit_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_Crit" in strengthenExt1)
   using Crit_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -402,7 +402,7 @@ lemma ExitStrengthRel :
   unfolding Exits_def Exit_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_Exit" in strengthenExt1)
   using Exit_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -412,7 +412,7 @@ lemma IdleStrengthRel :
   unfolding Idles_def Idle_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_Idle" in strengthenExt1)
   using Idle_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -494,7 +494,7 @@ lemma ABS_all :
   "[|M < N|] ==> (absTransfRule (env N) M ` rule_refs N) = ABS_rules M"
   apply (subst ABS_rules_eq_rules')
   unfolding rule_refs_def ABS_rules'_def
-  apply (intro  image_UnI)
+  apply (intro image_UnI)
   apply (auto simp add: Abs_Try_refs Abs_Crit_refs Abs_Exit_refs Abs_Idle_refs)
   done
 
@@ -528,11 +528,11 @@ lemma symInvs :
   "symParamForm2 N (Lemma_1' N)"
   unfolding Lemma_1'_def
   apply auto
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
+  done
   done
 
 definition lemmasFor_Try' :: "nat \<Rightarrow> ((nat \<Rightarrow> nat \<Rightarrow> formula) list)" where
@@ -640,36 +640,27 @@ lemma ReachStafitEnv :
     unfolding fitEnv_def
     apply (rule allI)
     apply (rule impI)
-    apply (case_tac   "v")
-    
+    apply (case_tac "v")
     subgoal for v x1
-      apply (case_tac   "x1 = ''x''")
-      
-      apply (subgoal_tac  "formEval (initSpec1) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
+      apply (case_tac "x1 = ''x''")
+      apply (subgoal_tac "formEval (initSpec1) s0")
+      apply auto[1]
+      apply auto[1]
       apply auto
-      done
-    
-    subgoal for v x21 x22
-      apply (case_tac   "x21 = ''n''")
-      
-      apply (subgoal_tac  "formEval (initSpec0 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply auto
-      done
-    
-    apply auto
     done
-  
+    subgoal for v x21 x22
+      apply (case_tac "x21 = ''n''")
+      apply (subgoal_tac "formEval (initSpec0 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply auto
+    done
+    apply auto
+  done
   subgoal for r sk
     unfolding rule_refs_def
     apply (auto intro: Un_iff lemmaTry_fitEnv lemmaCrit_fitEnv lemmaExit_fitEnv lemmaIdle_fitEnv)
-    done
-  
+  done
   done
 
 lemma absProtSim : 
@@ -678,70 +669,69 @@ lemma absProtSim :
   subgoal for r
     using wellFormedRule_refs
     apply auto
-    done
-  
-  subgoal  unfolding InvS'_def lemmasFor_Try'_def lemmasFor_Crit'_def lemmasFor_Exit'_def lemmasFor_Idle'_def
+  done
+  subgoal
+    unfolding InvS'_def lemmasFor_Try'_def lemmasFor_Crit'_def lemmasFor_Exit'_def lemmasFor_Idle'_def
     using symInvs
     apply auto
-    done
-  
-  subgoal  using rulesIsSym
+  done
+  subgoal
+    using rulesIsSym
     apply auto
-    done
-  
-  subgoal  using symPreds
+  done
+  subgoal
+    using symPreds
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using SafeAndderiveAll
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using StrengthRelRules2Rule_refs
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using rule_refsIsSym
+  done
+  subgoal
+    using SafeAndderiveAll
     apply auto
-    done
-  
-  subgoal  using rule_refsWellTyped
+  done
+  subgoal
+    using StrengthRelRules2Rule_refs
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using ReachStafitEnv
+  done
+  subgoal
+    using rule_refsIsSym
     apply auto
-    done
-  
-  subgoal  unfolding InvS_def InvS'_def
+  done
+  subgoal
+    using rule_refsWellTyped
     apply auto
-    subgoal  using strengthenVsObsLs_lemmasFor_Try
+  done
+  subgoal
+    apply auto
+  done
+  subgoal
+    using ReachStafitEnv
+    apply auto
+  done
+  subgoal
+    unfolding InvS_def InvS'_def
+    apply auto
+    subgoal
+      using strengthenVsObsLs_lemmasFor_Try
       apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_Crit
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_Exit
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_Idle
-      apply auto
-      done
-    
     done
-  
+    subgoal
+      using strengthenVsObsLs_lemmasFor_Crit
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_Exit
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_Idle
+      apply auto
+    done
+  done
   apply (rule equivRuleSetReflex)
   using ABS_all 
   apply auto

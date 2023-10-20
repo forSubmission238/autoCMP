@@ -298,6 +298,8 @@ class VarExpr(BaseExpr):
 
 class FieldName(BaseExpr):
     def __init__(self, v, field):
+        assert isinstance(v, BaseExpr)
+        assert isinstance(field, str)
         self.v = v
         self.field = field
 
@@ -462,6 +464,7 @@ class Skip(BaseCmd):
 
 class UndefineCmd(BaseCmd):
     def __init__(self, var):
+        assert isinstance(var, BaseExpr)
         self.var = var
 
     def __str__(self):

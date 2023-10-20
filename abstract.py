@@ -399,7 +399,6 @@ def is_imp(e):
 def destruct_lemma(lemma):
     if isinstance(lemma, murphi.ForallExpr):
         decls, assms, concls = destruct_lemma(lemma.expr)
-        print("***{}\n***{}\n***{}".format(decls, assms, concls))
         return [lemma.var_decl] + decls, assms, concls
     elif is_imp(lemma):
         return [], split_conj(lemma.expr1), lemma.expr2

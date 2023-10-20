@@ -1,6 +1,6 @@
 
 theory mesi
-  imports ECMP
+  imports "../ECMP"
 begin
 
 definition MM :: "scalrValueType" where [simp]:
@@ -54,7 +54,7 @@ definition allInitSpecs :: "nat \<Rightarrow> formula set" where [simp]:
 lemma symPreds [intro]: 
   "symPredSet' N (allInitSpecs N)"
   unfolding allInitSpecs_def
-  apply (blast)
+  apply blast
   done
 
 lemma deriveFormAllInitSpec : 
@@ -74,7 +74,7 @@ lemma symt1 :
   "[|i <= N|] ==> wellFormedRule (env N) N (t1 i)"
   unfolding t1_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -93,7 +93,7 @@ lemma symt2 :
   "[|i <= N|] ==> wellFormedRule (env N) N (t2 N i)"
   unfolding t2_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -112,7 +112,7 @@ lemma symt3 :
   "[|i <= N|] ==> wellFormedRule (env N) N (t3 N i)"
   unfolding t3_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -131,7 +131,7 @@ lemma symt4 :
   "[|i <= N|] ==> wellFormedRule (env N) N (t4 N i)"
   unfolding t4_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -174,29 +174,29 @@ definition ABS_t4 :: "nat \<Rightarrow> rule" where
 definition ABS_t4s :: "nat \<Rightarrow> rule set" where
   "ABS_t4s N \<equiv> {ABS_t4 N}"
 
+definition Lemma_4 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_4 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const S \<longrightarrow>\<^sub>f
+  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const MM) i N"
+
 definition Lemma_6 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_6 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
   forallFormExcl (\<lambda>j. IVar (Para ''state'' j) =\<^sub>f Const I) i N"
-
-definition Lemma_3 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_3 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
-  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const E) i N"
 
 definition Lemma_0 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_0 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
   forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const MM) i N"
 
-definition Lemma_4 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_4 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const S \<longrightarrow>\<^sub>f
-  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const MM) i N"
-
-definition Lemma_9 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_9 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
-  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const S) i N"
+definition Lemma_3 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_3 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
+  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const E) i N"
 
 definition Lemma_5 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
   "Lemma_5 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const S \<longrightarrow>\<^sub>f
   forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const E) i N"
+
+definition Lemma_9 :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_9 N p i \<equiv> IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
+  forallFormExcl (\<lambda>j. \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const S) i N"
 
 definition rules :: "nat \<Rightarrow> rule set" where
   "rules N = (t1s N \<union> (t2s N \<union> (t3s N \<union> t4s N)))"
@@ -219,47 +219,20 @@ lemma symProtAll :
   "symProtRules' N (t3s N)"
   "symProtRules' N (t4s N)"
   using symt1(1) t1s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symt2(1) t2s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symt3(1) t3s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symt4(1) t4s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   done
 
 lemma symMesi : 
   "symParamForm2 N (Mesi N)"
   unfolding Mesi_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
-  unfolding symParamForm2_def
-  apply auto
-  done
-
-lemma symLemma_6 : 
-  "symParamForm2 N (Lemma_6 N)"
-  unfolding Lemma_6_def
-  apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
-  unfolding symParamForm2_def
-  apply auto
-  done
-
-lemma symLemma_3 : 
-  "symParamForm2 N (Lemma_3 N)"
-  unfolding Lemma_3_def
-  apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
-  unfolding symParamForm2_def
-  apply auto
-  done
-
-lemma symLemma_0 : 
-  "symParamForm2 N (Lemma_0 N)"
-  unfolding Lemma_0_def
-  apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -268,16 +241,34 @@ lemma symLemma_4 :
   "symParamForm2 N (Lemma_4 N)"
   unfolding Lemma_4_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
 
-lemma symLemma_9 : 
-  "symParamForm2 N (Lemma_9 N)"
-  unfolding Lemma_9_def
+lemma symLemma_6 : 
+  "symParamForm2 N (Lemma_6 N)"
+  unfolding Lemma_6_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
+  unfolding symParamForm2_def
+  apply auto
+  done
+
+lemma symLemma_0 : 
+  "symParamForm2 N (Lemma_0 N)"
+  unfolding Lemma_0_def
+  apply auto
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
+  unfolding symParamForm2_def
+  apply auto
+  done
+
+lemma symLemma_3 : 
+  "symParamForm2 N (Lemma_3 N)"
+  unfolding Lemma_3_def
+  apply auto
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -286,7 +277,16 @@ lemma symLemma_5 :
   "symParamForm2 N (Lemma_5 N)"
   unfolding Lemma_5_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
+  unfolding symParamForm2_def
+  apply auto
+  done
+
+lemma symLemma_9 : 
+  "symParamForm2 N (Lemma_9 N)"
+  unfolding Lemma_9_def
+  apply auto
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -305,7 +305,7 @@ lemma symt1_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (t1_ref i)"
   unfolding t1_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -340,7 +340,7 @@ lemma symt2_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (t2_ref N i)"
   unfolding t2_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -377,7 +377,7 @@ lemma symt3_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (t3_ref N i)"
   unfolding t3_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -416,7 +416,7 @@ lemma symt4_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (t4_ref N i)"
   unfolding t4_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -447,7 +447,7 @@ lemma t1StrengthRel :
   unfolding t1s_def t1_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_t1" in strengthenExt1)
   using t1_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -457,7 +457,7 @@ lemma t2StrengthRel :
   unfolding t2s_def t2_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_t2" in strengthenExt1)
   using t2_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -467,7 +467,7 @@ lemma t3StrengthRel :
   unfolding t3s_def t3_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_t3" in strengthenExt1)
   using t3_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -477,7 +477,7 @@ lemma t4StrengthRel :
   unfolding t4s_def t4_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_t4" in strengthenExt1)
   using t4_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -559,8 +559,33 @@ lemma ABS_all :
   "[|M < N|] ==> (absTransfRule (env N) M ` rule_refs N) = ABS_rules M"
   apply (subst ABS_rules_eq_rules')
   unfolding rule_refs_def ABS_rules'_def
-  apply (intro  image_UnI)
+  apply (intro image_UnI)
   apply (auto simp add: Abs_t1_refs Abs_t2_refs Abs_t3_refs Abs_t4_refs)
+  done
+
+definition Lemma_4' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_4' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
+  IVar (Para ''state'' i) =\<^sub>f Const S \<longrightarrow>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const MM"
+
+lemma absTransfLemma_4' : 
+  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_4' N 0 l) = Lemma_4' N 0 l"
+  unfolding Lemma_4'_def
+  apply auto
+  done
+
+lemma strengthenVsObsLemma_4 : 
+  "strengthenVsObs (Lemma_4 N) (Lemma_4' N) N"
+  unfolding Lemma_4_def Lemma_4'_def
+  apply (rule strengthenVsObsDiff)
+  unfolding symParamForm_def
+  apply auto
+  done
+
+lemma SafeAndderiveFormLemma_4' : 
+  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_4' N k l) & deriveForm (env N) (Lemma_4' N k l)"
+  unfolding Lemma_4'_def
+  apply auto
   done
 
 definition Lemma_6' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
@@ -585,31 +610,6 @@ lemma strengthenVsObsLemma_6 :
 lemma SafeAndderiveFormLemma_6' : 
   "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_6' N k l) & deriveForm (env N) (Lemma_6' N k l)"
   unfolding Lemma_6'_def
-  apply auto
-  done
-
-definition Lemma_3' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_3' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
-  IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const E"
-
-lemma absTransfLemma_3' : 
-  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_3' N 0 l) = Lemma_3' N 0 l"
-  unfolding Lemma_3'_def
-  apply auto
-  done
-
-lemma strengthenVsObsLemma_3 : 
-  "strengthenVsObs (Lemma_3 N) (Lemma_3' N) N"
-  unfolding Lemma_3_def Lemma_3'_def
-  apply (rule strengthenVsObsDiff)
-  unfolding symParamForm_def
-  apply auto
-  done
-
-lemma SafeAndderiveFormLemma_3' : 
-  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_3' N k l) & deriveForm (env N) (Lemma_3' N k l)"
-  unfolding Lemma_3'_def
   apply auto
   done
 
@@ -638,53 +638,28 @@ lemma SafeAndderiveFormLemma_0' :
   apply auto
   done
 
-definition Lemma_4' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_4' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
-  IVar (Para ''state'' i) =\<^sub>f Const S \<longrightarrow>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const MM"
-
-lemma absTransfLemma_4' : 
-  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_4' N 0 l) = Lemma_4' N 0 l"
-  unfolding Lemma_4'_def
-  apply auto
-  done
-
-lemma strengthenVsObsLemma_4 : 
-  "strengthenVsObs (Lemma_4 N) (Lemma_4' N) N"
-  unfolding Lemma_4_def Lemma_4'_def
-  apply (rule strengthenVsObsDiff)
-  unfolding symParamForm_def
-  apply auto
-  done
-
-lemma SafeAndderiveFormLemma_4' : 
-  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_4' N k l) & deriveForm (env N) (Lemma_4' N k l)"
-  unfolding Lemma_4'_def
-  apply auto
-  done
-
-definition Lemma_9' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
-  "Lemma_9' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
+definition Lemma_3' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_3' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
   IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
-  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const S"
+  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const E"
 
-lemma absTransfLemma_9' : 
-  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_9' N 0 l) = Lemma_9' N 0 l"
-  unfolding Lemma_9'_def
+lemma absTransfLemma_3' : 
+  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_3' N 0 l) = Lemma_3' N 0 l"
+  unfolding Lemma_3'_def
   apply auto
   done
 
-lemma strengthenVsObsLemma_9 : 
-  "strengthenVsObs (Lemma_9 N) (Lemma_9' N) N"
-  unfolding Lemma_9_def Lemma_9'_def
+lemma strengthenVsObsLemma_3 : 
+  "strengthenVsObs (Lemma_3 N) (Lemma_3' N) N"
+  unfolding Lemma_3_def Lemma_3'_def
   apply (rule strengthenVsObsDiff)
   unfolding symParamForm_def
   apply auto
   done
 
-lemma SafeAndderiveFormLemma_9' : 
-  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_9' N k l) & deriveForm (env N) (Lemma_9' N k l)"
-  unfolding Lemma_9'_def
+lemma SafeAndderiveFormLemma_3' : 
+  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_3' N k l) & deriveForm (env N) (Lemma_3' N k l)"
+  unfolding Lemma_3'_def
   apply auto
   done
 
@@ -713,45 +688,70 @@ lemma SafeAndderiveFormLemma_5' :
   apply auto
   done
 
-lemma symInvs : 
-  "symParamForm2 N (Lemma_6' N)"
-  "symParamForm2 N (Lemma_3' N)"
-  "symParamForm2 N (Lemma_0' N)"
-  "symParamForm2 N (Lemma_4' N)"
-  "symParamForm2 N (Lemma_9' N)"
-  "symParamForm2 N (Lemma_5' N)"
-  unfolding Lemma_6'_def Lemma_3'_def Lemma_0'_def Lemma_4'_def Lemma_9'_def Lemma_5'_def
+definition Lemma_9' :: "nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> formula" where
+  "Lemma_9' N i j \<equiv> \<not>\<^sub>f Const (index i) =\<^sub>f Const (index j) \<and>\<^sub>f
+  IVar (Para ''state'' i) =\<^sub>f Const MM \<longrightarrow>\<^sub>f
+  \<not>\<^sub>f IVar (Para ''state'' j) =\<^sub>f Const S"
+
+lemma absTransfLemma_9' : 
+  "[|M < N;M = 1;l <= 1|] ==> absTransfForm (env N) M (Lemma_9' N 0 l) = Lemma_9' N 0 l"
+  unfolding Lemma_9'_def
   apply auto
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+
+lemma strengthenVsObsLemma_9 : 
+  "strengthenVsObs (Lemma_9 N) (Lemma_9' N) N"
+  unfolding Lemma_9_def Lemma_9'_def
+  apply (rule strengthenVsObsDiff)
+  unfolding symParamForm_def
+  apply auto
+  done
+
+lemma SafeAndderiveFormLemma_9' : 
+  "[|M < N;M = 1;l <= M;k <= M|] ==> safeForm (env N) M (Lemma_9' N k l) & deriveForm (env N) (Lemma_9' N k l)"
+  unfolding Lemma_9'_def
+  apply auto
+  done
+
+lemma symInvs : 
+  "symParamForm2 N (Lemma_4' N)"
+  "symParamForm2 N (Lemma_6' N)"
+  "symParamForm2 N (Lemma_0' N)"
+  "symParamForm2 N (Lemma_3' N)"
+  "symParamForm2 N (Lemma_5' N)"
+  "symParamForm2 N (Lemma_9' N)"
+  unfolding Lemma_4'_def Lemma_6'_def Lemma_0'_def Lemma_3'_def Lemma_5'_def Lemma_9'_def
+  apply auto
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  done
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
+  done
   done
 
 definition lemmasFor_t1' :: "nat \<Rightarrow> ((nat \<Rightarrow> nat \<Rightarrow> formula) list)" where
@@ -825,7 +825,7 @@ lemma wellFormedRule_refs :
 lemma SafeAndderiveAll : 
   "[|M < N;M = 1;l <= M;k <= M;pinvL : set (InvS' N);pf : set pinvL|] ==> safeForm (env N) M (pf k l) & deriveForm (env N) (pf k l)"
   unfolding InvS'_def lemmasFor_t1'_def lemmasFor_t2'_def lemmasFor_t3'_def lemmasFor_t4'_def
-  using SafeAndderiveFormLemma_6' SafeAndderiveFormLemma_3' SafeAndderiveFormLemma_0' SafeAndderiveFormLemma_4' SafeAndderiveFormLemma_9' SafeAndderiveFormLemma_5'
+  using SafeAndderiveFormLemma_4' SafeAndderiveFormLemma_6' SafeAndderiveFormLemma_0' SafeAndderiveFormLemma_3' SafeAndderiveFormLemma_5' SafeAndderiveFormLemma_9'
   apply auto
   done
 
@@ -859,30 +859,23 @@ lemma ReachStafitEnv :
     unfolding fitEnv_def
     apply (rule allI)
     apply (rule impI)
-    apply (case_tac   "v")
-    
+    apply (case_tac "v")
     subgoal for v x1
       apply auto
-      done
-    
-    subgoal for v x21 x22
-      apply (case_tac   "x21 = ''state''")
-      
-      apply (subgoal_tac  "formEval (initSpec0 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply auto
-      done
-    
-    apply auto
     done
-  
+    subgoal for v x21 x22
+      apply (case_tac "x21 = ''state''")
+      apply (subgoal_tac "formEval (initSpec0 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply auto
+    done
+    apply auto
+  done
   subgoal for r sk
     unfolding rule_refs_def
     apply (auto intro: Un_iff lemmat1_fitEnv lemmat2_fitEnv lemmat3_fitEnv lemmat4_fitEnv)
-    done
-  
+  done
   done
 
 lemma absProtSim : 
@@ -891,70 +884,69 @@ lemma absProtSim :
   subgoal for r
     using wellFormedRule_refs
     apply auto
-    done
-  
-  subgoal  unfolding InvS'_def lemmasFor_t1'_def lemmasFor_t2'_def lemmasFor_t3'_def lemmasFor_t4'_def
+  done
+  subgoal
+    unfolding InvS'_def lemmasFor_t1'_def lemmasFor_t2'_def lemmasFor_t3'_def lemmasFor_t4'_def
     using symInvs
     apply auto
-    done
-  
-  subgoal  using rulesIsSym
+  done
+  subgoal
+    using rulesIsSym
     apply auto
-    done
-  
-  subgoal  using symPreds
+  done
+  subgoal
+    using symPreds
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using SafeAndderiveAll
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using StrengthRelRules2Rule_refs
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using rule_refsIsSym
+  done
+  subgoal
+    using SafeAndderiveAll
     apply auto
-    done
-  
-  subgoal  using rule_refsWellTyped
+  done
+  subgoal
+    using StrengthRelRules2Rule_refs
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using ReachStafitEnv
+  done
+  subgoal
+    using rule_refsIsSym
     apply auto
-    done
-  
-  subgoal  unfolding InvS_def InvS'_def
+  done
+  subgoal
+    using rule_refsWellTyped
     apply auto
-    subgoal  using strengthenVsObsLs_lemmasFor_t1
+  done
+  subgoal
+    apply auto
+  done
+  subgoal
+    using ReachStafitEnv
+    apply auto
+  done
+  subgoal
+    unfolding InvS_def InvS'_def
+    apply auto
+    subgoal
+      using strengthenVsObsLs_lemmasFor_t1
       apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_t2
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_t3
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_t4
-      apply auto
-      done
-    
     done
-  
+    subgoal
+      using strengthenVsObsLs_lemmasFor_t2
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_t3
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_t4
+      apply auto
+    done
+  done
   apply (rule equivRuleSetReflex)
   using ABS_all 
   apply auto

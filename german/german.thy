@@ -1,6 +1,6 @@
 
 theory german
-  imports ECMP
+  imports "../ECMP"
 begin
 
 definition I :: "scalrValueType" where [simp]:
@@ -203,29 +203,29 @@ lemma symPreds [intro]:
   "symPredSet' N (allInitSpecs N)"
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
+  apply blast
   unfolding allInitSpecs_def
   apply (rule symPredsUnion)
-  apply (blast)
-  apply (blast)
+  apply blast
+  apply blast
   done
 
 lemma deriveFormAllInitSpec : 
@@ -246,7 +246,7 @@ lemma symRecvGntE :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvGntE i)"
   unfolding RecvGntE_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -265,7 +265,7 @@ lemma symRecvGntS :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvGntS i)"
   unfolding RecvGntS_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -290,7 +290,7 @@ lemma symSendGntE :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendGntE N i)"
   unfolding SendGntE_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -313,7 +313,7 @@ lemma symSendGntS :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendGntS i)"
   unfolding SendGntS_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -335,7 +335,7 @@ lemma symRecvInvAck1 :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvInvAck1 i)"
   unfolding RecvInvAck1_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -356,7 +356,7 @@ lemma symRecvInvAck2 :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvInvAck2 i)"
   unfolding RecvInvAck2_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -377,7 +377,7 @@ lemma symSendInvAck :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendInvAck i)"
   unfolding SendInvAck_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -400,7 +400,7 @@ lemma symSendInv :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendInv i)"
   unfolding SendInv_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -422,7 +422,7 @@ lemma symRecvReqE :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvReqE N i)"
   unfolding RecvReqE_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -444,7 +444,7 @@ lemma symRecvReqS :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvReqS N i)"
   unfolding RecvReqS_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -464,7 +464,7 @@ lemma symSendReqE :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendReqE i)"
   unfolding SendReqE_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -483,7 +483,7 @@ lemma symSendReqS :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendReqS i)"
   unfolding SendReqS_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -604,36 +604,36 @@ lemma symProtAll :
   "symProtRules' N (SendReqEs N)"
   "symProtRules' N (SendReqSs N)"
   using symRecvGntE(1) RecvGntEs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symRecvGntS(1) RecvGntSs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendGntE(1) SendGntEs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendGntS(1) SendGntSs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symRecvInvAck1(1) RecvInvAck1s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symRecvInvAck2(1) RecvInvAck2s_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendInvAck(1) SendInvAcks_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendInv(1) SendInvs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symRecvReqE(1) RecvReqEs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symRecvReqS(1) RecvReqSs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendReqE(1) SendReqEs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   using symSendReqS(1) SendReqSs_def symParaRuleInfSymRuleSet symParaRuleInfSymRuleSet2
-  apply (auto)[1]
+  apply auto[1]
   done
 
 lemma symCntrlProp : 
   "symParamForm2 N (CntrlProp N)"
   unfolding CntrlProp_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -642,7 +642,7 @@ lemma symLemma_1 :
   "symParamForm2 N (Lemma_1 N)"
   unfolding Lemma_1_def
   apply auto
-  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  apply (intro symParamForm2Imply symParamFormForallExcl2)
   unfolding symParamForm2_def
   apply auto
   done
@@ -662,7 +662,7 @@ lemma symRecvGntE_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvGntE_ref i)"
   unfolding RecvGntE_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -697,7 +697,7 @@ lemma symRecvGntS_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvGntS_ref i)"
   unfolding RecvGntS_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -738,7 +738,7 @@ lemma symSendGntE_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendGntE_ref N i)"
   unfolding SendGntE_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -777,7 +777,7 @@ lemma symSendGntS_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendGntS_ref i)"
   unfolding SendGntS_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -818,7 +818,7 @@ lemma symRecvInvAck1_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvInvAck1_ref N i)"
   unfolding RecvInvAck1_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -855,7 +855,7 @@ lemma symRecvInvAck2_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvInvAck2_ref i)"
   unfolding RecvInvAck2_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -892,7 +892,7 @@ lemma symSendInvAck_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendInvAck_ref i)"
   unfolding SendInvAck_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -931,7 +931,7 @@ lemma symSendInv_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendInv_ref i)"
   unfolding SendInv_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -969,7 +969,7 @@ lemma symRecvReqE_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvReqE_ref N i)"
   unfolding RecvReqE_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1007,7 +1007,7 @@ lemma symRecvReqS_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (RecvReqS_ref N i)"
   unfolding RecvReqS_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1043,7 +1043,7 @@ lemma symSendReqE_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendReqE_ref i)"
   unfolding SendReqE_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1078,7 +1078,7 @@ lemma symSendReqS_ref :
   "[|i <= N|] ==> wellFormedRule (env N) N (SendReqS_ref i)"
   unfolding SendReqS_ref_def
   apply (auto intro!: symParamRuleI2 symParamRuleI symParamFormAnd symParamFormForall symParamFormForallExcl symParamFormImply symParamStatementParallel symParamStatementForall symParamStatementForallExcl symParamStatementIte)
-  unfolding symParamForm_def  symParamStatement_def     symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
+  unfolding symParamForm_def symParamStatement_def symParamForm2_def symParamStatement2_def mutualDiffVars_def equivForm_def
   apply auto
   done
 
@@ -1109,7 +1109,7 @@ lemma RecvGntEStrengthRel :
   unfolding RecvGntEs_def RecvGntE_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvGntE" in strengthenExt1)
   using RecvGntE_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1119,7 +1119,7 @@ lemma RecvGntSStrengthRel :
   unfolding RecvGntSs_def RecvGntS_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvGntS" in strengthenExt1)
   using RecvGntS_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1129,7 +1129,7 @@ lemma SendGntEStrengthRel :
   unfolding SendGntEs_def SendGntE_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendGntE" in strengthenExt1)
   using SendGntE_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1139,7 +1139,7 @@ lemma SendGntSStrengthRel :
   unfolding SendGntSs_def SendGntS_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendGntS" in strengthenExt1)
   using SendGntS_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1149,7 +1149,7 @@ lemma RecvInvAck1StrengthRel :
   unfolding RecvInvAck1s_def RecvInvAck1_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvInvAck1" in strengthenExt1)
   using RecvInvAck1_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1159,7 +1159,7 @@ lemma RecvInvAck2StrengthRel :
   unfolding RecvInvAck2s_def RecvInvAck2_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvInvAck2" in strengthenExt1)
   using RecvInvAck2_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1169,7 +1169,7 @@ lemma SendInvAckStrengthRel :
   unfolding SendInvAcks_def SendInvAck_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendInvAck" in strengthenExt1)
   using SendInvAck_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1179,7 +1179,7 @@ lemma SendInvStrengthRel :
   unfolding SendInvs_def SendInv_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendInv" in strengthenExt1)
   using SendInv_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1189,7 +1189,7 @@ lemma RecvReqEStrengthRel :
   unfolding RecvReqEs_def RecvReqE_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvReqE" in strengthenExt1)
   using RecvReqE_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1199,7 +1199,7 @@ lemma RecvReqSStrengthRel :
   unfolding RecvReqSs_def RecvReqS_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_RecvReqS" in strengthenExt1)
   using RecvReqS_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1209,7 +1209,7 @@ lemma SendReqEStrengthRel :
   unfolding SendReqEs_def SendReqE_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendReqE" in strengthenExt1)
   using SendReqE_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1219,7 +1219,7 @@ lemma SendReqSStrengthRel :
   unfolding SendReqSs_def SendReqS_refs_def
   apply (rule_tac ?lemmasFor_r="lemmasFor_SendReqS" in strengthenExt1)
   using SendReqS_strengthen
-  apply (presburger)
+  apply presburger
   unfolding InvS_def
   apply auto
   done
@@ -1397,7 +1397,7 @@ lemma ABS_all :
   "[|M < N|] ==> (absTransfRule (env N) M ` rule_refs N) = ABS_rules M"
   apply (subst ABS_rules_eq_rules')
   unfolding rule_refs_def ABS_rules'_def
-  apply (intro  image_UnI)
+  apply (intro image_UnI)
   apply (auto simp add: Abs_RecvGntE_refs Abs_RecvGntS_refs Abs_SendGntE_refs Abs_SendGntS_refs Abs_RecvInvAck1_refs Abs_RecvInvAck2_refs Abs_SendInvAck_refs Abs_SendInv_refs Abs_RecvReqE_refs Abs_RecvReqS_refs Abs_SendReqE_refs Abs_SendReqS_refs)
   done
 
@@ -1434,11 +1434,11 @@ lemma symInvs :
   "symParamForm2 N (Lemma_1' N)"
   unfolding Lemma_1'_def
   apply auto
-  subgoal  apply (intro  symParamForm2Imply symParamFormForallExcl2)
+  subgoal
+    apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def
     apply auto
-    done
-  
+  done
   done
 
 definition lemmasFor_RecvGntE' :: "nat \<Rightarrow> ((nat \<Rightarrow> nat \<Rightarrow> formula) list)" where
@@ -1666,78 +1666,55 @@ lemma ReachStafitEnv :
     unfolding fitEnv_def
     apply (rule allI)
     apply (rule impI)
-    apply (case_tac   "v")
-    
+    apply (case_tac "v")
     subgoal for v x1
-      apply (case_tac   "x1 = ''ExGntd''")
-      
-      apply (subgoal_tac  "formEval (initSpec6) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''CurCmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec7) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x1 = ''CurPtr''")
-      
-      apply (subgoal_tac  "formEval (initSpec8 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
+      apply (case_tac "x1 = ''ExGntd''")
+      apply (subgoal_tac "formEval (initSpec6) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''CurCmd''")
+      apply (subgoal_tac "formEval (initSpec7) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x1 = ''CurPtr''")
+      apply (subgoal_tac "formEval (initSpec8 N) s0")
+      apply auto[1]
+      apply auto[1]
       apply auto
-      done
-    
-    subgoal for v x21 x22
-      apply (case_tac   "x21 = ''Chan1.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec0 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Chan2.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec1 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Chan3.Cmd''")
-      
-      apply (subgoal_tac  "formEval (initSpec2 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''Cache.State''")
-      
-      apply (subgoal_tac  "formEval (initSpec3 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''InvSet''")
-      
-      apply (subgoal_tac  "formEval (initSpec4 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply (case_tac   "x21 = ''ShrSet''")
-      
-      apply (subgoal_tac  "formEval (initSpec5 N) s0")
-      
-      apply (auto)[1]
-      apply (auto)[1]
-      apply auto
-      done
-    
-    apply auto
     done
-  
+    subgoal for v x21 x22
+      apply (case_tac "x21 = ''Chan1.Cmd''")
+      apply (subgoal_tac "formEval (initSpec0 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Chan2.Cmd''")
+      apply (subgoal_tac "formEval (initSpec1 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Chan3.Cmd''")
+      apply (subgoal_tac "formEval (initSpec2 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''Cache.State''")
+      apply (subgoal_tac "formEval (initSpec3 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''InvSet''")
+      apply (subgoal_tac "formEval (initSpec4 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply (case_tac "x21 = ''ShrSet''")
+      apply (subgoal_tac "formEval (initSpec5 N) s0")
+      apply auto[1]
+      apply auto[1]
+      apply auto
+    done
+    apply auto
+  done
   subgoal for r sk
     unfolding rule_refs_def
     apply (auto intro: Un_iff lemmaRecvGntE_fitEnv lemmaRecvGntS_fitEnv lemmaSendGntE_fitEnv lemmaSendGntS_fitEnv lemmaRecvInvAck1_fitEnv lemmaRecvInvAck2_fitEnv lemmaSendInvAck_fitEnv lemmaSendInv_fitEnv lemmaRecvReqE_fitEnv lemmaRecvReqS_fitEnv lemmaSendReqE_fitEnv lemmaSendReqS_fitEnv)
-    done
-  
+  done
   done
 
 lemma absProtSim : 
@@ -1746,102 +1723,101 @@ lemma absProtSim :
   subgoal for r
     using wellFormedRule_refs
     apply auto
-    done
-  
-  subgoal  unfolding InvS'_def lemmasFor_RecvGntE'_def lemmasFor_RecvGntS'_def lemmasFor_SendGntE'_def lemmasFor_SendGntS'_def lemmasFor_RecvInvAck1'_def lemmasFor_RecvInvAck2'_def lemmasFor_SendInvAck'_def lemmasFor_SendInv'_def lemmasFor_RecvReqE'_def lemmasFor_RecvReqS'_def lemmasFor_SendReqE'_def lemmasFor_SendReqS'_def
+  done
+  subgoal
+    unfolding InvS'_def lemmasFor_RecvGntE'_def lemmasFor_RecvGntS'_def lemmasFor_SendGntE'_def lemmasFor_SendGntS'_def lemmasFor_RecvInvAck1'_def lemmasFor_RecvInvAck2'_def lemmasFor_SendInvAck'_def lemmasFor_SendInv'_def lemmasFor_RecvReqE'_def lemmasFor_RecvReqS'_def lemmasFor_SendReqE'_def lemmasFor_SendReqS'_def
     using symInvs
     apply auto
-    done
-  
-  subgoal  using rulesIsSym
+  done
+  subgoal
+    using rulesIsSym
     apply auto
-    done
-  
-  subgoal  using symPreds
+  done
+  subgoal
+    using symPreds
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using SafeAndderiveAll
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using StrengthRelRules2Rule_refs
+  done
+  subgoal
     apply auto
-    done
-  
-  subgoal  using rule_refsIsSym
+  done
+  subgoal
+    using SafeAndderiveAll
     apply auto
-    done
-  
-  subgoal  using rule_refsWellTyped
+  done
+  subgoal
+    using StrengthRelRules2Rule_refs
     apply auto
-    done
-  
-  subgoal  apply auto
-    done
-  
-  subgoal  using ReachStafitEnv
+  done
+  subgoal
+    using rule_refsIsSym
     apply auto
-    done
-  
-  subgoal  unfolding InvS_def InvS'_def
+  done
+  subgoal
+    using rule_refsWellTyped
     apply auto
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvGntE
+  done
+  subgoal
+    apply auto
+  done
+  subgoal
+    using ReachStafitEnv
+    apply auto
+  done
+  subgoal
+    unfolding InvS_def InvS'_def
+    apply auto
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvGntE
       apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvGntS
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendGntE
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendGntS
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvInvAck1
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvInvAck2
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendInvAck
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendInv
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvReqE
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_RecvReqS
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendReqE
-      apply auto
-      done
-    
-    subgoal  using strengthenVsObsLs_lemmasFor_SendReqS
-      apply auto
-      done
-    
     done
-  
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvGntS
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendGntE
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendGntS
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvInvAck1
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvInvAck2
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendInvAck
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendInv
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvReqE
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_RecvReqS
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendReqE
+      apply auto
+    done
+    subgoal
+      using strengthenVsObsLs_lemmasFor_SendReqS
+      apply auto
+    done
+  done
   apply (rule equivRuleSetReflex)
   using ABS_all 
   apply auto

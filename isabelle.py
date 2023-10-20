@@ -723,50 +723,60 @@ class IsabelleApplyEruleProof(Proof):
             (self.name, repr(self.unfolds), repr(self.usings), repr(self.plus))
 
 class GenericProof(Proof):
-    def __init__(self, tactic_name: str, *, unfolds=[], usings=[], introITag=None,
-                 intros=[],simpadds=[], simpdels=[],plus=None,goalNum=None): 
+    def __init__(self, tactic_name: str, *,
+                 unfolds: Optional[Iterable[str]] = None,
+                 usings: Optional[Iterable[str]] = None,
+                 rules: Optional[Iterable[str]] = None,
+                 plus: Optional[str] = None,
+                 introITag: Optional[str] = None,
+                 intros: Optional[Iterable[str]] = None,
+                 simpadds: Optional[Iterable[str]] = None,
+                 simpdels: Optional[Iterable[str]] = None,
+                 goalNum: Optional[str] = None): 
         self.tactic_name = tactic_name
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.intros =intros 
-        self.simpadds=simpadds
-        self.simpdels=simpdels
-        self.introITag=introITag
-        self.goalNum=goalNum
+        self.usings = usings
+        self.unfolds = unfolds
+        self.rules = rules
+        self.plus = plus
+        self.introITag = introITag
+        self.intros = intros 
+        self.simpadds = simpadds
+        self.simpdels = simpdels
+        self.goalNum = goalNum
 
     def __str__(self):
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
+        res = ""
+        if self.unfolds:
+            res += "unfolding " + " ".join(str(unfold) + "_def" for unfold in self.unfolds) + "\n"
+        if self.usings:
+            res += "using " + " ".join(using for using in self.usings) + "\n"
 
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
+        tactic_str = self.tactic_name
+        if self.rules:
+            tactic_str += " " + " ".join(str(rule) for rule in self.rules)
+        if self.introITag:
+            tactic_str += " " + self.introITag + ": " + " ".join(str(intro) for intro in self.intros)
+        if self.simpdels:
+            tactic_str += " simp del: " + " ".join(str(del0) for del0 in self.simpdels)
+        if self.simpadds:
+            tactic_str += " simp add: " + " ".join(str(add) for add in self.simpadds)
 
-        plusStr = '' if self.plus is None else "+" 
-        introStr = '' if self.introITag is None else (self.introITag+": "+(" ".join(str(intro) for intro in self.intros)))
-
-        simpdelStr = '' if len(self.simpdels)==0 else ("simp del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
-
-        simpaddStr = '' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)) )
-
-        goalStr = ""  if (self.goalNum==None) else "[%s]"%self.goalNum
-        
-        if introStr or simpaddStr or simpdelStr or goalStr:
-            res= "apply (%s%s%s%s)%s"   % \
-            ( self.tactic_name, '' if introStr=='' else " " + introStr, \
-                '' if simpaddStr=='' else " " + simpaddStr, \
-                '' if simpdelStr=='' else " " + simpdelStr, \
-                '' if goalStr=='' else goalStr)
+        if tactic_str == self.tactic_name:
+            res += "apply %s" % tactic_str
         else:
-            res = "apply %s" % self.tactic_name
+            res += "apply (%s)" % tactic_str
 
-        return unfoldStr + usingStr + res + plusStr
+        if self.plus:
+            res += self.plus
+        if self.goalNum:
+            res += "[%s]" % self.goalNum
+        
+        return res
 
     def __repr__(self): 
-        return "%s ( %s, %s, %s,%s,%s,%s)" % \
-            (self.tactic_name, repr(self.unfolds),  \
-            repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.simpadds),repr(self.simpdels))
+        return "%s (%s, %s, %s, %s, %s, %s)" % (
+            self.tactic_name, repr(self.unfolds), repr(self.usings), repr(self.plus),
+            repr(self.intros), repr(self.simpadds), repr(self.simpdels))
 
 class AutoProof(GenericProof):
     def __init__(self, **kwargs):
@@ -776,218 +786,100 @@ class blastProof(GenericProof):
     def __init__(self, **kwargs):
         super().__init__("blast", **kwargs)
 
-class introProof(Proof):
-    def __init__(self, *, unfolds=[], usings=[], 
-        intros=[],plus=None): 
-        self.unfolds=unfolds
-        self.plus=plus
-        self.intros =intros 
-        self.usings=usings
+class presburgerProof(GenericProof):
+    def __init__(self, **kwargs):
+        super().__init__("presburger", **kwargs)
 
-    def __str__(self):
-        unfoldStr = '' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
+class introProof(GenericProof):
+    def __init__(self, **kwargs):
+        super().__init__("intro", **kwargs)
 
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
-
-        plusStr = '' if self.plus==None else "+" 
-        introStr = '' if   self.intros==[] else (" "+(" ".join(str(intro) for intro in self.intros)))
-
-        res= "apply (intro%s)%s"   % \
-            ( '' if introStr=='' else " " + introStr, \
-                '' if plusStr=='' else plusStr)
-        return unfoldStr + usingStr + res
-
-    def __repr__(self): 
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
-
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
-
-        plusStr = '' if self.plus==None else "+" 
-        introStr = '' if self.introITag==None else (" "+(" ".join(str(intro) for intro in self.intros)))
-
-        res= "apply (intro%s)%s"   % \
-            ( '' if introStr=='' else " " + introStr, \
-                '' if plusStr=='' else plusStr)
-
-        return unfoldStr + usingStr + res
-
-class presburgerProof(Proof):
-    def __init__(self,   unfolds=[], usings=[], introITag=None,
-        intros=[],simpadds=[], simpdels=[],plus=None): 
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.intros =intros 
-        self.simpadds=simpadds
-        self.simpdels=simpdels
-        self.introITag=introITag
-
-    def __str__(self):
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
-
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
-
-        plusStr = '' if self.plus==None else "+" 
-        
-        introStr = '' if   self.introITag==None else (self.introITag+" "+(" ".join(str(intro) for intro in self.intros)))
-
-        simpdelStr = '' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
-        
-        simpaddStr = '' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)) )
-        
-        res= "apply (presburger%s%s%s)%s"   % \
-            ( '' if introStr=='' else " " + introStr, \
-                '' if simpaddStr=='' else " " + simpaddStr, \
-                '' if simpdelStr=='' else " " + simpdelStr, \
-                '' if plusStr=='' else plusStr)
-         
-        return unfoldStr + usingStr + res
-
-    def __repr__(self): 
-        return "auto( %s, %s, %s,%s,%s,%s)" % \
-            (repr(self.unfolds),  \
-            repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.simpadds),repr(self.simpdels))
-
-class substProof(Proof):
-    def __init__(self,  name, unfolds=[], usings=[], introITag=None,
-        intros=[],simpadds=[], simpdels=[],plus=None): 
-        self.name=name
-        self.usings=usings
-        self.unfolds=unfolds
-        self.plus=plus
-        self.intros =intros 
-        self.simpadds=simpadds
-        self.simpdels=simpdels
-        self.introITag=introITag
-
-
-    def __str__(self):
-        unfoldStr='' if len(self.unfolds)==0 else \
-            "unfolding " + (" ".join(str(un)+"_def" for un in self.unfolds) + "\n")
-
-        usingStr = '' if len(self.usings)==0 else \
-            "using " + (" ".join(us  for us in self.usings) + "\n") 
-
-        plusStr='' if self.plus==None else "+"
-
-        introStr='' if   self.introITag==None else (self.introITag+" "+(" ".join(str(intro) for intro in self.intros)))
-
-        simpdelStr='' if len(self.simpdels)==0 else ("del: " + (" ".join(str(del0) for del0 in self.simpdels) ))
-
-        simpaddStr='' if len(self.simpadds)==0 else ('simp add: ' + (" ".join(str(add) for add in self.simpadds)) )
-                 
-        # res= "apply (subst %s  %s %s   %s %s)%s"   % \
-        #     (self.name, introStr, destStr, simpaddStr, simpdelStr,plusStr)
-        res= "apply (subst%s%s%s%s)%s"   % \
-            ( '' if self.name=='' else " " + self.name, \
-                '' if introStr=='' else " " + introStr, \
-                '' if simpaddStr=='' else " " + simpaddStr, \
-                '' if simpdelStr=='' else " " + simpdelStr, \
-                '' if plusStr=='' else plusStr)
-
-        # return unfoldStr+' '+usingStr+' '+res
-        return unfoldStr + usingStr + res
-
-    def __repr__(self): 
-        return "subst(%s %s, %s, %s,%s,%s,%s)" % \
-            (self.name,repr(self.unfolds),  \
-            repr(self.usings),repr(self.plus),repr(self.intros), \
-            repr(self.simpadds),repr(self.simpdels))
+class substProof(GenericProof):
+    def __init__(self, **kwargs):
+        super().__init__("subst", **kwargs)
 
 class subgoalProof(Proof):
-    def __init__(self,fors=None,proofs=None): 
-        self.fors=fors
-        self.proofs=proofs 
+    def __init__(self, *, fors: Optional[Iterable[str]] = None,
+                 proofs: Optional[Iterable[Proof]] = None): 
+        self.fors = fors
+        self.proofs = proofs
 
     def __str__(self):
-        res1="subgoal for %s\n" % (" ".join(s for s in self.fors)) if self.fors else "subgoal"
-        res2=indent("\n".join(str(s) for s in self.proofs), 2)
-        res3="\n  done\n"
-        return(res1+res2+res3)
+        res = "subgoal"
+        if self.fors:
+            res += " for " + " ".join(self.fors)
+        res += "\n"
+        res += indent("\n".join(str(s) for s in self.proofs), 2)
+        res += "\ndone"
+        return res
 
     def export(self):
-        res1="subgoal for %s\n" % (" ".join(s for s in self.fors)) if self.fors else "subgoal"
-        res2=indent("\n".join(str(s) for s in self.proofs), 2)
-        res3="\n  done\n"
-        return(res1+res2+res3)
-
+        res = "subgoal"
+        if self.fors:
+            res += " for " + " ".join(self.fors)
+        res += "\n"
+        res += indent("\n".join(str(s) for s in self.proofs), 2)
+        res += "\ndone"
+        return res
 
 class subgoaltacProof(Proof):
-    def __init__(self,goal): 
-        self.goal=goal
+    def __init__(self, goal: IsabelleTerm):
+        self.goal = goal
 
     def __str__(self):
-        res1="apply (subgoal_tac  \"%s\")\n"%(str(self.goal))  
-        return(res1)
+        return "apply (subgoal_tac \"%s\")" % self.goal  
 
     def export(self):
-        res1="apply (subgoal_tac  \"%s\")\n"%(str(self.goal))  
-        return(res1)
+        return "apply (subgoal_tac \"%s\")" % self.goal  
 
 class casetacProof(Proof):
-    def __init__(self,goal): 
-        self.goal=goal
+    def __init__(self, goal: IsabelleTerm): 
+        self.goal = goal
 
     def __str__(self):
-        res1="apply (case_tac   \"%s\")\n"%(str(self.goal))  
-        return(res1)
+        return "apply (case_tac \"%s\")" % self.goal  
 
     def export(self):
-        res1="apply (case_tac   \"%s\")\n"%(str(self.goal))  
-        return(res1)
+        return "apply (case_tac \"%s\")" % self.goal  
 
-class primRec: 
-    def __init__(self,name,typ,eqs): 
-        self.name=name
-        self.typ=typ
-        self.eqs=eqs
+class primRec(IsabelleDecl):
+    """Isabelle declaration of primitive recursion."""
+    def __init__(self, name: str, typ: IsabelleType, eqs: Iterable[IsabelleTerm]): 
+        self.name = name
+        self.typ = typ
+        self.eqs = eqs
 
     def __str__(self):
-        res="primrec %s :: \"%s\" where\n%s\n"% \
-            (self.name, self.typ, indent(" |\n".join("\"" + eq.export() + "\"" for eq in self.eqs), 2))
-        return(res)
+        return "primrec %s :: \"%s\" where\n%s\n" % (
+            self.name, self.typ,
+            indent(" |\n".join("\"" + eq.export() + "\"" for eq in self.eqs), 2))
 
-    def __repr__(self):
-        res="primrec %s :: \"%s\" where\n%s\n"% \
-            (self.name, self.typ, indent(" |\n".join("\"" + str(eq) + "\"" for eq in self.eqs), 2))
-        return(res)
+    def export(self) -> str:
+        return "primrec %s :: \"%s\" where\n%s\n" % (
+            self.name, self.typ,
+            indent(" |\n".join("\"" + eq.export() + "\"" for eq in self.eqs), 2))
 
-    def export(self):
-        res="primrec %s :: \"%s\" where\n%s\n"% \
-            (self.name, self.typ, indent(" |\n".join("\"" + eq.export() + "\"" for eq in self.eqs), 2))
-        return(res)
-
-
-
-'''primrec env :: "nat \<Rightarrow> envType" where
-  "env N (Para n i) =
-   (if n = ''Sta.n'' \<and> i \<le> N then enumType else anyType)"
-| "env N (Ident n) =
-   (if n = ''Sta.x'' then boolType else anyType)"
-| "env N dontCareVar = anyType"'''
-
-
+"""
+Some common types
+"""
 nat = ConstType("nat")
 formula = ConstType("formula")
 rule = ConstType("rule")
 scalarValueType = ConstType("scalrValueType")
-def setType(t):
-    return(ConstType(str(t)+" set"))
 
-def enum(cl, v):
+def setType(t: IsabelleType) -> IsabelleType:
+    return ConstType("set", args=[t])
+
+"""
+Some common terms
+"""
+def enum(cl: str, v: str) -> IsabelleTerm:
     return Fun(Const("enum"), [String(cl), String(v)])
 
 isaTrue = Const("True")
 isaFalse = Const("False")
 
-def boolV(v):
+def boolV(v: bool):
     return Fun(Const("boolV"), [isaTrue if v else isaFalse])
 
 def index(s):
@@ -1099,7 +991,7 @@ def enum_def(cl, v):
 def header(thy_name):
     return """
 theory %s
-  imports ECMP
+  imports "../ECMP"
 begin
 
 """ % thy_name
@@ -1165,10 +1057,4 @@ if __name__ == "__main__":
     with open("IsabelleTest.thy", "w") as f:
         f.write(header("IsabelleTest"))
         for t in test_data:
-            #print(str(t))
             f.write(t.export())
-
-
-#lemma symPreds1 [intro]:
-#  "symPredSet' N {initSpec1}"
-#  unfolding symPredSet'_def by auto

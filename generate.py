@@ -66,7 +66,7 @@ def skip_dict(rule_dict, checked, ABS_set):
     return rule_dict
 
 def json_str_gen(filename):
-    print('you wanna reading {}...'.format(filename))
+    print('Reading file {}...'.format(filename))
     prot = parser.parse_file(filename)
     rule_dict = collections.defaultdict(dict)
     not_skip = []
@@ -116,7 +116,6 @@ def json_str_gen(filename):
                 rule_name = abs2ori[r.name]
             else:
                 rule_name = r.name.replace('ABS_', '')
-            print(rule_name)
             not_skip.append(rule_name)
             param = list(rule_dict[rule_name]['limits'].keys())
             if len(param) == 1:
@@ -129,13 +128,11 @@ def json_str_gen(filename):
         elif isinstance(r,murphi.MurphiRuleSet):
             rule_name = abs2ori[r.rule.name]
             decl = r.rule.name.split('_')[-1]
-            # print(rule_name)
             param = list(rule_dict[rule_name]['limits'].keys())
             not_skip.append(rule_name)
             if len(r.var_decls)==1:
                 if len(param) == 2:
                     cond_res = copy.deepcopy(rule_dict[rule_name]["abstract"][0]["cond"])
-                    print("****", cond_res)
                     cond_res.update({decl:False})
                     rule_dict[rule_name]["abstract"].append({"cond": cond_res,"answer":r.rule.name})
                 else:
@@ -166,7 +163,7 @@ def json_str_gen(filename):
     return enum_type, rule_dict
 
 def inv_2forall(filename):
-    print("you wanna reading \"{}\"".format(filename)) 
+    print("Reading file \"{}\"".format(filename)) 
     prot = parser.parse_file(filename)
     for name, inv in prot.lemma_map.items():
         cnt = 0

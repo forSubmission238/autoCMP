@@ -29,7 +29,7 @@ def translateBooleans():
         isabelle.Definition("false", isabelle.scalarValueType, isabelle.boolV(False), is_simp=True, is_equiv=True),
     ]
 
-def destruct_var(e: murphi.BaseExpr, vars: List[str]):
+def destruct_var(e: murphi.MurphiExpr, vars: List[str]):
     if isinstance(e, murphi.VarExpr):
         assert e.name not in vars, "destruct_var: %s not in %s" % (e.name, vars)
         return [e.name], None
@@ -43,14 +43,14 @@ def destruct_var(e: murphi.BaseExpr, vars: List[str]):
         print("destruct var on %s" % e)
         raise NotImplementedError
 
-def translateVar(v: murphi.BaseExpr, vars: List[str]):
+def translateVar(v: murphi.MurphiExpr, vars: List[str]):
     names, idx = destruct_var(v, vars)
     if idx is None:
         return isabelle.Ident(".".join(names))
     else:
         return isabelle.Para(".".join(names), idx)
 
-def translateExp(e: murphi.BaseExpr, vars: List[str]):
+def translateExp(e: murphi.MurphiExpr, vars: List[str]):
     if isinstance(e, murphi.UnknownExpr):
         raise NotImplementedError
     elif isinstance(e, murphi.BooleanExpr):
@@ -68,7 +68,7 @@ def translateExp(e: murphi.BaseExpr, vars: List[str]):
         print("translateExp: %s" % e)
         raise NotImplementedError
 
-def translateIsabelleExp(e: murphi.BaseExpr, vars: List[str]):
+def translateIsabelleExp(e: murphi.MurphiExpr, vars: List[str]):
     if isinstance(e, murphi.UnknownExpr):
         raise NotImplementedError
     elif isinstance(e, murphi.BooleanExpr):
@@ -86,7 +86,7 @@ def translateIsabelleExp(e: murphi.BaseExpr, vars: List[str]):
         print("translateExp: %s" % e)
         raise NotImplementedError
 
-def translateForm(e: murphi.BaseExpr, vars: List[str]):
+def translateForm(e: murphi.MurphiExpr, vars: List[str]):
     if isinstance(e, murphi.BooleanExpr):
         if e.val:
             return isabelle.Const("chaos")
@@ -130,7 +130,7 @@ def translateForm(e: murphi.BaseExpr, vars: List[str]):
         print("translateForm: %s" % e)
         raise NotImplementedError
 
-def hasParamExpr(e: murphi.BaseExpr):
+def hasParamExpr(e: murphi.MurphiExpr):
     if isinstance(e, (murphi.VarExpr, murphi.ArrayIndex, murphi.FieldName)):
         return False
     elif isinstance(e, (murphi.UnknownExpr, murphi.BooleanExpr)):
@@ -147,7 +147,7 @@ def hasParamExpr(e: murphi.BaseExpr):
         print("hasParamExpr on %s" % e)
         raise NotImplementedError
 
-def hasParamCmd(cmd: murphi.BaseCmd):
+def hasParamCmd(cmd: murphi.MurphiCmd):
     if isinstance(cmd, murphi.UndefineCmd):
         return False
     elif isinstance(cmd, murphi.AssignCmd):
@@ -165,7 +165,7 @@ def hasParamCmd(cmd: murphi.BaseCmd):
         print("hasParamCmd on %s" % cmd)
         raise NotImplementedError
 
-def translateVar1(v: murphi.BaseExpr, vars: List[str]):
+def translateVar1(v: murphi.MurphiExpr, vars: List[str]):
     names, idx = destruct_var(v, vars)
     if idx is None:
         return ".".join(names), None
@@ -411,7 +411,7 @@ def translateEnvByStartState(prot):
                 paraLemmas.append(isabelle.IsabelleLemma(assms=[cond1], conclusion=eq1,inLemmas=True))
                 makeSimpLemmasOn(i+1,"isPara")
 
-    def hasArrayIndex(v: murphi.BaseExpr) -> bool:
+    def hasArrayIndex(v: murphi.MurphiExpr) -> bool:
         """Return whether v contains an array index."""
         if isinstance(v, murphi.VarExpr):
             return False
@@ -422,7 +422,7 @@ def translateEnvByStartState(prot):
         else:
             raise AssertionError
 
-    def translate(cmd: murphi.BaseCmd, vars: List[str]):
+    def translate(cmd: murphi.MurphiCmd, vars: List[str]):
         nonlocal para
         if isinstance(cmd, murphi.AssignCmd):
             varOpd = translateIsabelleExp(cmd.var, vars)
@@ -505,7 +505,7 @@ def check_ite_assign_cmd(c):
                     c1.var == c2.var:
                     return (cond, c1.var, c1.expr, c2.expr)
 
-def translateCmd(cmd: murphi.BaseCmd, vars: List[str]):
+def translateCmd(cmd: murphi.MurphiCmd, vars: List[str]):
     if isinstance(cmd, murphi.Skip):
         return isabelle.Const("skip")
     elif isinstance(cmd, murphi.AssignCmd):
@@ -546,7 +546,7 @@ def translateCmd(cmd: murphi.BaseCmd, vars: List[str]):
         print("translateCmd: %s" % cmd)
         raise NotImplementedError
     
-def translateCmds(cmds: Iterable[murphi.BaseCmd], vars: List[str]):
+def translateCmds(cmds: Iterable[murphi.MurphiCmd], vars: List[str]):
     isa_cmds = []
     for cmd in cmds:
         isa_cmd = translateCmd(cmd, vars)

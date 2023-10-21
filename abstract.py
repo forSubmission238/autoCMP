@@ -1,6 +1,6 @@
 import murphi
 
-class DontCareExpr(murphi.BaseExpr):
+class DontCareExpr(murphi.MurphiExpr):
     def __init__(self):
         pass
 
@@ -379,14 +379,14 @@ def list_conj(es):
 def is_imp(e):
     return isinstance(e, murphi.OpExpr) and e.op == '->'
 
-def destruct_lemma(lemma: murphi.BaseExpr):
+def destruct_lemma(lemma: murphi.MurphiExpr):
     if isinstance(lemma, murphi.ForallExpr):
         decls, assms, concls = destruct_lemma(lemma.expr)
         return [lemma.var_decl] + decls, assms, concls
     elif is_imp(lemma):
         return [], split_conj(lemma.expr1), lemma.expr2
 
-def strengthen(rule: murphi.MurphiRule, lemma: murphi.BaseExpr):
+def strengthen(rule: murphi.MurphiRule, lemma: murphi.MurphiExpr):
     _, _, concl = destruct_lemma(lemma)
     cond_assms = split_conj(rule.cond)
     new_cond = list_conj(cond_assms + [concl])

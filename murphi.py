@@ -156,16 +156,16 @@ class MurphiVarDecl:
         return isinstance(other, MurphiVarDecl) and self.name == other.name and \
             self.typ == other.typ
 
-class BaseExpr:
+class MurphiExpr:
     """Base class for Murphi expressions."""
     def priority(self) -> int:
         raise NotImplementedError
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseExpr":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiExpr":
         return self
 
 
-class UnknownExpr(BaseExpr):
+class UnknownExpr(MurphiExpr):
     def __init__(self, s):
         assert isinstance(s, str)
         self.s = s
@@ -179,7 +179,7 @@ class UnknownExpr(BaseExpr):
     def __repr__(self):
         return "UnknownExpr(%s)" % repr(self.s)
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         assert isinstance(prot, MurphiProtocol)
         if self.s == "true":
             return BooleanExpr(True)
@@ -194,7 +194,7 @@ class UnknownExpr(BaseExpr):
         else:
             raise AssertionError("elaborate: unrecognized name %s" % self.s)
 
-class BooleanExpr(BaseExpr):
+class BooleanExpr(MurphiExpr):
     def __init__(self, val):
         self.val = val
 
@@ -213,7 +213,7 @@ class BooleanExpr(BaseExpr):
     def __eq__(self, other):
         return isinstance(other, BooleanExpr) and self.val == other.val
 
-class EnumValExpr(BaseExpr):
+class EnumValExpr(MurphiExpr):
     def __init__(self, enum_type, enum_val):
         self.enum_type = enum_type
         self.enum_val = enum_val
@@ -231,7 +231,7 @@ class EnumValExpr(BaseExpr):
         return isinstance(other, EnumValExpr) and self.enum_type == other.enum_type and \
             self.enum_val == other.enum_val
 
-class VarExpr(BaseExpr):
+class VarExpr(MurphiExpr):
     def __init__(self, name: str, typ: MurphiType):
         assert isinstance(name, str) and isinstance(typ, MurphiType)
         self.name = name
@@ -249,9 +249,9 @@ class VarExpr(BaseExpr):
     def __eq__(self, other):
         return isinstance(other, VarExpr) and self.name == other.name and self.typ == other.typ
 
-class FieldName(BaseExpr):
-    def __init__(self, v: BaseExpr, field: str):
-        assert isinstance(v, BaseExpr)
+class FieldName(MurphiExpr):
+    def __init__(self, v: MurphiExpr, field: str):
+        assert isinstance(v, MurphiExpr)
         assert isinstance(field, str)
         self.v = v
         self.field = field
@@ -268,11 +268,11 @@ class FieldName(BaseExpr):
     def __eq__(self, other):
         return isinstance(other, FieldName) and self.v == other.v and self.field == other.field
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         return FieldName(self.v.elaborate(prot, bound_vars), self.field)
 
-class ArrayIndex(BaseExpr):
-    def __init__(self, v: BaseExpr, idx: BaseExpr):
+class ArrayIndex(MurphiExpr):
+    def __init__(self, v: MurphiExpr, idx: MurphiExpr):
         self.v = v
         self.idx = idx
 
@@ -288,11 +288,11 @@ class ArrayIndex(BaseExpr):
     def __eq__(self, other):
         return isinstance(other, ArrayIndex) and self.v == other.v and self.idx == other.idx
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         return ArrayIndex(self.v.elaborate(prot, bound_vars), self.idx.elaborate(prot, bound_vars))
 
-class ForallExpr(BaseExpr):
-    def __init__(self, var_decl: MurphiVarDecl, expr: BaseExpr):
+class ForallExpr(MurphiExpr):
+    def __init__(self, var_decl: MurphiVarDecl, expr: MurphiExpr):
         self.var_decl = var_decl
         self.var, self.typ = self.var_decl.name, self.var_decl.typ
         self.expr = expr
@@ -313,7 +313,7 @@ class ForallExpr(BaseExpr):
         return isinstance(other, ForallExpr) and self.var_decl == other.var_decl and \
             self.expr == other.expr
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         bound_vars[self.var] = self.typ
         res = ForallExpr(self.var_decl, self.expr.elaborate(prot, bound_vars))
         del bound_vars[self.var]
@@ -328,11 +328,11 @@ priority_map = {
     '->': 25
 }
 
-class OpExpr(BaseExpr):
-    def __init__(self, op: str, expr1: BaseExpr, expr2: BaseExpr):
+class OpExpr(MurphiExpr):
+    def __init__(self, op: str, expr1: MurphiExpr, expr2: MurphiExpr):
         assert isinstance(op, str) and op in ("+",'=', '!=', '&', '|', '->')
-        assert isinstance(expr1, BaseExpr), "OpExpr: expr1 %s has type %s" % (expr1, type(expr1))
-        assert isinstance(expr2, BaseExpr), "OpExpr: expr2 %s has type %s" % (expr2, type(expr2))
+        assert isinstance(expr1, MurphiExpr), "OpExpr: expr1 %s has type %s" % (expr1, type(expr1))
+        assert isinstance(expr2, MurphiExpr), "OpExpr: expr2 %s has type %s" % (expr2, type(expr2))
         self.op = op
         self.expr1 = expr1
         self.expr2 = expr2
@@ -371,11 +371,11 @@ class OpExpr(BaseExpr):
         return isinstance(other, OpExpr) and self.op == other.op and self.expr1 == other.expr1 and \
             self.expr2 == other.expr2
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         return OpExpr(self.op, self.expr1.elaborate(prot, bound_vars), self.expr2.elaborate(prot, bound_vars))
 
-class NegExpr(BaseExpr):
-    def __init__(self, expr: BaseExpr):
+class NegExpr(MurphiExpr):
+    def __init__(self, expr: MurphiExpr):
         self.expr = expr
 
     def priority(self) -> int:
@@ -393,15 +393,15 @@ class NegExpr(BaseExpr):
     def __eq__(self, other):
         return isinstance(other, NegExpr) and self.expr == other.expr
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> BaseExpr:
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> MurphiExpr:
         return NegExpr(self.expr.elaborate(prot, bound_vars))
 
-class BaseCmd:
+class MurphiCmd:
     """Base class for Murphi commands."""
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseCmd":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiCmd":
         return self
 
-class Skip(BaseCmd):
+class Skip(MurphiCmd):
     def __init__(self):
         pass
 
@@ -414,9 +414,9 @@ class Skip(BaseCmd):
     def __eq__(self, other):
         return isinstance(other, Skip)
 
-class UndefineCmd(BaseCmd):
-    def __init__(self, var: BaseExpr):
-        assert isinstance(var, BaseExpr)
+class UndefineCmd(MurphiCmd):
+    def __init__(self, var: MurphiExpr):
+        assert isinstance(var, MurphiExpr)
         self.var = var
 
     def __str__(self):
@@ -428,13 +428,13 @@ class UndefineCmd(BaseCmd):
     def __eq__(self, other):
         return isinstance(other, UndefineCmd) and self.var == other.var
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseCmd":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiCmd":
         return UndefineCmd(self.var.elaborate(prot, bound_vars))
 
-class AssignCmd(BaseCmd):
-    def __init__(self, var: BaseExpr, expr: BaseExpr):
-        assert isinstance(var, BaseExpr)
-        assert isinstance(expr, BaseExpr)
+class AssignCmd(MurphiCmd):
+    def __init__(self, var: MurphiExpr, expr: MurphiExpr):
+        assert isinstance(var, MurphiExpr)
+        assert isinstance(expr, MurphiExpr)
         self.var = var
         self.expr = expr
 
@@ -447,11 +447,11 @@ class AssignCmd(BaseCmd):
     def __eq__(self, other):
         return isinstance(other, AssignCmd) and self.var == other.var and self.expr == other.expr
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseCmd":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiCmd":
         return AssignCmd(self.var.elaborate(prot, bound_vars), self.expr.elaborate(prot, bound_vars))
 
-class ForallCmd(BaseCmd):
-    def __init__(self, var_decl: MurphiVarDecl, cmds: Iterable[BaseCmd]):
+class ForallCmd(MurphiCmd):
+    def __init__(self, var_decl: MurphiVarDecl, cmds: Iterable[MurphiCmd]):
         self.var_decl = var_decl
         self.var, self.typ = self.var_decl.name, self.var_decl.typ
         self.cmds = tuple(cmds)
@@ -470,19 +470,19 @@ class ForallCmd(BaseCmd):
         return isinstance(other, ForallCmd) and self.var_decl == other.var_decl and \
             self.cmds == other.cmds
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseCmd":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiCmd":
         bound_vars[self.var] = self.typ
         res = ForallCmd(self.var_decl, [cmd.elaborate(prot, bound_vars) for cmd in self.cmds])
         del bound_vars[self.var]
         return res
 
-class IfCmd(BaseCmd):
-    def __init__(self, args: Iterable[BaseExpr | Iterable[BaseCmd]]):
+class IfCmd(MurphiCmd):
+    def __init__(self, args: Iterable[MurphiExpr | Iterable[MurphiCmd]]):
         assert len(args) >= 2, "IfCmd: input args has %s elements" % len(args)
         self.args = args
 
-        self.if_branches: List[Tuple[BaseExpr, BaseCmd]] = []
-        self.else_branch: Optional[BaseCmd] = None
+        self.if_branches: List[Tuple[MurphiExpr, MurphiCmd]] = []
+        self.else_branch: Optional[MurphiCmd] = None
         for i in range(len(self.args) // 2):
             self.if_branches.append((self.args[2*i], self.args[2*i+1]))
         if len(self.args) % 2 == 1:
@@ -509,17 +509,17 @@ class IfCmd(BaseCmd):
     def __eq__(self, other):
         return isinstance(other, IfCmd) and self.args == other.args
 
-    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "BaseCmd":
+    def elaborate(self, prot: "MurphiProtocol", bound_vars: Dict[str, MurphiType]) -> "MurphiCmd":
         new_args = []
         for arg in self.args:
-            if isinstance(arg, BaseExpr):
+            if isinstance(arg, MurphiExpr):
                 new_args.append(arg.elaborate(prot, bound_vars))
             else:
                 new_args.append([cmd.elaborate(prot, bound_vars) for cmd in arg])
         return IfCmd(new_args)
 
 class StartState:
-    def __init__(self, name: str, cmds: Iterable[BaseCmd]):
+    def __init__(self, name: str, cmds: Iterable[MurphiCmd]):
         self.name = name
         self.cmds = tuple(cmds)
 
@@ -543,10 +543,10 @@ class MurphiDecl:
 
 
 class MurphiRule:
-    def __init__(self, name: str, cond: BaseExpr, cmds: Iterable[BaseCmd]):
+    def __init__(self, name: str, cond: MurphiExpr, cmds: Iterable[MurphiCmd]):
         assert isinstance(name, str)
-        assert isinstance(cond, BaseExpr)
-        assert all(isinstance(cmd, BaseCmd) for cmd in cmds)
+        assert isinstance(cond, MurphiExpr)
+        assert all(isinstance(cmd, MurphiCmd) for cmd in cmds)
         self.name = name
         self.cond = cond
         self.cmds = tuple(cmds)
@@ -604,9 +604,9 @@ class MurphiRuleSet:
         return res
 
 class MurphiInvariant:
-    def __init__(self, name: str, inv: BaseExpr):
+    def __init__(self, name: str, inv: MurphiExpr):
         assert isinstance(name, str)
-        assert isinstance(inv, BaseExpr)
+        assert isinstance(inv, MurphiExpr)
         self.name = name
         self.inv = inv
 

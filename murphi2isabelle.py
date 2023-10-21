@@ -788,7 +788,7 @@ def translateAllSpecs(prot: murphi.MurphiProtocol):
     def_rules = isabelle.Definition(name="rules", typ=typ, val=isabelle.UN(rulesDefList), args=["N"])
     res.append(def_rules)
     deriveAllLLemmaProof = [isabelle.AutoProof(
-        unfolds=["deriveRule", "deriveForm" "deriveStmt"] + deriveAllLLemmaProofUnfolds1)]
+        unfolds=["deriveRule", "deriveForm", "deriveStmt"] + deriveAllLLemmaProofUnfolds1)]
     symProtAllLemmaProof = makeSymProtAllProof(symProtAllLemmaProofUsings2)
     deriveAllLLemmas = isabelle.IsabelleLemmas("deriveAll", deriveAllLLemmaist, proof=deriveAllLLemmaProof)
     symProtAllLemmas = isabelle.IsabelleLemmas("symProtAll", symProtAllLemmaList, proof=symProtAllLemmaProof)
@@ -1807,11 +1807,6 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof2=isabelle.subgoalProof(fors=["s0"],proofs=[proof21,proof22,proof23,proof25,proof26]+[isabelle.AutoProof()])
     autoIntros=["Un_iff"]+["lemma"+k+"_fitEnv" for k in prot.ori_rule_map.keys()]
     proof3=isabelle.subgoalProof(fors=["r","sk"],proofs=[isabelle.AutoProof(unfolds=["rule_refs"],introITag="intro",intros=autoIntros)])
-    '''proof7=isabelle.subgoalProof(fors=[],proofs=[isabelle.AutoProof()])
-    proof8s=[isabelle.AutoProof(unfolds=["rule_refs"])] + \
-        [isabelle.AutoProof(unfolds=[n+"_refs",n+"_ref"]) for n in prot.ori_rule_map.keys()]
-    proof8=isabelle.subgoalProof(fors=[],proofs=proof8s)
-    proof9=isabelle.AutoProof()'''
     lemma=isabelle.IsabelleLemma(assms=[assm],conclusion=conclusion,name=name,proof=[proof1,proof2,proof3])
     #generate the main lemma apply(rule_tac ?fs=" (allInitSpecs N)"  and rs="(rule_refs N)" and k="k" in invIntro)
     res.append(lemma)

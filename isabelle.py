@@ -24,9 +24,11 @@ class ConstType(IsabelleType):
     This includes types with parameters, e.g. 'a list, ('a, 'b) map, etc.
 
     """
-    def __init__(self, name: str, args: Optional[Iterable[IsabelleType]]=None):
+    def __init__(self, name: str, args: Optional[Iterable[IsabelleType]] = None):
         self.name = name
-        self.args = args
+        if args is None:
+            args = tuple()
+        self.args = tuple(args)
 
     def priority(self) -> int:
         return 100
@@ -95,15 +97,13 @@ class ListType(IsabelleType):
         return 40
 
     def __str__(self):
-        s1 = self.domain.export()
-        return "(%s) list" % (s1)
+        return "(%s) list" % self.domain
 
     def __repr__(self):
         return "ListType(%s)" % (repr(self.domain))
     
     def export(self) -> str:
-        s1 = self.domain.export()
-        return "(%s) list" % (s1)
+        return "(%s) list" % self.domain.export()
 
     def is_atom(self) -> bool:
         return False
@@ -438,7 +438,7 @@ class Quant(IsabelleTerm):
         return 10
 
     def __str__(self):
-        return "%s%s. %s" % (quant_op_map[self.quant_op], self.bound_var, self.t.export())
+        return "%s%s. %s" % (quant_op_map[self.quant_op], self.bound_var, self.t)
 
     def __repr__(self):
         return "Quant(%s, %s, %s)" % (self.quant_op, self.bound_var, repr(self.t))
@@ -576,22 +576,19 @@ class IsabelleLemma(IsabelleDecl):
         self.inLemmas = inLemmas
 
     def __str__(self):
-        assmPart = "" if len(self.assms) == 0 else \
-                    '[|' + (';'.join(str(assm) for assm in self.assms)) + '|]'
-        concPart = str(self.conclusion)
+        lemmaStr = str(self.conclusion)
+        for assm in reversed(self.assms):
+            lemmaStr = str(assm) + " \\<Longrightarrow> " + lemmaStr
         attribStr = "" if len(self.attribs) == 0 else \
-                    "[%s]" % (",".join(attrib for attrib in self.attribs))
+                    " [%s]" % (",".join(attrib for attrib in self.attribs))
         if not self.inLemmas:
-            res = "lemma %s %s: \n  \"%s%s%s\"\n%s\n  done\n" % ( \
-                    self.name, attribStr,
-                    assmPart,
-                    " ==> " if len(self.assms) > 0 else "", concPart.lstrip(),
+            res = "lemma %s%s: \n  \"%s\"\n%s\n  done\n" % (
+                    self.name, attribStr, lemmaStr,
                     "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
         else:
-            res = "\"%s%s%s\"\n  %s\n" % (
-                    assmPart,
-                    " ==> " if len(self.assms) > 0 else "", concPart.lstrip(),
+            res = "\"%s\"\n  %s\n" % (
+                    lemmaStr,
                     "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
         return res
@@ -602,20 +599,20 @@ class IsabelleLemma(IsabelleDecl):
              repr(self.attribs),repr(self.proof))
 
     def export(self):
-        assmPart = "" if len(self.assms) == 0 else \
-                '[|' + (';'.join(str(assm) for assm in self.assms)) + '|]'
-        concPart = str(self.conclusion)
+        lemmaStr = self.conclusion.export()
+        for assm in reversed(self.assms):
+            lemmaStr = assm.export() + " \\<Longrightarrow> " + lemmaStr
         attribStr = "" if len(self.attribs) == 0 else \
-                    "[%s]" % (",".join(attrib for attrib in self.attribs))
+                    " [%s]" % (",".join(attrib for attrib in self.attribs))
         if not self.inLemmas:
-            res = "lemma %s %s: \n  \"%s%s%s\"\n%s\n  done\n" % (
+            res = "lemma %s%s: \n  \"%s\"\n%s\n  done\n" % (
                     self.name, attribStr,
-                    assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(),
+                    lemmaStr,
                     "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
         else:
-            res = "\"%s%s%s\"\n %s\n" % (
-                    assmPart, " ==> " if len(self.assms)>0 else "", concPart.lstrip(),
+            res = "\"%s\"\n %s\n" % (
+                    lemmaStr,
                     "" if len(self.proof) == 0 else indent('\n'.join(str(proof) for proof in self.proof), 2)
                 )
         return res
@@ -629,7 +626,7 @@ class IsabelleLemmas(IsabelleDecl):
         self.proof = tuple(proof)
 
     def __str__(self):
-        res = "lemma %s : \n%s\n%s\n  done\n" % (
+        res = "lemma %s: \n%s\n%s\n  done\n" % (
                 self.name,
                 indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2),
                 indent('\n'.join(str(proof) for proof in self.proof), 2)
@@ -640,9 +637,9 @@ class IsabelleLemmas(IsabelleDecl):
             return "IsabelleLemmas(%s, %s, %s)" % (self.name, repr(self.lemmas), repr(self.proof))
 
     def export(self):
-        res = "lemma %s : \n%s\n%s\n  done\n" % (
+        res = "lemma %s: \n%s\n%s\n  done\n" % (
                 self.name,
-                indent('\n'.join(str(lemma).strip() for lemma in self.lemmas), 2),
+                indent('\n'.join(lemma.export().strip() for lemma in self.lemmas), 2),
                 indent('\n'.join(str(proof) for proof in self.proof), 2)
             )
         return res

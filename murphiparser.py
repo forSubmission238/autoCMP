@@ -65,6 +65,8 @@ grammar = r"""
 
     ?protocol: consts types vars startstate (prot_decl)*
 
+    ?invariants: (invariant)* -> invariants
+
     COMMENT: "--" /[^\n]*/ NEWLINE
 
     %import common.NEWLINE
@@ -184,10 +186,12 @@ class MurphiTransformer(Transformer):
     def protocol(self, consts, types, vars, start_state, *decls):
         return murphi.MurphiProtocol(consts, types, vars, start_state, decls)
 
+    def invariants(self, *args):
+        return args
 
 murphi_parser = Lark(grammar, start="protocol", parser="lalr", transformer=MurphiTransformer())
 
-invariant_parser = Lark(grammar, start="invariant", parser="lalr", transformer=MurphiTransformer())
+invariants_parser = Lark(grammar, start="invariants", parser="lalr", transformer=MurphiTransformer())
 
 def parse_file(filename) -> murphi.MurphiProtocol:
     with open(filename, "r") as f:

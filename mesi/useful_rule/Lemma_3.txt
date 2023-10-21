@@ -1,8 +1,0 @@
-invariant "Lemma_3"
-  forall p : NODE do forall i : NODE do
-    state[i] = MM ->
-    forall j : NODE do j != i -> state[j] != E 
-end
-end 
-end;
-

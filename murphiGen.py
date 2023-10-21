@@ -1,8 +1,9 @@
 import os
 import argparse
 import csv
+from typing import Tuple
 
-from murphiparser import invariant_parser, parse_file
+from murphiparser import invariants_parser, parse_file
 from abstract import strengthen, absTransfRule
 import murphi
 
@@ -13,8 +14,8 @@ args = arg_parser.parse_args()
 data_dir = '.'
 protocol_name = args.task
 
-prot = parse_file('{}/{}/{}.m'.format(data_dir, protocol_name, protocol_name))
-
+# Read the original protocol
+prot: murphi.MurphiProtocol = parse_file('{}/{}/{}.m'.format(data_dir, protocol_name, protocol_name))
 
 # Delete the old abstract protocol
 if os.path.exists('./{0}/ABS{0}.m'.format(protocol_name)):
@@ -30,19 +31,16 @@ with open('{}/{}/abs_process.csv'.format(data_dir, protocol_name)) as csv_f:
         abs_result[line[0]] = line[1:]
 
 # Read invariants
-invs = dict()
-for lemma in lemmas:
-    with open('{}/{}/useful_rule/{}.txt'.format(data_dir, protocol_name, lemma), 'r') as f:
-        invs[lemma] = invariant_parser.parse(f.read())
-        invs[lemma] = invs[lemma].elaborate(prot, dict())
-
-for lemma in lemmas:
-    prot.add_lemma(invs[lemma])
+with open('{}/{}/auxiliary.m'.format(data_dir, protocol_name)) as aux_f:
+    aux_invs: Tuple[murphi.MurphiInvariant] = invariants_parser.parse(aux_f.read())
+    for inv in aux_invs:
+        inv = inv.elaborate(prot, dict())
+        prot.add_lemma(inv)
 
 new_rules = list()
 for rule_name in prot.rule_map:
     if isinstance(prot.rule_map[rule_name], murphi.MurphiRule):
-        rule = prot.rule_map[rule_name]
+        rule: murphi.MurphiRule = prot.rule_map[rule_name]
         if rule_name in abs_result:
             for lemma_name in abs_result[rule_name]:
                 rule = strengthen(rule, prot.lemma_map[lemma_name].inv)
@@ -50,7 +48,7 @@ for rule_name in prot.rule_map:
         if abs_rule and (rule.cond != abs_rule.cond or rule.cmds != abs_rule.cmds):
             new_rules.append(abs_rule)
     elif isinstance(prot.rule_map[rule_name], murphi.MurphiRuleSet):
-        rule_set = prot.rule_map[rule_name]
+        rule_set: murphi.MurphiRuleSet = prot.rule_map[rule_name]
         rule = rule_set.rule
         if rule_name in abs_result:
             for lemma_name in abs_result[rule_name]:
@@ -74,7 +72,7 @@ for rule_name in prot.rule_map:
 for new_rule in new_rules:
     prot.add_abs_rule(new_rule)
 
-with open("./ABS{0}.m".format(protocol_name), 'a') as f:
+with open("{0}/ABS{1}.m".format(data_dir, protocol_name), 'a') as f:
     f.write(str(prot))
 
 os.rename('{0}/ABS{1}.m'.format(data_dir, protocol_name),

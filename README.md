@@ -1,15 +1,18 @@
-# auto-CMP
-we only need provide three input files in a case study:
-1.  prot.m: the protocol file im Murphi, which is under parameterized verification.
+# AutoCMP
 
-2. abs_process.csv: the CMP-abstraction information lines for the protocol. Each line records a  Murphi rule and the non-interference lemmas which are used for guard strengthening the rule.
+We only need provide three input files in a case study:
 
-3. useful_rule: the file includes all definitions of auxiliary invariants (or non-interference lemmas).
+1. `<prot>.m`: the protocol file im Murphi, which is under parameterized verification.
+
+2. `abs_process.csv`: the CMP-abstraction information lines for the protocol. Each line records a Murphi rule and the non-interference lemmas which are used for guard strengthening the rule.
+
+3. `auxiliary.m`: the file includes all definitions of auxiliary invariants (or non-interference lemmas).
 
 Output files are as follows:
+
 1. Our tool murphiGen can automatically generate the abstract protocol model and invariants for observation in a file absProt.m 
 
-2. The Tool proofGen can automatically generate a proof script Prot.thy certificating the correctness of the CMP-abstraction.
+2. The tool proofGen can automatically generate a proof script Prot.thy certificating the correctness of the CMP-abstraction.
 
 
 # System FrameWork
@@ -22,7 +25,7 @@ Cmurphi 5.5.0
 
 http://mclab.di.uniroma1.it/site/index.php/software/18-cmurphi
 
-Isabelle 2021 
+Isabelle 2023
 
 https://isabelle.in.tum.de/installation.html
 
@@ -42,24 +45,24 @@ Note that these programs runs on MAC or Linux system
 
 4. Run the file murphiGen.py --task prot, in which the parameter ‘prot’ represents the name of protocol you want to verify. It will automatically perform CMP work until ‘success!’ is displayed on the terminal.
 
-   ```
-   python murphiGen.py --task mutualEx
-   ```
+  ```
+  python murphiGen.py --task mutualEx
+  ```
 
-   After step 4, a file named ABSprot.m will appear in the path ./prot/, which is the final abstract protocol. 
+  After step 4, a file named ABSprot.m will appear in the path ./prot/, which is the final abstract protocol. 
 
-4. Then run proofGen.py --task prot to generate the proof file prot.thy(prot has the same meaning as above). This program will first generate a prot_str.json file in the current directory using abs_process.csv and ABSprot.m mentioned above, which records the enum type of the protocol and more detailed CMP description of each rule. With the help of this file, proofGen creates  prot.thy. 
+5. Then run proofGen.py --task prot to generate the proof file prot.thy(prot has the same meaning as above). This program will first generate a prot_str.json file in the current directory using abs_process.csv and ABSprot.m mentioned above, which records the enum type of the protocol and more detailed CMP description of each rule. With the help of this file, proofGen creates prot.thy. 
 
    ```
    python proofGen.py --task mutualEx
    ```
 
-## ABSprot.m
+## `ABS<prot>.m`
 
 The ABSprot.m is an abstraction of the original protocol. It contains the original and abstracted rules, as well as variable definitions, initializations, and invariants, etc. This file is model checked by Murphi, and a positive model checking result should be returned.
 
 
-## Prot.thy
+## `<prot>.thy`
 
 Prot.thy is provided to Isabelle, and should pass Isabelle's proof checking automatically. If both the former model checking result of ABSprot.m and the theorem proving result of  Prot.thy are successful, our parameterized checking of prot  is successful.  In detail, this proof script consists of the following parts:
 
@@ -103,83 +106,93 @@ The last element, “abstract”, represents abstract information about rules. I
 Take the mutualEx protocol as an example: its first item contains its enum type, "state", and then in the last item, "ruleset" means that the ruleset is "Idle" and "strengthening" means that "Lemma_1" is used to strengthen the rule. Its original rule name is "Idle_ref", while its abstract rule name is "ABS_Idle", which are both contained in "answer".
 
 In the other items, the "strengthen" of "Crit" is empty because its abstract form is the same as the original rule and has not been strengthened. "Try" and "Exit" don't exist after abstraction, so the content in "answer" is replaced by "skipRule".
-```
- [
-
-{
-
-  "enum_typs": [
-
-​        "state"
-
-   ]
-
-},
-
-{
-
-  "ruleset": "Try",
-
-  "strengthen": [  
-
-  ],
-
-  "answer": "Try_ref",
-
-  "abstract":[{"cond":{"i": true},"answer":"Try_ref"},{"cond":{"i": false},"answer":"skipRule"}]
-
-},
-
-{
-
-  "ruleset": "Crit",
-
-  "strengthen": [
-
-  ],
-
-  "answer": "Crit_ref",
-
-  "abstract":[{"cond":{"i": true},"answer":"Crit_ref"},{"cond":{"i": false},"answer":"ABS_Crit"}]
-
-},
-
-{
-
-  "ruleset": "Exit",
-
-  "strengthen": [  
-
-  ],
-
-  "answer": "Exit_ref",
-
-  "abstract":[{"cond":{"i": true},"answer":"Exit_ref"},{"cond":{"i": false},"answer":"skipRule"}]
-
-},
-
-{
-
-  "ruleset": "Idle",
-
-  "strengthen": [
-
-​    "Lemma_1"
-
-  ],
-
-  "answer": "Idle_ref",
-
-  "abstract":[{"cond":{"i": true},"answer":"Idle_ref"},{"cond":{"i": false},"answer":"ABS_Idle"}]
-
-}
-
+```json
+[
+    {
+        "enum_typs": [
+            "state"
+        ]
+    },
+    {
+        "ruleset": "Try",
+        "strengthen": [],
+        "answer": "Try_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Try_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "Crit",
+        "strengthen": [],
+        "answer": "Crit_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Crit_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_Crit"
+            }
+        ]
+    },
+    {
+        "ruleset": "Exit",
+        "strengthen": [],
+        "answer": "Exit_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Exit_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "skipRule"
+            }
+        ]
+    },
+    {
+        "ruleset": "Idle",
+        "strengthen": [
+            "Lemma_1"
+        ],
+        "answer": "Idle_ref",
+        "abstract": [
+            {
+                "cond": {
+                    "i": true
+                },
+                "answer": "Idle_ref"
+            },
+            {
+                "cond": {
+                    "i": false
+                },
+                "answer": "ABS_Idle"
+            }
+        ]
+    }
 ]
 ```
-
-
-
- 
 
 # Results
 
@@ -205,4 +218,4 @@ In the main directory, we place the main results of our work:
 
     (4)  Flash.thy
 
-3. By our experiments, we have found some errors in the classical work of CMP field [1].  Please refer to [errors](./SomeErrors.pdf) for details. 
+3. By our experiments, we have found some errors in the classical work of CMP field [1].  Please refer to [errors](./SomeErrors.pdf) for details.

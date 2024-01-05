@@ -899,6 +899,23 @@ invariant "CacheStateProp_Home"
   end;
 
 
+rule "ABS_PI_Remote_PutX"
+  forall p : NODE do
+    Sta.Dir.Dirty &
+    Sta.WbMsg.Cmd != WB_Wb &
+    Sta.ShWbMsg.Cmd != SHWB_ShWb &
+    Sta.Proc[p].CacheState != CACHE_E &
+    Sta.HomeProc.CacheState != CACHE_E &
+    Sta.HomeUniMsg.Cmd != UNI_Put &
+    Sta.UniMsg[p].Cmd != UNI_PutX &
+    Sta.HomeUniMsg.Cmd != UNI_PutX
+  end
+==>
+begin
+  Sta.WbMsg.Cmd := WB_Wb;
+  Sta.WbMsg.Proc := Other;
+endrule;
+
 rule "ABS_NI_Local_Get_Get"
   !Sta.Dir.Pending &
   Sta.Dir.Dirty &
@@ -935,146 +952,6 @@ begin
       Sta.Dir.HeadPtr := Other;
     end;
   end;
-endrule;
-
-rule "ABS_NI_Local_GetX_GetX"
-  !Sta.Dir.Pending &
-  Sta.Dir.Dirty &
-  !Sta.Dir.Local
-==>
-begin
-  Sta.Dir.Pending := true;
-  Sta.FwdCmd := UNI_GetX;
-  Sta.HomePendReqSrc := false;
-  Sta.PendReqSrc := Other;
-  Sta.Collecting := false;
-endrule;
-
-rule "ABS_NI_Local_GetX_PutX1"
-  !Sta.Dir.Pending &
-  ( Sta.Dir.Dirty ->
-      Sta.Dir.Local &
-      Sta.HomeProc.CacheState = CACHE_E ) &
-  Sta.Dir.Dirty
-==>
-begin
-  Sta.Dir.Local := false;
-  Sta.Dir.Dirty := true;
-  Sta.Dir.HeadVld := true;
-  Sta.Dir.HeadPtr := Other;
-  Sta.Dir.ShrVld := false;
-  for p : NODE do
-    Sta.Dir.ShrSet[p] := false;
-    Sta.Dir.InvSet[p] := false;
-  end;
-  Sta.HomeProc.CacheState := CACHE_I;
-endrule;
-
-rule "ABS_NI_Local_GetX_PutX2"
-  !Sta.Dir.Pending &
-  ( Sta.Dir.Dirty ->
-      Sta.Dir.Local &
-      Sta.HomeProc.CacheState = CACHE_E ) &
-  !Sta.Dir.Dirty &
-  ( Sta.Dir.HeadVld ->
-      Sta.Dir.HeadPtr = Other &
-      forall p : NODE do
-        !Sta.Dir.ShrSet[p]
-      end )
-==>
-begin
-  Sta.Dir.Dirty := true;
-  Sta.Dir.HeadVld := true;
-  Sta.Dir.HeadPtr := Other;
-  Sta.Dir.ShrVld := false;
-  for p : NODE do
-    Sta.Dir.ShrSet[p] := false;
-    Sta.Dir.InvSet[p] := false;
-  end;
-  Sta.HomeProc.CacheState := CACHE_I;
-  if Sta.Dir.Local then
-    Sta.HomeProc.CacheState := CACHE_I;
-    if Sta.HomeProc.ProcCmd = NODE_Get then
-      Sta.HomeProc.InvMarked := true;
-    end;
-  end;
-  Sta.Dir.Local := false;
-endrule;
-
-rule "ABS_NI_Local_GetX_PutX3"
-  !Sta.Dir.Pending &
-  ( Sta.Dir.Dirty ->
-      Sta.Dir.Local &
-      Sta.HomeProc.CacheState = CACHE_E ) &
-  !Sta.Dir.Dirty
-==>
-begin
-  Sta.Dir.Pending := true;
-  Sta.Dir.Dirty := true;
-  for p : NODE do
-    if Sta.Dir.ShrVld &
-    Sta.Dir.ShrSet[p] |
-    Sta.Dir.HeadVld &
-    Sta.Dir.HeadPtr = p then
-      Sta.Dir.InvSet[p] := true;
-    else
-      Sta.Dir.InvSet[p] := false;
-    end;
-    if Sta.Dir.ShrVld &
-    Sta.Dir.ShrSet[p] |
-    Sta.Dir.HeadVld &
-    Sta.Dir.HeadPtr = p then
-      Sta.InvMsg[p].Cmd := INV_Inv;
-    else
-      Sta.InvMsg[p].Cmd := INV_None;
-    end;
-    Sta.Dir.ShrSet[p] := false;
-  end;
-  Sta.Dir.HeadVld := true;
-  Sta.Dir.HeadPtr := Other;
-  Sta.Dir.ShrVld := false;
-  if Sta.Dir.Local then
-    Sta.HomeProc.CacheState := CACHE_I;
-    if Sta.HomeProc.ProcCmd = NODE_Get then
-      Sta.HomeProc.InvMarked := true;
-    end;
-  end;
-  Sta.Dir.Local := false;
-  Sta.HomePendReqSrc := false;
-  Sta.PendReqSrc := Other;
-  Sta.Collecting := true;
-endrule;
-
-rule "ABS_NI_ShWb"
-  Sta.ShWbMsg.Cmd = SHWB_ShWb &
-  Sta.ShWbMsg.Proc = Other
-==>
-begin
-  Sta.ShWbMsg.Cmd := SHWB_None;
-  Sta.Dir.Pending := false;
-  Sta.Dir.Dirty := false;
-  Sta.Dir.ShrVld := true;
-  for p : NODE do
-    Sta.Dir.InvSet[p] := Sta.Dir.ShrSet[p];
-  end;
-  undefine Sta.ShWbMsg.Proc;
-endrule;
-
-rule "ABS_PI_Remote_PutX"
-  forall p : NODE do
-    Sta.Dir.Dirty &
-    Sta.WbMsg.Cmd != WB_Wb &
-    Sta.ShWbMsg.Cmd != SHWB_ShWb &
-    Sta.Proc[p].CacheState != CACHE_E &
-    Sta.HomeProc.CacheState != CACHE_E &
-    Sta.HomeUniMsg.Cmd != UNI_Put &
-    Sta.UniMsg[p].Cmd != UNI_PutX &
-    Sta.HomeUniMsg.Cmd != UNI_PutX
-  end
-==>
-begin
-  Sta.WbMsg.Cmd := WB_Wb;
-  Sta.WbMsg.Proc := Other;
 endrule;
 
 ruleset dst : NODE do
@@ -1248,6 +1125,114 @@ begin
   Sta.HomeUniMsg.HomeProc := false;
   Sta.HomeUniMsg.Proc := Other;
   Sta.FwdCmd := UNI_None;
+endrule;
+
+rule "ABS_NI_Local_GetX_GetX"
+  !Sta.Dir.Pending &
+  Sta.Dir.Dirty &
+  !Sta.Dir.Local
+==>
+begin
+  Sta.Dir.Pending := true;
+  Sta.FwdCmd := UNI_GetX;
+  Sta.HomePendReqSrc := false;
+  Sta.PendReqSrc := Other;
+  Sta.Collecting := false;
+endrule;
+
+rule "ABS_NI_Local_GetX_PutX1"
+  !Sta.Dir.Pending &
+  ( Sta.Dir.Dirty ->
+      Sta.Dir.Local &
+      Sta.HomeProc.CacheState = CACHE_E ) &
+  Sta.Dir.Dirty
+==>
+begin
+  Sta.Dir.Local := false;
+  Sta.Dir.Dirty := true;
+  Sta.Dir.HeadVld := true;
+  Sta.Dir.HeadPtr := Other;
+  Sta.Dir.ShrVld := false;
+  for p : NODE do
+    Sta.Dir.ShrSet[p] := false;
+    Sta.Dir.InvSet[p] := false;
+  end;
+  Sta.HomeProc.CacheState := CACHE_I;
+endrule;
+
+rule "ABS_NI_Local_GetX_PutX2"
+  !Sta.Dir.Pending &
+  ( Sta.Dir.Dirty ->
+      Sta.Dir.Local &
+      Sta.HomeProc.CacheState = CACHE_E ) &
+  !Sta.Dir.Dirty &
+  ( Sta.Dir.HeadVld ->
+      Sta.Dir.HeadPtr = Other &
+      forall p : NODE do
+        !Sta.Dir.ShrSet[p]
+      end )
+==>
+begin
+  Sta.Dir.Dirty := true;
+  Sta.Dir.HeadVld := true;
+  Sta.Dir.HeadPtr := Other;
+  Sta.Dir.ShrVld := false;
+  for p : NODE do
+    Sta.Dir.ShrSet[p] := false;
+    Sta.Dir.InvSet[p] := false;
+  end;
+  Sta.HomeProc.CacheState := CACHE_I;
+  if Sta.Dir.Local then
+    Sta.HomeProc.CacheState := CACHE_I;
+    if Sta.HomeProc.ProcCmd = NODE_Get then
+      Sta.HomeProc.InvMarked := true;
+    end;
+  end;
+  Sta.Dir.Local := false;
+endrule;
+
+rule "ABS_NI_Local_GetX_PutX3"
+  !Sta.Dir.Pending &
+  ( Sta.Dir.Dirty ->
+      Sta.Dir.Local &
+      Sta.HomeProc.CacheState = CACHE_E ) &
+  !Sta.Dir.Dirty
+==>
+begin
+  Sta.Dir.Pending := true;
+  Sta.Dir.Dirty := true;
+  for p : NODE do
+    if Sta.Dir.ShrVld &
+    Sta.Dir.ShrSet[p] |
+    Sta.Dir.HeadVld &
+    Sta.Dir.HeadPtr = p then
+      Sta.Dir.InvSet[p] := true;
+    else
+      Sta.Dir.InvSet[p] := false;
+    end;
+    if Sta.Dir.ShrVld &
+    Sta.Dir.ShrSet[p] |
+    Sta.Dir.HeadVld &
+    Sta.Dir.HeadPtr = p then
+      Sta.InvMsg[p].Cmd := INV_Inv;
+    else
+      Sta.InvMsg[p].Cmd := INV_None;
+    end;
+    Sta.Dir.ShrSet[p] := false;
+  end;
+  Sta.Dir.HeadVld := true;
+  Sta.Dir.HeadPtr := Other;
+  Sta.Dir.ShrVld := false;
+  if Sta.Dir.Local then
+    Sta.HomeProc.CacheState := CACHE_I;
+    if Sta.HomeProc.ProcCmd = NODE_Get then
+      Sta.HomeProc.InvMarked := true;
+    end;
+  end;
+  Sta.Dir.Local := false;
+  Sta.HomePendReqSrc := false;
+  Sta.PendReqSrc := Other;
+  Sta.Collecting := true;
 endrule;
 
 ruleset dst : NODE do
@@ -1449,35 +1434,20 @@ begin
   Sta.Collecting := false;
 endrule;
 
-invariant "Lemma_3b"
-  forall src : NODE do
-    forall dst : NODE do
-      Sta.HomeUniMsg.Cmd = UNI_GetX &
-      !Sta.HomeUniMsg.HomeProc &
-      Sta.HomeUniMsg.Proc = dst ->
-        Sta.Dir.Pending &
-        !Sta.Dir.Local &
-        Sta.HomePendReqSrc &
-        Sta.FwdCmd = UNI_GetX
-    end
+rule "ABS_NI_ShWb"
+  Sta.ShWbMsg.Cmd = SHWB_ShWb &
+  Sta.ShWbMsg.Proc = Other
+==>
+begin
+  Sta.ShWbMsg.Cmd := SHWB_None;
+  Sta.Dir.Pending := false;
+  Sta.Dir.Dirty := false;
+  Sta.Dir.ShrVld := true;
+  for p : NODE do
+    Sta.Dir.InvSet[p] := Sta.Dir.ShrSet[p];
   end;
-
-
-invariant "Lemma_3a"
-  forall src : NODE do
-    forall dst : NODE do
-      src != dst &
-      Sta.UniMsg[src].Cmd = UNI_GetX &
-      !Sta.UniMsg[src].HomeProc &
-      Sta.UniMsg[src].Proc = dst ->
-        Sta.Dir.Pending &
-        !Sta.Dir.Local &
-        !Sta.HomePendReqSrc &
-        Sta.PendReqSrc = src &
-        Sta.FwdCmd = UNI_GetX
-    end
-  end;
-
+  undefine Sta.ShWbMsg.Proc;
+endrule;
 
 invariant "Lemma_1"
   forall src : NODE do
@@ -1524,6 +1494,36 @@ invariant "Lemma_2b"
         !Sta.Dir.Local &
         Sta.HomePendReqSrc &
         Sta.FwdCmd = UNI_Get
+    end
+  end;
+
+
+invariant "Lemma_3a"
+  forall src : NODE do
+    forall dst : NODE do
+      src != dst &
+      Sta.UniMsg[src].Cmd = UNI_GetX &
+      !Sta.UniMsg[src].HomeProc &
+      Sta.UniMsg[src].Proc = dst ->
+        Sta.Dir.Pending &
+        !Sta.Dir.Local &
+        !Sta.HomePendReqSrc &
+        Sta.PendReqSrc = src &
+        Sta.FwdCmd = UNI_GetX
+    end
+  end;
+
+
+invariant "Lemma_3b"
+  forall src : NODE do
+    forall dst : NODE do
+      Sta.HomeUniMsg.Cmd = UNI_GetX &
+      !Sta.HomeUniMsg.HomeProc &
+      Sta.HomeUniMsg.Proc = dst ->
+        Sta.Dir.Pending &
+        !Sta.Dir.Local &
+        Sta.HomePendReqSrc &
+        Sta.FwdCmd = UNI_GetX
     end
   end;
 

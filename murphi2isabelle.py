@@ -584,16 +584,16 @@ def translateRuleSet(ruleset: murphi.MurphiRuleSet):
 
 #generate def of rs, and  lemma items on deriveRule, symProts, and terms rs N  in rules--such as Trys
 #deriveAll lemmas such as r ∈ Trys N ⟹ deriveRule (env N) r
-'''definition Trys :: "nat \<Rightarrow> rule set" where
-  "Trys N \<equiv> oneParamCons N Try"
-  definition NI_Remote_Get_Put_refs :: "nat \<Rightarrow> rule set" where [rules_simp]:
-  "NI_Remote_Get_Put_refs N \<equiv> twoParamsCons N (NI_Remote_Get_Put_ref N)
+'''definition Trys :: "nat \\<Rightarrow> rule set" where
+  "Trys N \\<equiv> oneParamCons N Try"
+  definition NI_Remote_Get_Put_refs :: "nat \\<Rightarrow> rule set" where [rules_simp]:
+  "NI_Remote_Get_Put_refs N \\<equiv> twoParamsCons N (NI_Remote_Get_Put_ref N)
  
 lemma deriveAll:
-  "r \<in> Trys N \<Longrightarrow> deriveRule (env N) r"
-  "r \<in> Crits N \<Longrightarrow> deriveRule (env N) r"
-  "r \<in> Exits N \<Longrightarrow> deriveRule (env N) r"
-  "r \<in> Idles N \<Longrightarrow> deriveRule (env N) r"
+  "r \\<in> Trys N \\<Longrightarrow> deriveRule (env N) r"
+  "r \\<in> Crits N \\<Longrightarrow> deriveRule (env N) r"
+  "r \\<in> Exits N \\<Longrightarrow> deriveRule (env N) r"
+  "r \\<in> Idles N \\<Longrightarrow> deriveRule (env N) r"
   by (auto simp: deriveRule_def deriveForm_def deriveStmt_def
       Trys_def Try_def Crits_def Crit_def Exits_def Exit_def Idles_def Idle_def)
 
@@ -606,8 +606,8 @@ lemma symProtAll:
     symIdle(1) Idles_def
     symParaRuleInfSymRuleSet by auto 
 
-definition rules :: "nat \<Rightarrow> rule set" where
-  "rules N \<equiv> Trys N \<union> Crits N \<union> Exits N \<union> Idles N"
+definition rules :: "nat \\<Rightarrow> rule set" where
+  "rules N \\<equiv> Trys N \\<union> Crits N \\<union> Exits N \\<union> Idles N"
 
   "'''
 
@@ -1064,14 +1064,14 @@ lemma IdleStrengthRel:"strengthenRel (Idles N)  (set (InvS N)) (Idle_refs N) N "
   done
 
 
-definition lemmasFor_Idle :: "nat \<Rightarrow> (nat \<Rightarrow> nat \<Rightarrow> formula) list" where
-  "lemmasFor_Idle N \<equiv> [Lemma_1 N]"
+definition lemmasFor_Idle :: "nat \\<Rightarrow> (nat \\<Rightarrow> nat \\<Rightarrow> formula) list" where
+  "lemmasFor_Idle N \\<equiv> [Lemma_1 N]"
 
-definition lemmasFor_Idle' :: "nat \<Rightarrow> (nat \<Rightarrow> nat \<Rightarrow> formula) list" where
-  "lemmasFor_Idle' N \<equiv> [Lemma_1' N]"
+definition lemmasFor_Idle' :: "nat \\<Rightarrow> (nat \\<Rightarrow> nat \\<Rightarrow> formula) list" where
+  "lemmasFor_Idle' N \\<equiv> [Lemma_1' N]"
 
-definition InvS :: "nat \<Rightarrow> (nat \<Rightarrow> nat \<Rightarrow> formula) list list" where
-  "InvS N \<equiv> [lemmasFor_Idle N]"
+definition InvS :: "nat \\<Rightarrow> (nat \\<Rightarrow> nat \\<Rightarrow> formula) list list" where
+  "InvS N \\<equiv> [lemmasFor_Idle N]"
 '''
 
 
@@ -1138,7 +1138,7 @@ def swapListEle(a,i,j):
     a[i]=a[j]
     a[j]=temp
 
-def genSterengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
+def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
     def getRuleOrRuleset(item):
         try: 
             return(item["ruleset"])
@@ -1306,18 +1306,18 @@ def genSterengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             2. definitions for    ABS_rules,  ABS_rules' 
             "abstract":[{"cond":{"i": false},"answer":"ABS_Idle"},{"cond":{"i": true},"answer":"ABS_Idle"}]
             lemma abs_Idle_ref
-            "M \<le> N \<Longrightarrow> i \<le> M \<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
-            "M \<le> N \<Longrightarrow> i > M \<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
-            definition ABS_rules :: "nat \<Rightarrow> rule set" where [simp]:
-            "ABS_rules M \<equiv>
-            Trys M \<union> Crits M \<union> {ABS_Crit} \<union> Exits M \<union> Idle_refs M \<union> {ABS_Idle M} \<union> {chaos \<triangleright> skip}"
+            "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
+            "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+            definition ABS_rules :: "nat \\<Rightarrow> rule set" where [simp]:
+            "ABS_rules M \\<equiv>
+            Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
 
-            definition ABS_rules' :: "nat \<Rightarrow> rule set" where [simp]:
-            "ABS_rules' M \<equiv>
-            ((Trys M) \<union> {chaos \<triangleright> skip}) \<union>
-            ((Crits M) \<union> {ABS_Crit}) \<union>
-            ((Exits M) \<union> {chaos \<triangleright> skip}) \<union>
-            ((Idle_refs M) \<union> {ABS_Idle M})"
+            definition ABS_rules' :: "nat \\<Rightarrow> rule set" where [simp]:
+            "ABS_rules' M \\<equiv>
+            ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+            ((Crits M) \\<union> {ABS_Crit}) \\<union>
+            ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+            ((Idle_refs M) \\<union> {ABS_Idle M})"
 
             lemma ABS_rules_eq_rules':
             "ABS_rules M = ABS_rules' M"
@@ -1485,18 +1485,18 @@ def genSterengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             2. definitions for    ABS_rules,  ABS_rules' 
             "abstract":[{"cond":{"i": false},"answer":"ABS_Idle"},{"cond":{"i": true},"answer":"ABS_Idle"}]
             lemma abs_Idle_ref
-            "M \<le> N \<Longrightarrow> i \<le> M \<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
-            "M \<le> N \<Longrightarrow> i > M \<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
-            definition ABS_rules :: "nat \<Rightarrow> rule set" where [simp]:
-            "ABS_rules M \<equiv>
-            Trys M \<union> Crits M \<union> {ABS_Crit} \<union> Exits M \<union> Idle_refs M \<union> {ABS_Idle M} \<union> {chaos \<triangleright> skip}"
+            "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
+            "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+            definition ABS_rules :: "nat \\<Rightarrow> rule set" where [simp]:
+            "ABS_rules M \\<equiv>
+            Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
 
-            definition ABS_rules' :: "nat \<Rightarrow> rule set" where [simp]:
-            "ABS_rules' M \<equiv>
-            ((Trys M) \<union> {chaos \<triangleright> skip}) \<union>
-            ((Crits M) \<union> {ABS_Crit}) \<union>
-            ((Exits M) \<union> {chaos \<triangleright> skip}) \<union>
-            ((Idle_refs M) \<union> {ABS_Idle M})"
+            definition ABS_rules' :: "nat \\<Rightarrow> rule set" where [simp]:
+            "ABS_rules' M \\<equiv>
+            ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+            ((Crits M) \\<union> {ABS_Crit}) \\<union>
+            ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+            ((Idle_refs M) \\<union> {ABS_Idle M})"
 
             lemma ABS_rules_eq_rules':
             "ABS_rules M = ABS_rules' M"
@@ -1650,7 +1650,7 @@ def genAllInvariantsPrime(prot: murphi.MurphiProtocol):
 
 
 '''lemma wellFormedRules:
-  "r \<in> rules N \<Longrightarrow> wellFormedRule (env N) N r"
+  "r \\<in> rules N \\<Longrightarrow> wellFormedRule (env N) N r"
   unfolding wellFormedRule.simps
   by (auto simp add: rules_def rules_simp
     symPI_Remote_Get
@@ -1659,12 +1659,12 @@ def genAllInvariantsPrime(prot: murphi.MurphiProtocol):
 lemma absProtSim:
   assumes "M < N"
     and "M = 1"
-    and "isAbstractProtInvSet absRules Is S' M env ""\<forall>i invL f s l. l\<le>1 \<and> invL \<in> set (InvS' N) \<longrightarrow> f \<in> set invL \<longrightarrow>
-           reachableUpTo {f'. \<exists>f. f \<in> (allInitSpecs N) \<and> f' = absTransfForm (env N) M f} (ABS_rules M) i s \<longrightarrow>
+    and "isAbstractProtInvSet absRules Is S' M env ""\\<forall>i invL f s l. l\\<le>1 \\<and> invL \\<in> set (InvS' N) \\<longrightarrow> f \\<in> set invL \\<longrightarrow>
+           reachableUpTo {f'. \\<exists>f. f \\<in> (allInitSpecs N) \\<and> f' = absTransfForm (env N) M f} (ABS_rules M) i s \\<longrightarrow>
            formEval (absTransfForm (env N) M (f 0 l)) s"
-    shows isParamProtInvSet  rs Is S N "\<forall>invL f s i j. invL \<in> set (InvS N) \<longrightarrow> f \<in> set invL \<longrightarrow>
-           reachableUpTo (allInitSpecs N) (rules N) k s \<longrightarrow>
-           i \<le> N \<longrightarrow> j \<le> N \<longrightarrow> formEval (f i j) s" 
+    shows isParamProtInvSet  rs Is S N "\\<forall>invL f s i j. invL \\<in> set (InvS N) \\<longrightarrow> f \\<in> set invL \\<longrightarrow>
+           reachableUpTo (allInitSpecs N) (rules N) k s \\<longrightarrow>
+           i \\<le> N \\<longrightarrow> j \\<le> N \\<longrightarrow> formEval (f i j) s" 
   apply (rule_tac ?rs2.0 = "rules2 N" and env="env N" and S="set (InvS N)" and S'="set (InvS' N)" and M=M and absRules="ABS_rules M" in CMP1)
   subgoal for r'''
 
@@ -1762,7 +1762,7 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     res.append(isabelle.IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
     
     '''lemma rules2WellTyped:
-    "r \<in> rules2 N \<Longrightarrow> deriveRule (env N) r"
+    "r \\<in> rules2 N \\<Longrightarrow> deriveRule (env N) r"
     unfolding rules2_def'''
     name="rules2WellTyped"
     assm=isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")]))
@@ -1877,9 +1877,9 @@ def translateProtocol(prot: murphi.MurphiProtocol, str_data):
     str_data = str_data[1:]
     defs.extend(translateAllSpecs(prot)) 
     defs.extend(genSymLemmas(prot))
-    defs.extend(genSterengthenLemmas(prot,str_data))
+    defs.extend(genStrengthenLemmas(prot, str_data))
     defs.extend(genAllInvariantsPrime(prot))
-    defs.extend(genAllRuleSetStuff(prot,str_data,initSpecs))
+    defs.extend(genAllRuleSetStuff(prot, str_data, initSpecs))
     return defs
 
 def translateFile(filename: str, str_file: str, theory_name: str):

@@ -247,6 +247,19 @@ begin
   CurCmd := Empty;
 endrule;
 
+rule "ABS_RecvInvAck1"
+  CurCmd != Empty &
+  ExGntd = true &
+  forall j : NODE do
+    Cache[j].State != E &
+    Chan2[j].Cmd != GntE &
+    Chan3[j].Cmd != InvAck
+  end
+==>
+begin
+  ExGntd := false;
+endrule;
+
 rule "ABS_RecvReqE"
   CurCmd = Empty
 ==>
@@ -267,19 +280,6 @@ begin
   for j : NODE do
     InvSet[j] := ShrSet[j];
   end;
-endrule;
-
-rule "ABS_RecvInvAck1"
-  CurCmd != Empty &
-  ExGntd = true &
-  forall j : NODE do
-    Cache[j].State != E &
-    Chan2[j].Cmd != GntE &
-    Chan3[j].Cmd != InvAck
-  end
-==>
-begin
-  ExGntd := false;
 endrule;
 
 invariant "Lemma_1"

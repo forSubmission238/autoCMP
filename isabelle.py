@@ -84,7 +84,7 @@ class FunType(IsabelleType):
             s1 = "(" + s1 + ")"
         if self.range.priority() < self.priority():
             s2 = "(" + s2 + ")"
-        return "%s \<Rightarrow> %s" % (s1, s2)
+        return "%s \\<Rightarrow> %s" % (s1, s2)
 
     def is_atom(self) -> bool:
         return False
@@ -190,21 +190,21 @@ class String(IsabelleTerm):
 NO_ASSOC, LEFT_ASSOC, RIGHT_ASSOC = 0, 1, 2
 
 op_map_raw = {
-    "==": ("\<equiv>", 2, RIGHT_ASSOC, ""),
+    "==": ("\\<equiv>", 2, RIGHT_ASSOC, ""),
     "=": ("=", 50, RIGHT_ASSOC, ""),
     "+": ("+", 65, LEFT_ASSOC, ""),
-    "=f": ("=\<^sub>f", 50, RIGHT_ASSOC, ""),
-    "|>": ("\<triangleright>", 30, NO_ASSOC, "t"),
+    "=f": ("=\\<^sub>f", 50, RIGHT_ASSOC, ""),
+    "|>": ("\\<triangleright>", 30, NO_ASSOC, "t"),
     "||": ("||", 35, RIGHT_ASSOC, "n"),
-    "&f": ("\<and>\<^sub>f", 35, RIGHT_ASSOC, "n"),
-    "|f": ("\<or>\<^sub>f", 30, RIGHT_ASSOC, "n"),
-    "->f": ("\<longrightarrow>\<^sub>f", 25, RIGHT_ASSOC, "n"),
-    "Un": ("\<union>", 2, LEFT_ASSOC, ""),
-    "&": ("\<and>", 2, LEFT_ASSOC, ""),
-    "<=": ("\<le>", 2, RIGHT_ASSOC, ""),
+    "&f": ("\\<and>\\<^sub>f", 35, RIGHT_ASSOC, "n"),
+    "|f": ("\\<or>\\<^sub>f", 30, RIGHT_ASSOC, "n"),
+    "->f": ("\\<longrightarrow>\\<^sub>f", 25, RIGHT_ASSOC, "n"),
+    "Un": ("\\<union>", 2, LEFT_ASSOC, ""),
+    "&": ("\\<and>", 2, LEFT_ASSOC, ""),
+    "<=": ("\\<le>", 2, RIGHT_ASSOC, ""),
     ">": (">", 2, RIGHT_ASSOC, ""),
     "<": ("<", 2, RIGHT_ASSOC, ""),
-    ":": ("\<in>", 2, RIGHT_ASSOC, ""),
+    ":": ("\\<in>", 2, RIGHT_ASSOC, ""),
     "`": ("`", 2, RIGHT_ASSOC, "")
 }
 
@@ -272,8 +272,8 @@ class Op(IsabelleTerm):
             return "%s %s %s" % (s1, op_map[self.op].isa_name, s2)
 
 uop_map_raw = {
-    "~": ("\<not>", 40),
-    "~f": ("\<not>\<^sub>f", 40),
+    "~": ("\\<not>", 40),
+    "~f": ("\\<not>\\<^sub>f", 40),
 }
 
 class UOpInfo:
@@ -419,11 +419,11 @@ class List(IsabelleTerm):
         return "[%s]" % (', '.join(arg.export() for arg in self.args))
 
 quant_op_map = {
-    "%": "\<lambda>",
-    "all": "\<forall>",
-    "ex": "\<exists>",
-    "all_f": "\<forall>\<^sub>f",
-    "ex_f": "\<exists>\<^sub>f",
+    "%": "\\<lambda>",
+    "all": "\\<forall>",
+    "ex": "\\<exists>",
+    "all_f": "\\<forall>\\<^sub>f",
+    "ex_f": "\\<exists>\\<^sub>f",
 }
 
 class Quant(IsabelleTerm):

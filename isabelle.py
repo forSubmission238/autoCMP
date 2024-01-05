@@ -23,6 +23,12 @@ class ConstType(IsabelleType):
     
     This includes types with parameters, e.g. 'a list, ('a, 'b) map, etc.
 
+    Attributes
+    ----------
+    name : str
+        name of the type
+    
+
     """
     def __init__(self, name: str, args: Optional[Iterable[IsabelleType]] = None):
         self.name = name
@@ -59,7 +65,16 @@ class ConstType(IsabelleType):
         return not self.args
 
 class FunType(IsabelleType):
-    """Function type a => b."""
+    """Function type a => b.
+    
+    Attributes
+    ----------
+    domain : IsabelleType
+        domain of the function
+    range : IsabelleType
+        range of the function
+    """
+
     def __init__(self, domain: IsabelleType, range: IsabelleType):
         self.domain = domain
         self.range = range
@@ -965,7 +980,8 @@ def ruleS(conds, stmts):
 def enum_def(cl: str, v: str) -> Definition:
     return Definition(v, scalarValueType, enum(cl, v), is_simp=True, is_equiv=True)
 
-def header(thy_name):
+def header(thy_name: str):
+    """Create header for Isabelle theory with given name."""
     return """
 theory %s
   imports "../ECMP"

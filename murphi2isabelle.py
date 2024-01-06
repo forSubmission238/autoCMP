@@ -10,12 +10,14 @@ from isabelle import Const, Fun, Op, FunType
 from isabelle import Definition, IsabelleLemma, IsabelleLemmas
 
 def translateEnum(enum_typ: str, enum: murphi.EnumType):
+    """Obtain definition of enum value."""
     res = []
     for name in enum.names:
         res.append(isabelle.enum_def(enum_typ, name))
     return res
 
 def translateAllEnum(prot: murphi.MurphiProtocol, spec_data):
+    """Obtain all enum definitions."""
     res = []
     for item in spec_data:
         if "enum_typs" in item:
@@ -26,6 +28,7 @@ def translateAllEnum(prot: murphi.MurphiProtocol, spec_data):
     return res
 
 def translateBooleans():
+    """Obtain definition of boolean values."""
     return [
         Definition("true", isabelle.scalarValueType, isabelle.boolV(True), is_simp=True, is_equiv=True),
         Definition("false", isabelle.scalarValueType, isabelle.boolV(False), is_simp=True, is_equiv=True),
@@ -42,8 +45,7 @@ def destruct_var(e: murphi.MurphiExpr, vars: List[str]):
         names, idx = destruct_var(e.v, vars)
         return names + [e.field], idx
     else:
-        print("destruct var on %s" % e)
-        raise NotImplementedError
+        raise NotImplementedError("destruct var on %s" % e)
 
 def translateVar(v: murphi.MurphiExpr, vars: List[str]):
     names, idx = destruct_var(v, vars)
@@ -176,18 +178,18 @@ def translateVar1(v: murphi.MurphiExpr, vars: List[str]):
 
 
 class initSpec:
-    def __init__(self,cmd,vars,order):
-        self.cmd=cmd 
-        self.vars=vars
-        self.order=order
-        self.name="initSpec" + str(order)
-        (str1,result)=translateVar1(self.cmd.var,vars)
-        if not(result is None):
-            self.assignVar=(str1)
-            self.isGlobal=False 
+    def __init__(self, cmd: murphi.MurphiCmd, vars, order):
+        self.cmd = cmd 
+        self.vars = vars
+        self.order = order
+        self.name = "initSpec" + str(order)
+        str1, result = translateVar1(self.cmd.var, vars)
+        if result is not None:
+            self.assignVar = str1
+            self.isGlobal = False 
         else:
-            self.assignVar=str1
-            self.isGlobal=True
+            self.assignVar = str1
+            self.isGlobal = True
 
         if isinstance(cmd, murphi.AssignCmd):
             typ = isabelle.formula
@@ -200,9 +202,9 @@ class initSpec:
             for v in vars:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
-            self.defi=Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True)
-        elif  isinstance(cmd, murphi.UndefineCmd): 
-            def_name = "initSpec" + str(order)
+            self.defi = Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True)
+
+        elif isinstance(cmd, murphi.UndefineCmd): 
             typ = isabelle.formula
             for _ in range(len(vars)):
                 typ = FunType(isabelle.nat, typ)
@@ -214,12 +216,11 @@ class initSpec:
             for v in vars:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
-            val=isabelle.exF("i_0",val,"N")
-            typ = FunType(isabelle.nat, typ) if vars==[] else typ
-            if len(args)==0:
+            val = isabelle.exF("i_0", val, "N")
+            typ = FunType(isabelle.nat, typ) if vars == [] else typ
+            if len(args) == 0:
                 args.append("N")  
-            self.defi=(Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True))
-        
+            self.defi = Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True)
 
     def genInitSubgoalProof(self):
         args = [Const(arg) for arg in self.defi.args]
@@ -230,13 +231,16 @@ class initSpec:
         return self.name + str(self.order) + self.assignVar
 
 def translateStartState(prot: murphi.MurphiProtocol):
+    """Translate each condition on starting state to Isabelle."""
     count = 0
     res = []
-    opds=[]
-    initSpecs=[]
-    def translate(cmd, vars):
+    opds = []
+    initSpecs = []
+
+    def translate(cmd: murphi.MurphiCmd, vars: List[str]):
         nonlocal count
         if isinstance(cmd, murphi.AssignCmd):
+            # Translate condition for the assign command
             def_name = "initSpec" + str(count)
             count += 1
             typ = isabelle.formula
@@ -249,21 +253,41 @@ def translateStartState(prot: murphi.MurphiProtocol):
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
             res.append(Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
-            predic=Const(def_name) if args==[] else  Fun(Const(def_name),[Const("N") ])
-            proof=[isabelle.AutoProof()] if args==[] else [isabelle.IsabelleApplyRuleProof(name="symPredSetForall",unfolds=[def_name]),
-            isabelle.AutoProof(unfolds=["symParamForm"])]
+
+            """
+            lemma symPreds<i> [intro]:
+                "symPredSet' N {initSpec<i> N}"
+                <proof>
+            """
+            if args == []:
+                predic = Const(def_name)
+                proof = [isabelle.AutoProof()]
+                setOpd = []
+            else:
+                predic = Fun(Const(def_name), [Const("N")])
+                proof = [
+                    isabelle.IsabelleApplyRuleProof(name="symPredSetForall", unfolds=[def_name]),
+                    isabelle.AutoProof(unfolds=["symParamForm"])
+                ]
+                setOpd = [Const("N")]
             lemma = IsabelleLemma(
-                [], Fun(Const("symPredSet'"), [Const("N"),isabelle.Set(predic)]),
-                attribs=["intro"],
                 name="symPreds" + str(count - 1),
+                assms=[],
+                conclusion=Fun(Const("symPredSet'"), [Const("N"), isabelle.Set(predic)]),
+                attribs=["intro"],
                 proof=proof)
-            res.append(lemma) 
-            setOpd = [] if args==[] else [Const("N")]
-            opd=isabelle.Set(Fun(Const(def_name), setOpd  ))
+            res.append(lemma)
+            opd = isabelle.Set(Fun(Const(def_name), setOpd))
             opds.append(opd)
-            '''f ∈ {InitSpecs_1 N} ==>deriveForm (env N) f'''
-            assm=Op(":",Const("f"),opd)
-            proof=isabelle.AutoProof()
+
+            """
+            lemma deriveFormInitSpec<i> [intro]:
+                f ∈ {InitSpecs<i> N} ⟹ deriveForm (env N) f
+                apply auto
+                done
+            """
+            assm = Op(":", Const("f"), opd)
+            proof = isabelle.AutoProof()
             conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
             lemma=IsabelleLemma(assms=[assm],conclusion=conclusion, \
             attribs=["intro"],name="deriveFormInitSpec"+ str(count - 1),proof=[proof])
@@ -271,46 +295,68 @@ def translateStartState(prot: murphi.MurphiProtocol):
             initSpecs.append(initSpec(cmd,vars,count - 1))
 
         elif isinstance(cmd, murphi.UndefineCmd):
+            # Translate condition for the undefine command
             def_name = "initSpec" + str(count)
             count += 1
             typ = isabelle.formula
             for _ in range(len(vars)):
                 typ = FunType(isabelle.nat, typ)
-            assert cmd.var!= "i_0"
-            val = isabelle.eqF(translateExp(cmd.var, vars), isabelle.index("i_0") )
+            assert cmd.var != "i_0"
+            val = isabelle.eqF(translateExp(cmd.var, vars), isabelle.index("i_0"))
             args = []
             assert len(vars) <= 1
             for v in vars:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
-            val=isabelle.exF("i_0",val,"N")
-            typ = FunType(isabelle.nat, typ) if vars==[] else typ
-            if len(args)==0:
+            val = isabelle.exF("i_0", val, "N")
+            typ = FunType(isabelle.nat, typ) if vars == [] else typ
+            if len(args) == 0:
                 args.append("N")  
             res.append(Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
 
-            predic=Fun(Const(def_name),[Const("N") ]) #Const(def_name) if args==[] else  
-            proof=[isabelle.IsabelleApplyRuleProof(name="symPredSetExist",unfolds=[def_name]),
-            isabelle.AutoProof(unfolds=["symParamForm"])] if vars==[] else [isabelle.IsabelleApplyRuleProof(name="symPredSetExistForall",unfolds=[def_name]),
-            isabelle.AutoProof(unfolds=["symParamForm2"])]
+            """
+            lemma symPreds<i> [intro]:
+                "symPredSet' N {initSpec<i> N}"
+                <proof>
+            """
+            if vars == []:
+                proof = [
+                    isabelle.IsabelleApplyRuleProof(name="symPredSetExist", unfolds=[def_name]),
+                    isabelle.AutoProof(unfolds=["symParamForm"])
+                ]
+            else:
+                proof = [
+                    isabelle.IsabelleApplyRuleProof(name="symPredSetExistForall",unfolds=[def_name]),
+                    isabelle.AutoProof(unfolds=["symParamForm2"])
+                ]
             lemma = IsabelleLemma(
-                [], Fun(Const("symPredSet'"), [Const("N"), isabelle.Set(predic)]),
-                attribs=["intro"],
                 name="symPreds" + str(count - 1),
+                assms=[],
+                conclusion=Fun(Const("symPredSet'"), [Const("N"), isabelle.Set(Fun(Const(def_name), [Const("N")]))]),
+                attribs=["intro"],
                 proof=proof)
-            res.append(lemma) 
+            res.append(lemma)
 
             setOpd = [Const("N")] #[] if args==[] else 
             opd=isabelle.Set(Fun(Const(def_name), setOpd  ))
             opds.append(opd) 
-            '''f ∈ {InitSpecs_1 N} ==>deriveForm (env N) f'''
-            assm=Op(":",Const("f"),opd)
-            conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
-            proof=isabelle.AutoProof()
-            lemma=IsabelleLemma(assms=[assm],conclusion=conclusion, \
-            attribs=["intro"],name="deriveFormInitSpec"+ str(count - 1),proof=[proof])
-            res.append(lemma) 
-            initSpecs.append(initSpec(cmd,vars,count - 1))
+
+            """
+            lemma deriveFormInitSpec<i> [intro]:
+                f ∈ {InitSpecs<i> N} ⟹ deriveForm (env N) f
+                apply auto
+                done
+            """
+            lemma = IsabelleLemma(
+                name="deriveFormInitSpec" + str(count - 1),
+                assms=[Op(":", Const("f"), opd)],
+                conclusion=Fun(Const("deriveForm"), [Fun(Const("env"), [Const("N")]), Const("f")]),
+                attribs=["intro"],
+                proof=[isabelle.AutoProof()])
+            res.append(lemma)
+
+            # Add to list of initSpecs
+            initSpecs.append(initSpec(cmd, vars, count - 1))
 
         elif isinstance(cmd, murphi.ForallCmd):
             assert cmd.typ == murphi.VarType("NODE")
@@ -320,44 +366,63 @@ def translateStartState(prot: murphi.MurphiProtocol):
             del vars[-1]
 
         else:
-            print("translateStartState: %s" % cmd)
-            raise NotImplementedError
+            raise NotImplementedError("translateStartState: %s" % cmd)
 
     for cmd in prot.start_state.cmds:
         translate(cmd, [])
     
-    val=isabelle.UN(opds)
-    allSpec=Definition("allInitSpecs", FunType(isabelle.nat, isabelle.setType(isabelle.formula)), val, args=["N"], is_simp=True, is_equiv=True) 
+    """
+    definition allInitSpecs :: "nat => formula set" where [simp]:
+        "allInitSpecs N == {initSpec0} ∪ {initSpec1} ∪ ...
+    """
+    allSpec = Definition(
+        name="allInitSpecs",
+        typ=FunType(isabelle.nat, isabelle.setType(isabelle.formula)),
+        val=isabelle.UN(opds), args=["N"], is_simp=True, is_equiv=True) 
     res.append(allSpec)
-    proofs=[]
-    for k  in range(len(opds)-1):
-        proofs.append(isabelle.IsabelleApplyRuleProof(name="symPredsUnion",unfolds= ["allInitSpecs"]))
+
+    """
+    lemma symPreds [intro]:
+        "symPredSet' N (allInitSpecs N)"
+        unfolding allInitSpecs_def
+        apply (rule symPredsUnion)
+        apply blast
+        <repeated>
+        done
+    """
+    proofs = []
+    for _ in range(len(opds) - 1):
+        proofs.append(isabelle.IsabelleApplyRuleProof(name="symPredsUnion", unfolds=["allInitSpecs"]))
         proofs.append(isabelle.blastProof())
-    theLast=isabelle.blastProof() if (len(opds)>1) else isabelle.blastProof(unfolds=["allInitSpecs"])
+    if len(opds) > 1:
+        proofs.append(isabelle.blastProof())
+    else:
+        proofs.append(isabelle.blastProof(unfolds=["allInitSpecs"]))
     lemma = IsabelleLemma([], 
-        Fun(Const("symPredSet'"), [Const("N"), Fun(Const("allInitSpecs"),[Const("N")])]),
+        Fun(Const("symPredSet'"), [Const("N"), Fun(Const("allInitSpecs"), [Const("N")])]),
         attribs=["intro"],
         name="symPreds",
-        proof=proofs+[theLast]
+        proof=proofs
     )
     res.append(lemma)
-    assm=Op(":",Const("f"),Fun(Const("allInitSpecs"), [Const("N")]))
-    conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
-    
-    usings=["deriveFormInitSpec"+str(k) for k in range(0,count )]
-    simpdels=["initSpec"+ str(k) +"_def" for k in range(0,count )]
-    proof=isabelle.AutoProof(usings=usings,simpdels=simpdels)
-    lemma=IsabelleLemma(assms=[assm], conclusion=conclusion, \
-        proof=[proof],name="deriveFormAllInitSpec")
+
+    """
+    lemma deriveFormAllInitSpec: 
+        "f ∈ allInitSpecs N ⟹ deriveForm (env N) f"
+        using deriveFormInitSpec<i>
+        apply (auto simp del: initSpec<i>_def)
+        done
+    """
+    lemma = IsabelleLemma(
+        name="deriveFormAllInitSpec",
+        assms=[Op(":", Const("f"), Fun(Const("allInitSpecs"), [Const("N")]))],
+        conclusion=Fun(Const("deriveForm"), [Fun(Const("env"), [Const("N")]), Const("f")]),
+        proof=[isabelle.AutoProof(
+            usings=["deriveFormInitSpec" + str(k) for k in range(count)],
+            simpdels=["initSpec" + str(k) + "_def" for k in range(count)])])
     res.append(lemma)
-    return (res,initSpecs)
 
-'''def translateEnv(prot):
-    eqs=[]
-    for var_decl in prot.vars:
-        if var_decl.typ
-        self.var_map[var_decl.name] = var_decl.typ'''
-
+    return res, initSpecs
 
 #generate environment definitions, and lemmas, declarations
 def translateEnvByStartState(prot):

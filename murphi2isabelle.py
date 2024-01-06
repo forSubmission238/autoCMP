@@ -6,6 +6,8 @@ import murphi
 import murphiparser
 import isabelle
 import abstract
+from isabelle import Const, Fun, Op, FunType
+from isabelle import Definition, IsabelleLemma, IsabelleLemmas
 
 def translateEnum(enum_typ: str, enum: murphi.EnumType):
     res = []
@@ -25,8 +27,8 @@ def translateAllEnum(prot: murphi.MurphiProtocol, spec_data):
 
 def translateBooleans():
     return [
-        isabelle.Definition("true", isabelle.scalarValueType, isabelle.boolV(True), is_simp=True, is_equiv=True),
-        isabelle.Definition("false", isabelle.scalarValueType, isabelle.boolV(False), is_simp=True, is_equiv=True),
+        Definition("true", isabelle.scalarValueType, isabelle.boolV(True), is_simp=True, is_equiv=True),
+        Definition("false", isabelle.scalarValueType, isabelle.boolV(False), is_simp=True, is_equiv=True),
     ]
 
 def destruct_var(e: murphi.MurphiExpr, vars: List[str]):
@@ -89,7 +91,7 @@ def translateIsabelleExp(e: murphi.MurphiExpr, vars: List[str]):
 def translateForm(e: murphi.MurphiExpr, vars: List[str]):
     if isinstance(e, murphi.BooleanExpr):
         if e.val:
-            return isabelle.Const("chaos")
+            return Const("chaos")
         else:
             raise NotImplementedError
     elif isinstance(e, (murphi.VarExpr, murphi.ArrayIndex, murphi.FieldName)):
@@ -120,7 +122,7 @@ def translateForm(e: murphi.MurphiExpr, vars: List[str]):
         elif e.op == "->":
             return isabelle.impF([translateForm(e.expr1, vars), translateForm(e.expr2, vars)])
         elif e.op== "+":
-            return(isabelle.addE)([translateForm(e.expr1, vars), translateForm(e.expr2, vars)])
+            return isabelle.addE([translateForm(e.expr1, vars), translateForm(e.expr2, vars)])
     elif isinstance(e, murphi.NegExpr):
         if isinstance(e.expr, (murphi.VarExpr, murphi.ArrayIndex, murphi.FieldName)):
             return isabelle.eqF(isabelle.IVar(translateVar(e.expr, vars)), isabelle.boolE(False))
@@ -190,7 +192,7 @@ class initSpec:
         if isinstance(cmd, murphi.AssignCmd):
             typ = isabelle.formula
             for _ in range(len(vars)):
-                typ = isabelle.FunType(isabelle.nat, typ)
+                typ = FunType(isabelle.nat, typ)
             val = isabelle.eqF(translateExp(cmd.var, vars), translateExp(cmd.expr, vars))
             self.assignVarInIsabelle=translateExp(cmd.var, vars)
             args = []
@@ -198,12 +200,12 @@ class initSpec:
             for v in vars:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
-            self.defi=isabelle.Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True)
+            self.defi=Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True)
         elif  isinstance(cmd, murphi.UndefineCmd): 
             def_name = "initSpec" + str(order)
             typ = isabelle.formula
             for _ in range(len(vars)):
-                typ = isabelle.FunType(isabelle.nat, typ)
+                typ = FunType(isabelle.nat, typ)
             assert cmd.var!= "i_0"
             val = isabelle.eqF(translateExp(cmd.var, vars), isabelle.index("i_0") )
             self.assignVarInIsabelle=translateExp(cmd.var, vars)
@@ -213,17 +215,15 @@ class initSpec:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
             val=isabelle.exF("i_0",val,"N")
-            typ = isabelle.FunType(isabelle.nat, typ) if vars==[] else typ
+            typ = FunType(isabelle.nat, typ) if vars==[] else typ
             if len(args)==0:
                 args.append("N")  
-            self.defi=(isabelle.Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True))
+            self.defi=(Definition(self.name, typ, val, args=args, is_simp=True, is_equiv=True))
         
 
     def genInitSubgoalProof(self):
-        args = [isabelle.Const(arg) for arg in self.defi.args]
-        pred = isabelle.Fun(isabelle.Const("formEval"),[isabelle.Fun(isabelle.Const(self.defi.name),args), 
-                                                        isabelle.Const("s0")])
-        
+        args = [Const(arg) for arg in self.defi.args]
+        pred = Fun(Const("formEval"), [Fun(Const(self.defi.name), args), Const("s0")])
         return isabelle.subgoaltacProof(pred)
 
     def __str__(self):
@@ -241,31 +241,31 @@ def translateStartState(prot: murphi.MurphiProtocol):
             count += 1
             typ = isabelle.formula
             for _ in range(len(vars)):
-                typ = isabelle.FunType(isabelle.nat, typ)
+                typ = FunType(isabelle.nat, typ)
             val = isabelle.eqF(translateExp(cmd.var, vars), translateExp(cmd.expr, vars))
             args = []
             assert len(vars) <= 1
             for v in vars:
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
-            res.append(isabelle.Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
-            predic=isabelle.Const(def_name) if args==[] else  isabelle.Fun(isabelle.Const(def_name),[isabelle.Const("N") ])
+            res.append(Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
+            predic=Const(def_name) if args==[] else  Fun(Const(def_name),[Const("N") ])
             proof=[isabelle.AutoProof()] if args==[] else [isabelle.IsabelleApplyRuleProof(name="symPredSetForall",unfolds=[def_name]),
             isabelle.AutoProof(unfolds=["symParamForm"])]
-            lemma = isabelle.IsabelleLemma(
-                [], isabelle.Fun(isabelle.Const("symPredSet'"), [isabelle.Const("N"),isabelle.Set(predic)]),
+            lemma = IsabelleLemma(
+                [], Fun(Const("symPredSet'"), [Const("N"),isabelle.Set(predic)]),
                 attribs=["intro"],
                 name="symPreds" + str(count - 1),
                 proof=proof)
             res.append(lemma) 
-            setOpd = [] if args==[] else [isabelle.Const("N")]
-            opd=isabelle.Set(isabelle.Fun(isabelle.Const(def_name), setOpd  ))
+            setOpd = [] if args==[] else [Const("N")]
+            opd=isabelle.Set(Fun(Const(def_name), setOpd  ))
             opds.append(opd)
             '''f ∈ {InitSpecs_1 N} ==>deriveForm (env N) f'''
-            assm=isabelle.Op(":",isabelle.Const("f"),opd)
+            assm=Op(":",Const("f"),opd)
             proof=isabelle.AutoProof()
-            conclusion=isabelle.Fun(isabelle.Const("deriveForm"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("f")])
-            lemma=isabelle.IsabelleLemma(assms=[assm],conclusion=conclusion, \
+            conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
+            lemma=IsabelleLemma(assms=[assm],conclusion=conclusion, \
             attribs=["intro"],name="deriveFormInitSpec"+ str(count - 1),proof=[proof])
             res.append(lemma)
             initSpecs.append(initSpec(cmd,vars,count - 1))
@@ -275,7 +275,7 @@ def translateStartState(prot: murphi.MurphiProtocol):
             count += 1
             typ = isabelle.formula
             for _ in range(len(vars)):
-                typ = isabelle.FunType(isabelle.nat, typ)
+                typ = FunType(isabelle.nat, typ)
             assert cmd.var!= "i_0"
             val = isabelle.eqF(translateExp(cmd.var, vars), isabelle.index("i_0") )
             args = []
@@ -284,30 +284,30 @@ def translateStartState(prot: murphi.MurphiProtocol):
                 val = isabelle.allF(v, val, "N")
                 args.append("N")
             val=isabelle.exF("i_0",val,"N")
-            typ = isabelle.FunType(isabelle.nat, typ) if vars==[] else typ
+            typ = FunType(isabelle.nat, typ) if vars==[] else typ
             if len(args)==0:
                 args.append("N")  
-            res.append(isabelle.Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
+            res.append(Definition(def_name, typ, val, args=args, is_simp=True, is_equiv=True))
 
-            predic=isabelle.Fun(isabelle.Const(def_name),[isabelle.Const("N") ]) #isabelle.Const(def_name) if args==[] else  
+            predic=Fun(Const(def_name),[Const("N") ]) #Const(def_name) if args==[] else  
             proof=[isabelle.IsabelleApplyRuleProof(name="symPredSetExist",unfolds=[def_name]),
             isabelle.AutoProof(unfolds=["symParamForm"])] if vars==[] else [isabelle.IsabelleApplyRuleProof(name="symPredSetExistForall",unfolds=[def_name]),
             isabelle.AutoProof(unfolds=["symParamForm2"])]
-            lemma = isabelle.IsabelleLemma(
-                [], isabelle.Fun(isabelle.Const("symPredSet'"), [isabelle.Const("N"), isabelle.Set(predic)]),
+            lemma = IsabelleLemma(
+                [], Fun(Const("symPredSet'"), [Const("N"), isabelle.Set(predic)]),
                 attribs=["intro"],
                 name="symPreds" + str(count - 1),
                 proof=proof)
             res.append(lemma) 
 
-            setOpd = [isabelle.Const("N")] #[] if args==[] else 
-            opd=isabelle.Set(isabelle.Fun(isabelle.Const(def_name), setOpd  ))
+            setOpd = [Const("N")] #[] if args==[] else 
+            opd=isabelle.Set(Fun(Const(def_name), setOpd  ))
             opds.append(opd) 
             '''f ∈ {InitSpecs_1 N} ==>deriveForm (env N) f'''
-            assm=isabelle.Op(":",isabelle.Const("f"),opd)
-            conclusion=isabelle.Fun(isabelle.Const("deriveForm"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("f")])
+            assm=Op(":",Const("f"),opd)
+            conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
             proof=isabelle.AutoProof()
-            lemma=isabelle.IsabelleLemma(assms=[assm],conclusion=conclusion, \
+            lemma=IsabelleLemma(assms=[assm],conclusion=conclusion, \
             attribs=["intro"],name="deriveFormInitSpec"+ str(count - 1),proof=[proof])
             res.append(lemma) 
             initSpecs.append(initSpec(cmd,vars,count - 1))
@@ -327,27 +327,27 @@ def translateStartState(prot: murphi.MurphiProtocol):
         translate(cmd, [])
     
     val=isabelle.UN(opds)
-    allSpec=isabelle.Definition("allInitSpecs", isabelle.FunType(isabelle.nat, isabelle.setType(isabelle.formula)), val, args=["N"], is_simp=True, is_equiv=True) 
+    allSpec=Definition("allInitSpecs", FunType(isabelle.nat, isabelle.setType(isabelle.formula)), val, args=["N"], is_simp=True, is_equiv=True) 
     res.append(allSpec)
     proofs=[]
     for k  in range(len(opds)-1):
         proofs.append(isabelle.IsabelleApplyRuleProof(name="symPredsUnion",unfolds= ["allInitSpecs"]))
         proofs.append(isabelle.blastProof())
     theLast=isabelle.blastProof() if (len(opds)>1) else isabelle.blastProof(unfolds=["allInitSpecs"])
-    lemma = isabelle.IsabelleLemma([], 
-        isabelle.Fun(isabelle.Const("symPredSet'"), [isabelle.Const("N"), isabelle.Fun(isabelle.Const("allInitSpecs"),[isabelle.Const("N")])]),
+    lemma = IsabelleLemma([], 
+        Fun(Const("symPredSet'"), [Const("N"), Fun(Const("allInitSpecs"),[Const("N")])]),
         attribs=["intro"],
         name="symPreds",
         proof=proofs+[theLast]
     )
     res.append(lemma)
-    assm=isabelle.Op(":",isabelle.Const("f"),isabelle.Fun(isabelle.Const("allInitSpecs"), [isabelle.Const("N")]))
-    conclusion=isabelle.Fun(isabelle.Const("deriveForm"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("f")])
+    assm=Op(":",Const("f"),Fun(Const("allInitSpecs"), [Const("N")]))
+    conclusion=Fun(Const("deriveForm"),[Fun(Const("env"),[Const("N")]), Const("f")])
     
     usings=["deriveFormInitSpec"+str(k) for k in range(0,count )]
     simpdels=["initSpec"+ str(k) +"_def" for k in range(0,count )]
     proof=isabelle.AutoProof(usings=usings,simpdels=simpdels)
-    lemma=isabelle.IsabelleLemma(assms=[assm], conclusion=conclusion, \
+    lemma=IsabelleLemma(assms=[assm], conclusion=conclusion, \
         proof=[proof],name="deriveFormAllInitSpec")
     res.append(lemma)
     return (res,initSpecs)
@@ -363,8 +363,8 @@ def translateStartState(prot: murphi.MurphiProtocol):
 def translateEnvByStartState(prot):
     eqIdents=[]
     eqParas=[]
-    cmpPara=isabelle.Fun(isabelle.Const("Para"),[isabelle.Const("n"),isabelle.Const("i")])
-    cmpIdent=isabelle.Fun(isabelle.Const("Ident"),[isabelle.Const("n")])
+    cmpPara=Fun(Const("Para"),[Const("n"),Const("i")])
+    cmpIdent=Fun(Const("Ident"),[Const("n")])
     identLemmas=[]
     paraLemmas=[]
     para=""
@@ -378,17 +378,17 @@ def translateEnvByStartState(prot):
                 
                 return(isabelle.IsabelleITE("isabelleIte",eq,right,makeite("isIdent")))
             else:
-                return(isabelle.Const("anyType"))
+                return(Const("anyType"))
         else:
             if(eqParas!=[]):
                 left,right=eqParas[0]
                 del(eqParas[0])
                 eq=isabelle.eq(cmpPara,left)
-                eq1=isabelle.Op("<=",isabelle.Const(para),isabelle.Const("N"))
-                cond=isabelle.Op("&",eq,eq1)
+                eq1=Op("<=",Const(para),Const("N"))
+                cond=Op("&",eq,eq1)
                 return(isabelle.IsabelleITE("isabelleIte",cond,right,makeite("isPara")))
             else:
-                return(isabelle.Const("anyType"))
+                return(Const("anyType"))
 
     def makeSimpLemmasOn(i,isIdentOrPara="isIdent"):
         if isIdentOrPara=="isIdent":
@@ -396,19 +396,19 @@ def translateEnvByStartState(prot):
                 pass
             else:
                 left,right=eqIdents[i]
-                left1=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),left])
+                left1=Fun(Const("env"),[Const("N"),left])
                 eq=isabelle.eq(left1,right)
-                identLemmas.append(isabelle.IsabelleLemma(assms=[], conclusion=eq,inLemmas=True))
+                identLemmas.append(IsabelleLemma(assms=[], conclusion=eq,inLemmas=True))
                 makeSimpLemmasOn(i+1,"isIdent")
         else:
             if (i==len(eqParas)):
                 pass
             else:
                 left,right=eqParas[i]
-                left2=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),left])
+                left2=Fun(Const("env"),[Const("N"),left])
                 eq1=isabelle.eq(left2,right)
-                cond1=isabelle.Op("<=",isabelle.Const(para),isabelle.Const("N"))
-                paraLemmas.append(isabelle.IsabelleLemma(assms=[cond1], conclusion=eq1,inLemmas=True))
+                cond1=Op("<=",Const(para),Const("N"))
+                paraLemmas.append(IsabelleLemma(assms=[cond1], conclusion=eq1,inLemmas=True))
                 makeSimpLemmasOn(i+1,"isPara")
 
     def hasArrayIndex(v: murphi.MurphiExpr) -> bool:
@@ -426,9 +426,9 @@ def translateEnvByStartState(prot):
         nonlocal para
         if isinstance(cmd, murphi.AssignCmd):
             varOpd = translateIsabelleExp(cmd.var, vars)
-            typ = isabelle.Const("enumType") if isinstance(cmd.expr,murphi.EnumValExpr) else \
-                  isabelle.Const("boolType") if isinstance(cmd.expr,murphi.BooleanExpr) else \
-                  isabelle.Const("indexType")
+            typ = Const("enumType") if isinstance(cmd.expr,murphi.EnumValExpr) else \
+                  Const("boolType") if isinstance(cmd.expr,murphi.BooleanExpr) else \
+                  Const("indexType")
             val = varOpd, typ
             if hasArrayIndex(cmd.var):
                 eqParas.append(val)
@@ -437,7 +437,7 @@ def translateEnvByStartState(prot):
 
         elif isinstance(cmd, murphi.UndefineCmd):
             varOpd = translateIsabelleExp(cmd.var, vars)
-            typ = isabelle.Const("indexType") 
+            typ = Const("indexType") 
             val = varOpd, typ
             if hasArrayIndex(cmd.var):
                 eqParas.append(val)
@@ -459,33 +459,33 @@ def translateEnvByStartState(prot):
     for cmd in prot.start_state.cmds:
         translate(cmd, [])
 
-    cmpPara=isabelle.Fun(isabelle.Const("Para"),[isabelle.Const("n"),isabelle.Const(para)])
-    cmpIdent=isabelle.Fun(isabelle.Const("Ident"),[isabelle.Const("n")])
+    cmpPara=Fun(Const("Para"),[Const("n"),Const(para)])
+    cmpIdent=Fun(Const("Ident"),[Const("n")])
     makeSimpLemmasOn(0,"isIdent")
     makeSimpLemmasOn(0,"isPara")
              
     paraLemmas.extend(identLemmas)  
     
-    left2=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),cmpPara])
-    eq2=isabelle.eq(left2,isabelle.Const("anyType"))
-    cond2=isabelle.Op(">",isabelle.Const(para),isabelle.Const("N"))
-    paraLemmas.append(isabelle.IsabelleLemma(assms=[cond2], conclusion=eq2,inLemmas=True))
+    left2=Fun(Const("env"),[Const("N"),cmpPara])
+    eq2=isabelle.eq(left2,Const("anyType"))
+    cond2=Op(">",Const(para),Const("N"))
+    paraLemmas.append(IsabelleLemma(assms=[cond2], conclusion=eq2,inLemmas=True))
     
-    left1=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),cmpIdent])
+    left1=Fun(Const("env"),[Const("N"),cmpIdent])
     eq1=isabelle.eq(left1,makeite("isIdent"))
-    left2=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),cmpPara])
+    left2=Fun(Const("env"),[Const("N"),cmpPara])
     eq2=isabelle.eq(left2,makeite("isPara"))
-    dontCareVarExp=isabelle.Const("dontCareVar")
-    left3=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N"),dontCareVarExp])
-    eq3=isabelle.eq(left3,isabelle.Const("anyType"))
+    dontCareVarExp=Const("dontCareVar")
+    left3=Fun(Const("env"),[Const("N"),dontCareVarExp])
+    eq3=isabelle.eq(left3,Const("anyType"))
     primrec = isabelle.primRec(
         "env",
-        isabelle.FunType(isabelle.nat,isabelle.ConstType("envType")),
+        FunType(isabelle.nat,isabelle.ConstType("envType")),
         [eq1,eq2,eq3])
     res=[]
     
     proof=isabelle.AutoProof()
-    lemmas=isabelle.IsabelleLemmas(name="env_simp",lemmas=paraLemmas,proof=[proof])
+    lemmas=IsabelleLemmas(name="env_simp",lemmas=paraLemmas,proof=[proof])
     
     res.append(primrec)
     res.append(lemmas)
@@ -507,7 +507,7 @@ def check_ite_assign_cmd(c):
 
 def translateCmd(cmd: murphi.MurphiCmd, vars: List[str]):
     if isinstance(cmd, murphi.Skip):
-        return isabelle.Const("skip")
+        return Const("skip")
     elif isinstance(cmd, murphi.AssignCmd):
         return isabelle.assignS(translateVar(cmd.var, vars), translateExp(cmd.expr, vars))
     elif isinstance(cmd, murphi.UndefineCmd):
@@ -557,28 +557,28 @@ def translateCmds(cmds: Iterable[murphi.MurphiCmd], vars: List[str]):
 def translateRuleTerm(rule: murphi.MurphiRule, vars: List[str]):
     isa_cond = translateForm(rule.cond, vars)
     isa_cmds = translateCmds(rule.cmds, vars)
-    return isabelle.Op("|>", isa_cond, isa_cmds)
+    return Op("|>", isa_cond, isa_cmds)
 
 def translateRule(rule: murphi.MurphiRule):
     isa_rule = translateRuleTerm(rule, [])
     typ = isabelle.rule
     args = []
     if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds):
-        typ = isabelle.FunType(isabelle.nat, typ)
+        typ = FunType(isabelle.nat, typ)
         args.append("N")
-    return isabelle.Definition(rule.name, typ, isa_rule, args=args, is_equiv=True)
+    return Definition(rule.name, typ, isa_rule, args=args, is_equiv=True)
 
 def translateRuleSet(ruleset: murphi.MurphiRuleSet):
     typ = isabelle.rule
     vars = []
     if hasParamExpr(ruleset.rule.cond) or any(hasParamCmd(c) for c in ruleset.rule.cmds):
-        typ = isabelle.FunType(isabelle.nat, typ)
+        typ = FunType(isabelle.nat, typ)
         vars.append("N")
     for var_decl in ruleset.var_decls:
-        typ = isabelle.FunType(isabelle.nat, typ)
+        typ = FunType(isabelle.nat, typ)
         vars.append(var_decl.name)
     isa_rule = translateRuleTerm(ruleset.rule, vars)
-    return isabelle.Definition(ruleset.rule.name, typ, isa_rule, args=vars, is_equiv=True)
+    return Definition(ruleset.rule.name, typ, isa_rule, args=vars, is_equiv=True)
 
 
 
@@ -626,26 +626,26 @@ def translateRuleSets(ruleset: murphi.MurphiRuleSet):
     else:
         count = len(vars)
 
-    typ = isabelle.FunType(isabelle.nat, isabelle.setType(isabelle.rule))
-    NParam = isabelle.Const("N")
-    ruleParam = isabelle.Fun(isabelle.Const(ruleset.rule.name),[NParam]) if ("N" in vars) else isabelle.Const(ruleset.rule.name)
+    typ = FunType(isabelle.nat, isabelle.setType(isabelle.rule))
+    NParam = Const("N")
+    ruleParam = Fun(Const(ruleset.rule.name),[NParam]) if ("N" in vars) else Const(ruleset.rule.name)
     if count == 1:
-        isa_rule = isabelle.Fun(isabelle.Const("oneParamCons"),[isabelle.Const("N"),ruleParam])
+        isa_rule = Fun(Const("oneParamCons"),[Const("N"),ruleParam])
     else:
-        isa_rule = isabelle.Fun(isabelle.Const("twoParamsCons"),[isabelle.Const("N"),ruleParam])
-    def1=isabelle.Definition(ruleset.rule.name+"s", typ, isa_rule, args=["N"], is_equiv=True)
-    assm1=isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const(ruleset.rule.name+"s"),[isabelle.Const("N")]))
-    cons1=isabelle.Fun(isabelle.Const("deriveRule"), \
-    [isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),isabelle.Const("r")])
-    lemma1=isabelle.IsabelleLemma(assms=[assm1],conclusion=cons1,inLemmas=True)
+        isa_rule = Fun(Const("twoParamsCons"),[Const("N"),ruleParam])
+    def1=Definition(ruleset.rule.name+"s", typ, isa_rule, args=["N"], is_equiv=True)
+    assm1=Op(":",Const("r"),Fun(Const(ruleset.rule.name+"s"),[Const("N")]))
+    cons1=Fun(Const("deriveRule"), \
+    [Fun(Const("env"),[Const("N")]),Const("r")])
+    lemma1=IsabelleLemma(assms=[assm1],conclusion=cons1,inLemmas=True)
     unfolds1=[ruleset.rule.name+"s",ruleset.rule.name]
     usings2=["sym"+ruleset.rule.name+"(1)",ruleset.rule.name+"s_def"]
 
-    cons2=isabelle.Fun(isabelle.Const("symProtRules'"),[isabelle.Const("N"), \
-        isabelle.Fun(isabelle.Const(ruleset.rule.name+"s"),[isabelle.Const("N")])])
+    cons2=Fun(Const("symProtRules'"),[Const("N"), \
+        Fun(Const(ruleset.rule.name+"s"),[Const("N")])])
     
-    lemma2=isabelle.IsabelleLemma(assms=[],conclusion=cons2,inLemmas=True)
-    term=isabelle.Fun(isabelle.Const(ruleset.rule.name+"s"),[isabelle.Const("N")])
+    lemma2=IsabelleLemma(assms=[],conclusion=cons2,inLemmas=True)
+    term=Fun(Const(ruleset.rule.name+"s"),[Const("N")])
 
     return (def1,lemma1,lemma2,term,unfolds1,usings2)
 
@@ -654,24 +654,24 @@ def translateRule1(rule: murphi.MurphiRule):
     if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds):
         vars.append("N")
 
-    typ = isabelle.FunType(isabelle.nat, isabelle.setType(isabelle.rule)) if "N" in vars else isabelle.setType(isabelle.rule)
-    ruleParam = isabelle.Fun(isabelle.Const(rule.name), [isabelle.Const("N")]) if ("N" in vars) else isabelle.Const(rule.name)
-    def1 = isabelle.Definition(rule.name+"s", typ, isabelle.Set(ruleParam), args=vars, is_equiv=True)
-    opds = [isabelle.Const(n) for n in vars]
-    assm1 = isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const(rule.name+"s"),opds))
-    cons1 = isabelle.Fun(isabelle.Const("deriveRule"), [
-        isabelle.Fun(isabelle.Const("env"), [isabelle.Const("N")]),
-        isabelle.Const("r")])
-    lemma1 = isabelle.IsabelleLemma(assms=[assm1],conclusion=cons1,inLemmas=True)
+    typ = FunType(isabelle.nat, isabelle.setType(isabelle.rule)) if "N" in vars else isabelle.setType(isabelle.rule)
+    ruleParam = Fun(Const(rule.name), [Const("N")]) if ("N" in vars) else Const(rule.name)
+    def1 = Definition(rule.name+"s", typ, isabelle.Set(ruleParam), args=vars, is_equiv=True)
+    opds = [Const(n) for n in vars]
+    assm1 = Op(":",Const("r"),Fun(Const(rule.name+"s"),opds))
+    cons1 = Fun(Const("deriveRule"), [
+        Fun(Const("env"), [Const("N")]),
+        Const("r")])
+    lemma1 = IsabelleLemma(assms=[assm1],conclusion=cons1,inLemmas=True)
     unfolds1 = [rule.name+"s",rule.name]
     usings2 = ["sym"+rule.name+"(1)", rule.name+"s_def"]
 
-    cons2 = isabelle.Fun(isabelle.Const("symProtRules'"), [
-        isabelle.Const("N"),
-        isabelle.Fun(isabelle.Const(rule.name+"s"),opds)])
+    cons2 = Fun(Const("symProtRules'"), [
+        Const("N"),
+        Fun(Const(rule.name+"s"),opds)])
     
-    lemma2 = isabelle.IsabelleLemma(assms=[],conclusion=cons2,inLemmas=True)
-    term = isabelle.Fun(isabelle.Const(rule.name+"s"),opds)
+    lemma2 = IsabelleLemma(assms=[],conclusion=cons2,inLemmas=True)
+    term = Fun(Const(rule.name+"s"),opds)
     return def1, lemma1, lemma2, term, unfolds1, usings2
 
 
@@ -679,17 +679,17 @@ def translateInvariant(inv: murphi.MurphiInvariant):
     typ = isabelle.formula
     args = []
     if hasParamExpr(inv.inv):
-        typ = isabelle.FunType(isabelle.nat, typ)
+        typ = FunType(isabelle.nat, typ)
         args.append("N")
     # Extract two parameters
     inv_t = inv.inv
     for _ in range(2):
         assert isinstance(inv_t, murphi.ForallExpr)
-        typ = isabelle.FunType(isabelle.nat, typ)
+        typ = FunType(isabelle.nat, typ)
         args.append(inv_t.var)
         inv_t = inv_t.expr
     isa_inv = translateForm(inv_t, args)
-    return isabelle.Definition(inv.name, typ, isa_inv, args=args, is_equiv=True)
+    return Definition(inv.name, typ, isa_inv, args=args, is_equiv=True)
 
 def genRuleSetSymLemma(ruleset: murphi.MurphiRuleSet):
     """Generate symmetry and wellformedness for each rule.
@@ -713,15 +713,15 @@ def genRuleSetSymLemma(ruleset: murphi.MurphiRuleSet):
     for var_decl in ruleset.var_decls:
         vars.append(var_decl.name)
     paraNums=len(vars) - 1 if hasForall else len(vars)
-    args=list(map(lambda a: isabelle.Const(a),vars))
-    ruleConst=isabelle.Fun(isabelle.Const(ruleset.rule.name),[isabelle.Const("N")]) if hasForall else isabelle.Const(ruleset.rule.name)
-    ruleInst=isabelle.Fun(isabelle.Const(ruleset.rule.name),args) #if args==[] else isabelle.Fun(isabelle.Const("wellFormedRule"),[isabelle.Const("N") ]) #isabelle.Const(def_name) if args==[] else  
-    predic1=isabelle.Fun(isabelle.Const("symParamRule"),[isabelle.Const("N"),ruleConst]) if paraNums==1 else isabelle.Fun(isabelle.Const("symParamRule2'"),[isabelle.Const("N"),ruleConst])
-    lemma1= isabelle.IsabelleLemma(assms=[], conclusion=predic1,inLemmas=True)
-    env=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])
-    predic2=isabelle.Fun(isabelle.Const("wellFormedRule"),[env,isabelle.Const("N"),ruleInst])
-    assms=[isabelle.Op("<=",isabelle.Const(n.name),isabelle.Const("N")) for n in  ruleset.var_decls]
-    lemma2= isabelle.IsabelleLemma(assms=assms, conclusion=predic2,inLemmas=True)
+    args=list(map(lambda a: Const(a),vars))
+    ruleConst=Fun(Const(ruleset.rule.name),[Const("N")]) if hasForall else Const(ruleset.rule.name)
+    ruleInst=Fun(Const(ruleset.rule.name),args) #if args==[] else Fun(Const("wellFormedRule"),[Const("N") ]) #Const(def_name) if args==[] else  
+    predic1=Fun(Const("symParamRule"),[Const("N"),ruleConst]) if paraNums==1 else Fun(Const("symParamRule2'"),[Const("N"),ruleConst])
+    lemma1= IsabelleLemma(assms=[], conclusion=predic1,inLemmas=True)
+    env=Fun(Const("env"),[Const("N")])
+    predic2=Fun(Const("wellFormedRule"),[env,Const("N"),ruleInst])
+    assms=[Op("<=",Const(n.name),Const("N")) for n in  ruleset.var_decls]
+    lemma2= IsabelleLemma(assms=assms, conclusion=predic2,inLemmas=True)
     intros=["symParamRuleI2", "symParamRuleI", "symParamFormAnd", "symParamFormForall",
             "symParamFormForallExcl", "symParamFormImply" ,"symParamStatementParallel",
             "symParamStatementForall", "symParamStatementForallExcl", "symParamStatementIte"] if paraNums==1 else \
@@ -732,7 +732,7 @@ def genRuleSetSymLemma(ruleset: murphi.MurphiRuleSet):
     proof1=isabelle.AutoProof(unfolds=[ruleset.rule.name], introITag="intro!", intros=intros)
     proof2=isabelle.AutoProof(unfolds=["symParamForm", "symParamStatement",
                                        "symParamForm2", "symParamStatement2", "mutualDiffVars", "equivForm"])
-    lemmas= isabelle.IsabelleLemmas(name="sym"+ruleset.rule.name,lemmas=[lemma1,lemma2],proof=[proof1,proof2])
+    lemmas= IsabelleLemmas(name="sym"+ruleset.rule.name,lemmas=[lemma1,lemma2],proof=[proof1,proof2])
     return lemmas
 
 def makeSymProtAllProof(usings):
@@ -784,14 +784,14 @@ def translateAllSpecs(prot: murphi.MurphiProtocol):
         elif isinstance(decl, murphi.MurphiInvariant):
             res.append(translateInvariant(decl))
 
-    typ = isabelle.FunType(isabelle.nat, isabelle.setType(isabelle.rule))
-    def_rules = isabelle.Definition(name="rules", typ=typ, val=isabelle.UN(rulesDefList), args=["N"])
+    typ = FunType(isabelle.nat, isabelle.setType(isabelle.rule))
+    def_rules = Definition(name="rules", typ=typ, val=isabelle.UN(rulesDefList), args=["N"])
     res.append(def_rules)
     deriveAllLLemmaProof = [isabelle.AutoProof(
         unfolds=["deriveRule", "deriveForm", "deriveStmt"] + deriveAllLLemmaProofUnfolds1)]
     symProtAllLemmaProof = makeSymProtAllProof(symProtAllLemmaProofUsings2)
-    deriveAllLLemmas = isabelle.IsabelleLemmas("deriveAll", deriveAllLLemmaist, proof=deriveAllLLemmaProof)
-    symProtAllLemmas = isabelle.IsabelleLemmas("symProtAll", symProtAllLemmaList, proof=symProtAllLemmaProof)
+    deriveAllLLemmas = IsabelleLemmas("deriveAll", deriveAllLLemmaist, proof=deriveAllLLemmaProof)
+    symProtAllLemmas = IsabelleLemmas("symProtAll", symProtAllLemmaList, proof=symProtAllLemmaProof)
     res.append(deriveAllLLemmas)
     res.append(symProtAllLemmas)
     return res
@@ -801,40 +801,44 @@ def genRuleSymLemma(rule: murphi.MurphiRule):
     if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds):
         args.append("N")
     oldArgs=args.copy()
-    args=list(map(lambda a: isabelle.Const(a),args))
-    ruleInst=isabelle.Fun(isabelle.Const(rule.name),args)
-    predic1=isabelle.Fun(isabelle.Const("symProtRules'"),[isabelle.Const("N"),isabelle.Set(ruleInst)])  
-    lemma1= isabelle.IsabelleLemma(assms=[], conclusion=predic1,inLemmas=True)  
-    env=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])
-    predic2=isabelle.Fun(isabelle.Const("wellFormedRule"),[env,isabelle.Const("N"),ruleInst])
+    args=list(map(lambda a: Const(a),args))
+    ruleInst=Fun(Const(rule.name),args)
+    predic1=Fun(Const("symProtRules'"),[Const("N"),isabelle.Set(ruleInst)])  
+    lemma1= IsabelleLemma(assms=[], conclusion=predic1,inLemmas=True)  
+    env=Fun(Const("env"),[Const("N")])
+    predic2=Fun(Const("wellFormedRule"),[env,Const("N"),ruleInst])
     intros=["equivStatementParallel","equivStatementIteStm","equivStatementPermute"]
     proof=[isabelle.AutoProof(unfolds=[rule.name])] if "N" not in oldArgs else \
         [isabelle.AutoProof(unfolds=[rule.name],introITag="intro!",intros=intros), \
         isabelle.IsabelleApplyRuleProof(name="equivStatementSym"), isabelle.IsabelleApplyRuleProof(name="equivStatementPermute"), \
         isabelle.AutoProof(simpadds=["mutualDiffVars_def"])]
-    lemma2= isabelle.IsabelleLemma(assms=[], conclusion=predic2,inLemmas=True)
-    lemmas= isabelle.IsabelleLemmas(name="sym"+rule.name,lemmas=[lemma1,lemma2],proof=proof)
+    lemma2= IsabelleLemma(assms=[], conclusion=predic2,inLemmas=True)
+    lemmas= IsabelleLemmas(name="sym"+rule.name,lemmas=[lemma1,lemma2],proof=proof)
     return lemmas
   
-def genInvariantSymLemma(inv: murphi.MurphiInvariant):
-    args = []
-    if hasParamExpr(inv.inv):
-        args.append("N")
-    # Extract two parameters
-    inv_t = inv.inv
-    for _ in range(2):
-        assert isinstance(inv_t, murphi.ForallExpr)
-        args.append(inv_t.var)
-        #inv_t = inv_t.expr
-    args=list(map(lambda a: isabelle.Const(a),args))
-    invN=isabelle.Fun(isabelle.Const(inv.name),[isabelle.Const("N")])
-    predic=isabelle.Fun(isabelle.Const("symParamForm2"),[isabelle.Const("N"),invN])
-    proof=[isabelle.AutoProof(unfolds=[inv.name]), \
-        isabelle.introProof(rules=["symParamForm2Imply","symParamFormForallExcl2"]), \
-        isabelle.AutoProof(unfolds=["symParamForm2"])]
-    lemma= isabelle.IsabelleLemma(assms=[], conclusion=predic, \
-            name="sym"+inv.name,proof=proof)
-    return lemma   
+def genInvariantSymLemma(inv: murphi.MurphiInvariant) -> IsabelleLemma:
+    """Generate symmetry for property of invariant.
+
+    lemma sym<inv_name>:
+        "symParamForm2 N (<inv_name> N)"
+        unfolding <inv_name>_def
+        apply auto
+        apply (intro symParamForm2Imply symParamFormForallExcl2)
+        unfolding symParamForm2_def
+        apply auto
+        done
+    """
+    invN = Fun(Const(inv.name), [Const("N")])
+    return IsabelleLemma(
+        name="sym" + inv.name,
+        assms=[],
+        conclusion=Fun(Const("symParamForm2"), [Const("N"), invN]),
+        proof=[
+            isabelle.AutoProof(unfolds=[inv.name]),
+            isabelle.introProof(rules=["symParamForm2Imply", "symParamFormForallExcl2"]),
+            isabelle.AutoProof(unfolds=["symParamForm2"])
+        ]
+    )
 
 '''
 lemma symInvs:
@@ -884,13 +888,13 @@ class extMurphiInvariant:
         typ = isabelle.formula
         args = []
         if hasParamExpr(self.decl.inv):
-            typ = isabelle.FunType(isabelle.nat, typ)
+            typ = FunType(isabelle.nat, typ)
             args.append("N")
         # Extract two parameters
         inv_t = self.decl.inv
         for _ in range(2):
             assert isinstance(inv_t, murphi.ForallExpr)
-            typ = isabelle.FunType(isabelle.nat, typ)
+            typ = FunType(isabelle.nat, typ)
             args.append(inv_t.var)
             inv_t = inv_t.expr
         #inv_t  = e1 ->e2 for some e1,e2 e2=forall i~=j-->  
@@ -913,20 +917,20 @@ class extMurphiInvariant:
             #vars.append(e.var)
             res = translateForm(self.decl.inv.expr.expr, args)
             self.lemma1Eqlemma =True
-        return isabelle.Definition(self.decl.name+"'", typ, res, args=args, is_equiv=True)
+        return Definition(self.decl.name+"'", typ, res, args=args, is_equiv=True)
 
     '''lemma absTransfLemma1:
     "M < N ⟹ M = 1 ⟹ l ≤ 1 ⟹ absTransfForm (env N) M (Lemma_1' N 0 l) = Lemma_1' N 0 l"
     unfolding Lemma_1'_def by auto'''
     def genabsTransfLemma(self):
-        cond1=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-        cond2=isabelle.Op("=",isabelle.Const("M"),isabelle.Const("1"))
-        cond3=isabelle.Op("<=",isabelle.Const("l"),isabelle.Const("1"))
-        right=isabelle.Fun(isabelle.Const(self.decl.name+"'"),[isabelle.Const("N"),isabelle.Const("0"),isabelle.Const("l")])
-        left=isabelle.Fun(isabelle.Const("absTransfForm"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),isabelle.Const("M"),
+        cond1=Op("<",Const("M"),Const("N"))
+        cond2=Op("=",Const("M"),Const("1"))
+        cond3=Op("<=",Const("l"),Const("1"))
+        right=Fun(Const(self.decl.name+"'"),[Const("N"),Const("0"),Const("l")])
+        left=Fun(Const("absTransfForm"),[Fun(Const("env"),[Const("N")]),Const("M"),
             right])
         proof=isabelle.AutoProof(unfolds=[self.decl.name+"'"])
-        return(isabelle.IsabelleLemma(name="absTransf"+self.decl.name+"'",assms=[cond1,cond2,cond3],conclusion=isabelle.Op("=",left,right),proof=[proof]))
+        return(IsabelleLemma(name="absTransf"+self.decl.name+"'",assms=[cond1,cond2,cond3],conclusion=Op("=",left,right),proof=[proof]))
     '''"lemma absTransfLemma1M < N ⟹ M = 1 ⟹ l ≤ 1 ⟹ 
     safeForm  env  M (pf 0 i) ∧ deriveForm env (pf 0 i)
     unfolding Lemma_1'_def by auto"'''
@@ -934,20 +938,20 @@ class extMurphiInvariant:
     def genSafeAndderiveForm(self):
         """
         """
-        cond1=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-        cond2=isabelle.Op("=",isabelle.Const("M"),isabelle.Const("1"))
-        cond3=isabelle.Op("<=",isabelle.Const("l"),isabelle.Const("M"))
-        cond4=isabelle.Op("<=",isabelle.Const("k"),isabelle.Const("M"))
-        pred1=isabelle.Fun(isabelle.Const("safeForm"), \
-            [isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("M"), \
-            isabelle.Fun(isabelle.Const(self.decl.name+"'"),[isabelle.Const("N"),isabelle.Const("k"),isabelle.Const("l")])])
-        pred2=isabelle.Fun(isabelle.Const("deriveForm"), \
-            [isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),   \
-            isabelle.Fun(isabelle.Const(self.decl.name+"'"),[isabelle.Const("N"),isabelle.Const("k"),isabelle.Const("l")])])
-        return isabelle.IsabelleLemma(
+        cond1=Op("<",Const("M"),Const("N"))
+        cond2=Op("=",Const("M"),Const("1"))
+        cond3=Op("<=",Const("l"),Const("M"))
+        cond4=Op("<=",Const("k"),Const("M"))
+        pred1=Fun(Const("safeForm"), \
+            [Fun(Const("env"),[Const("N")]), Const("M"), \
+            Fun(Const(self.decl.name+"'"),[Const("N"),Const("k"),Const("l")])])
+        pred2=Fun(Const("deriveForm"), \
+            [Fun(Const("env"),[Const("N")]),   \
+            Fun(Const(self.decl.name+"'"),[Const("N"),Const("k"),Const("l")])])
+        return IsabelleLemma(
             name="SafeAndderiveForm"+self.decl.name+"'",
             assms=[cond1,cond2,cond3,cond4], \
-            conclusion=isabelle.Op("&",pred1,pred2),
+            conclusion=Op("&",pred1,pred2),
             proof=[isabelle.AutoProof(unfolds=[self.decl.name+"'"])])
   
     def genstrengthenVsObsLemma(self):
@@ -964,9 +968,9 @@ class extMurphiInvariant:
             unfolding Lemma_2a_def Lemma_2a'_def
             apply (rule strengthenVsObsSame)
         """
-        opd1 = isabelle.Fun(isabelle.Const(self.decl.name),[isabelle.Const("N")])
-        opd2 = isabelle.Fun(isabelle.Const(self.decl.name+"'"),[isabelle.Const("N")])
-        pred = isabelle.Fun(isabelle.Const("strengthenVsObs"), [opd1, opd2, isabelle.Const("N")])
+        opd1 = Fun(Const(self.decl.name),[Const("N")])
+        opd2 = Fun(Const(self.decl.name+"'"),[Const("N")])
+        pred = Fun(Const("strengthenVsObs"), [opd1, opd2, Const("N")])
         proofs = []
         if self.lemma1Eqlemma:
             proofs.append(isabelle.IsabelleApplyRuleProof(
@@ -977,7 +981,7 @@ class extMurphiInvariant:
                 name="strengthenVsObsDiff",
                 unfolds=[self.decl.name,self.decl.name+"'"]))
             proofs.append(isabelle.AutoProof(unfolds=["symParamForm"]))
-        lemma = isabelle.IsabelleLemma(
+        lemma = IsabelleLemma(
             name="strengthenVsObs" + self.decl.name,
             assms=[], conclusion=pred, proof=proofs)
         return lemma
@@ -991,10 +995,10 @@ class extMurphiInvariant:
             done
         """
         name = self.decl.name + "'"
-        pred = isabelle.Fun(isabelle.Const("symParamForm2"), [
-            isabelle.Const("N"),
-            isabelle.Fun(isabelle.Const(name), [isabelle.Const("N")])])
-        lemma = isabelle.IsabelleLemma(assms=[],conclusion=pred,inLemmas=True)
+        pred = Fun(Const("symParamForm2"), [
+            Const("N"),
+            Fun(Const(name), [Const("N")])])
+        lemma = IsabelleLemma(assms=[],conclusion=pred,inLemmas=True)
         proof = isabelle.subgoalProof(proofs=[
             isabelle.introProof(rules=["symParamForm2Imply", "symParamFormForallExcl2"]),
             isabelle.AutoProof(unfolds=["symParamForm2"])])
@@ -1021,38 +1025,38 @@ class extMurphiRule:
 
     def genLemmastrengthenVsObsLs(self):
         name="strengthenVsObsLs_lemmasFor_"+self.decl.name
-        opd1=isabelle.Fun(isabelle.Const("lemmasFor_"+self.decl.name),[isabelle.Const("N")])
-        opd2=isabelle.Fun(isabelle.Const("lemmasFor_"+self.decl.name+"'"),[isabelle.Const("N")])
-        pred=isabelle.Fun(isabelle.Const("strengthenVsObsLs"),[opd1,opd2,isabelle.Const("N")])
+        opd1=Fun(Const("lemmasFor_"+self.decl.name),[Const("N")])
+        opd2=Fun(Const("lemmasFor_"+self.decl.name+"'"),[Const("N")])
+        pred=Fun(Const("strengthenVsObsLs"),[opd1,opd2,Const("N")])
         unfolds=["strengthenVsObsLs", "lemmasFor_"+self.decl.name, "lemmasFor_"+self.decl.name+"'"]
         proof=isabelle.AutoProof(unfolds=unfolds)
-        lemma=isabelle.IsabelleLemma(name=name,assms=[],conclusion=pred,proof=[proof])
+        lemma=IsabelleLemma(name=name,assms=[],conclusion=pred,proof=[proof])
         return lemma
 
     def genStrengthenLemmasDef1(self, item):
-        return isabelle.Definition(
+        return Definition(
             name="lemmasFor_" + self.decl.name + "'",
-            typ=isabelle.FunType(isabelle.nat, isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula)))),
-            val=isabelle.List(*tuple(isabelle.Fun(isabelle.Const(lemma+"'"), [isabelle.Const("N")]) for lemma in item["strengthen"])),
+            typ=FunType(isabelle.nat, isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula)))),
+            val=isabelle.List(*tuple(Fun(Const(lemma+"'"), [Const("N")]) for lemma in item["strengthen"])),
             args=["N"]
         )
 
     def genFitenvLemma(self):
         if hasParamExpr(self.decl.cond) or any(hasParamCmd(c) for c in self.decl.cmds):
-            hasNList = [isabelle.Const("N")]
+            hasNList = [Const("N")]
         else:
             hasNList = []
          
-        return isabelle.IsabelleLemma(
+        return IsabelleLemma(
             name="lemma" + self.decl.name + "_fitEnv",
             assms=[
-                isabelle.Fun(isabelle.Const("formEval"), [isabelle.Fun(isabelle.Const("pre"),[isabelle.Const("r")]),isabelle.Const("s")]),
-                isabelle.Fun(isabelle.Const("fitEnv"), [isabelle.Const("s"),isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])]),
-                isabelle.Op(":",isabelle.Const("r"), isabelle.Fun(isabelle.Const(self.decl.name+"_refs"),hasNList))
+                Fun(Const("formEval"), [Fun(Const("pre"),[Const("r")]),Const("s")]),
+                Fun(Const("fitEnv"), [Const("s"),Fun(Const("env"),[Const("N")])]),
+                Op(":",Const("r"), Fun(Const(self.decl.name+"_refs"),hasNList))
             ],
-            conclusion=isabelle.Fun(isabelle.Const("fitEnv"),
-                [isabelle.Fun(isabelle.Const("trans1"),[isabelle.Fun(isabelle.Const("act"),[isabelle.Const("r")]),isabelle.Const("s")]), \
-                 isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])
+            conclusion=Fun(Const("fitEnv"),
+                [Fun(Const("trans1"),[Fun(Const("act"),[Const("r")]),Const("s")]), \
+                 Fun(Const("env"),[Const("N")])
             ]),
             attribs=["intro"],
             proof=[isabelle.AutoProof(unfolds=[self.decl.name+"_refs", self.decl.name+"_ref"])]
@@ -1106,41 +1110,41 @@ class extMurphiRuleSet:
 
     def genLemmastrengthenVsObsLs(self):
         name="strengthenVsObsLs_lemmasFor_"+self.decl.rule.name
-        opd1=isabelle.Fun(isabelle.Const("lemmasFor_"+self.decl.rule.name),[isabelle.Const("N")])
-        opd2=isabelle.Fun(isabelle.Const("lemmasFor_"+self.decl.rule.name+"'"),[isabelle.Const("N")])
-        pred=isabelle.Fun(isabelle.Const("strengthenVsObsLs"),[opd1,opd2,isabelle.Const("N")])
+        opd1=Fun(Const("lemmasFor_"+self.decl.rule.name),[Const("N")])
+        opd2=Fun(Const("lemmasFor_"+self.decl.rule.name+"'"),[Const("N")])
+        pred=Fun(Const("strengthenVsObsLs"),[opd1,opd2,Const("N")])
         unfolds=["strengthenVsObsLs", "lemmasFor_"+self.decl.rule.name, "lemmasFor_"+self.decl.rule.name+"'"]
         autoIntros=["strengthenVsObs"+k for k in self.strengthen]
         if self.strengthen==[]:
             proof=isabelle.AutoProof(unfolds=unfolds)
         else:
             proof=isabelle.AutoProof(unfolds=unfolds,introITag="intro",intros=autoIntros)
-        lemma=isabelle.IsabelleLemma(name=name,assms=[],conclusion=pred,proof=[proof])
+        lemma=IsabelleLemma(name=name,assms=[],conclusion=pred,proof=[proof])
         return(lemma)
 
     def genStrengthenLemmasDef1(self,item):
         name="lemmasFor_"+self.decl.rule.name+"'"
-        val=isabelle.List(*tuple(isabelle.Fun(isabelle.Const(lemma+"'"), [isabelle.Const("N")]) for lemma in item["strengthen"]))
-        typ = isabelle.FunType(isabelle.nat, isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula))))
-        defLemma=isabelle.Definition(name=name, typ=typ, val=val,args=["N"])
+        val=isabelle.List(*tuple(Fun(Const(lemma+"'"), [Const("N")]) for lemma in item["strengthen"]))
+        typ = FunType(isabelle.nat, isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula))))
+        defLemma=Definition(name=name, typ=typ, val=val,args=["N"])
         return(defLemma)
 
     def genFitenvLemma(self):
         name="lemma"+self.decl.rule.name+"_fitEnv"
-        hasNList=[isabelle.Const("N")] if len(self.decl.var_decls)!=0  else \
-            ([isabelle.Const("N")] if (hasParamExpr(self.decl.rule.cond) or any(hasParamCmd(c) for c in self.decl.rule.cmds)) else [])
-        assm1=isabelle.Fun(isabelle.Const("formEval"), [isabelle.Fun(isabelle.Const("pre"),[isabelle.Const("r")]),isabelle.Const("s") ])  
-        assm2=isabelle.Fun(isabelle.Const("fitEnv"), [isabelle.Const("s"),isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]) ])  
-        assm3=isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const(self.decl.rule.name+"_refs"),hasNList) )
-        conclusion=isabelle.Fun(isabelle.Const("fitEnv"), \
-        [isabelle.Fun(isabelle.Const("trans1"),[isabelle.Fun(isabelle.Const("act"),[isabelle.Const("r")]),isabelle.Const("s")]), \
-        isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]) \
+        hasNList=[Const("N")] if len(self.decl.var_decls)!=0  else \
+            ([Const("N")] if (hasParamExpr(self.decl.rule.cond) or any(hasParamCmd(c) for c in self.decl.rule.cmds)) else [])
+        assm1=Fun(Const("formEval"), [Fun(Const("pre"),[Const("r")]),Const("s") ])  
+        assm2=Fun(Const("fitEnv"), [Const("s"),Fun(Const("env"),[Const("N")]) ])  
+        assm3=Op(":",Const("r"),Fun(Const(self.decl.rule.name+"_refs"),hasNList) )
+        conclusion=Fun(Const("fitEnv"), \
+        [Fun(Const("trans1"),[Fun(Const("act"),[Const("r")]),Const("s")]), \
+        Fun(Const("env"),[Const("N")]) \
         ]) 
         #atrributs=["intro"]
         unfolds=[ self.decl.rule.name+"_refs", self.decl.rule.name+"_ref"]
         proof=isabelle.AutoProof(unfolds=unfolds)
         #attribs=atrributs, 
-        return(isabelle.IsabelleLemma(name=name,assms=[assm1,assm2,assm3],conclusion=conclusion,proof=[proof]))
+        return(IsabelleLemma(name=name,assms=[assm1,assm2,assm3],conclusion=conclusion,proof=[proof]))
 
 def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
     def getRuleOrRuleset(item):
@@ -1184,9 +1188,9 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             paraNums=len(vars) - 1 if hasForall else len(vars)
 
             # Generate definition for strengthening lemmas for this rule
-            typ = isabelle.FunType(isabelle.nat, isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula))))
-            val=isabelle.List(*tuple(isabelle.Fun(isabelle.Const(lemma), [isabelle.Const("N")]) for lemma in item["strengthen"]))
-            defLemma=isabelle.Definition(name="lemmasFor_"+ruleset.rule.name, \
+            typ = FunType(isabelle.nat, isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula))))
+            val=isabelle.List(*tuple(Fun(Const(lemma), [Const("N")]) for lemma in item["strengthen"]))
+            defLemma=Definition(name="lemmasFor_"+ruleset.rule.name, \
             typ=typ, val=val,args=["N"])
 
             # Generate r_ref
@@ -1200,40 +1204,40 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             #r_ref.name=ruleset.rule.name+"_ref"
             ruleSet1=murphi.MurphiRuleSet(var_decls=ruleset.var_decls,rule=r_ref)
             #generate lemmas on r_strengthen
-            oldhasNList=[isabelle.Const("N")] if hasParamExpr(ruleset.rule.cond) or any(hasParamCmd(c) for c in ruleset.rule.cmds) else []
+            oldhasNList=[Const("N")] if hasParamExpr(ruleset.rule.cond) or any(hasParamCmd(c) for c in ruleset.rule.cmds) else []
         
-            hasNList=[isabelle.Const("N")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
+            hasNList=[Const("N")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
             
-            left1=isabelle.Fun(isabelle.Const("strengthenRuleByFrmL2"), [\
-                isabelle.Fun(isabelle.Const("map2'"),[isabelle.Fun(isabelle.Const("lemmasFor_"+oldRuleName),[isabelle.Const("N")]),isabelle.Const("j"),isabelle.Const("i")]), \
-                isabelle.Fun(isabelle.Const(oldRuleName), oldhasNList+[isabelle.Const("i")]) \
+            left1=Fun(Const("strengthenRuleByFrmL2"), [\
+                Fun(Const("map2'"),[Fun(Const("lemmasFor_"+oldRuleName),[Const("N")]),Const("j"),Const("i")]), \
+                Fun(Const(oldRuleName), oldhasNList+[Const("i")]) \
                 ]) if (paraNums==1) else \
-                isabelle.Fun(isabelle.Const("strengthenRuleByFrmL2"), [\
-                isabelle.Fun(isabelle.Const("map2'"),[isabelle.Fun(isabelle.Const("lemmasFor_"+oldRuleName),[isabelle.Const("N")]),isabelle.Const("i"),isabelle.Const("j")]), \
-                isabelle.Fun(isabelle.Const(oldRuleName), oldhasNList+[isabelle.Const("i"),isabelle.Const("j")]) \
+                Fun(Const("strengthenRuleByFrmL2"), [\
+                Fun(Const("map2'"),[Fun(Const("lemmasFor_"+oldRuleName),[Const("N")]),Const("i"),Const("j")]), \
+                Fun(Const(oldRuleName), oldhasNList+[Const("i"),Const("j")]) \
                 ])  
                 
-            right1=isabelle.Fun(isabelle.Const(r_ref.name),hasNList+[isabelle.Const("i")]) if (paraNums==1) else \
-                isabelle.Fun(isabelle.Const(r_ref.name),hasNList+[isabelle.Const("i"),isabelle.Const("j")])
+            right1=Fun(Const(r_ref.name),hasNList+[Const("i")]) if (paraNums==1) else \
+                Fun(Const(r_ref.name),hasNList+[Const("i"),Const("j")])
             eq1=isabelle.eq(left1,right1)
             lemmas_def=" ".join(lemma+"_def" for lemma in item["strengthen"])
             proof=isabelle.AutoProof(unfolds=[("lemmasFor_%s_def %s %s_def %s_ref")%(oldRuleName,lemmas_def,oldRuleName,oldRuleName)])
-            lemma1= isabelle.IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
+            lemma1= IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
             #generate lemmas on r_StrengthRel
-            pred2=isabelle.Fun(isabelle.Const("strengthenRel"), [ \
-                isabelle.Fun(isabelle.Const(oldRuleName+"s"),[isabelle.Const("N")]), \
-                isabelle.Fun(isabelle.Const("set"), [isabelle.Fun(isabelle.Const("InvS"),[isabelle.Const("N")])]), \
-                isabelle.Fun(isabelle.Const(oldRuleName+"_refs"), [isabelle.Const("N")]),
-                isabelle.Const("N") \
+            pred2=Fun(Const("strengthenRel"), [ \
+                Fun(Const(oldRuleName+"s"),[Const("N")]), \
+                Fun(Const("set"), [Fun(Const("InvS"),[Const("N")])]), \
+                Fun(Const(oldRuleName+"_refs"), [Const("N")]),
+                Const("N") \
                 ])
             proof21TacName="strengthenExt1" if len(ruleset.var_decls)==1 else "strengthenExt2"
             proof21=isabelle.IsabelleApplyRuleProof(name=proof21TacName,unfolds=["%ss_def %s_refs"%(oldRuleName,oldRuleName)],
             rule_tac="?lemmasFor_r=\"lemmasFor_"+oldRuleName+"\"")
             proof22=isabelle.presburgerProof(usings=[oldRuleName+"_strengthen"])
             proof23=isabelle.AutoProof(unfolds=["InvS"])
-            lemma2=isabelle.IsabelleLemma(name=oldRuleName+"StrengthRel",assms=[], conclusion=pred2,proof=[proof21,proof22,proof23]) 
-            predOfLemma=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%oldRuleName)),[isabelle.Const("N")])
-            predOfLemma1=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%oldRuleName+"'")),[isabelle.Const("N")])
+            lemma2=IsabelleLemma(name=oldRuleName+"StrengthRel",assms=[], conclusion=pred2,proof=[proof21,proof22,proof23]) 
+            predOfLemma=Fun(Const(("lemmasFor_%s"%oldRuleName)),[Const("N")])
+            predOfLemma1=Fun(Const(("lemmasFor_%s"%oldRuleName+"'")),[Const("N")])
             
             #abstract r_ref
             absRule=[]
@@ -1324,48 +1328,48 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             tmpabsRuleDefListM1=[] #for lemma abs_Idle_refs
             for absItem in item["abstract"]:
                 cond=absItem["cond"]
-                assms=[isabelle.Op("<=",isabelle.Const("M"),isabelle.Const("N")) ]
+                assms=[Op("<=",Const("M"),Const("N")) ]
                 abstracted=False
                 absPars=[]
                 leftPars=[]
                 for k, val0 in cond.items():
-                    leftPars.append(isabelle.Const(k))
+                    leftPars.append(Const(k))
                     if val0:
-                        isaCond0=isabelle.Op("<=",isabelle.Const(k),isabelle.Const("M"))   
-                        absPars.append(isabelle.Const(k))  
+                        isaCond0=Op("<=",Const(k),Const("M"))   
+                        absPars.append(Const(k))  
                                     
                     else:
-                        isaCond0=isabelle.Op(">",isabelle.Const(k),isabelle.Const("M"))
+                        isaCond0=Op(">",Const(k),Const("M"))
                         abstracted=True
                     assms.append(isaCond0)
-                arg1=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])
-                arg2=isabelle.Const("M")
-                hasNList=[isabelle.Const("N")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
-                arg3=isabelle.Fun(isabelle.Const(ruleSet1.rule.name),hasNList+leftPars) if item["ruleset"]!=item["answer"] else \
-                    isabelle.Fun(isabelle.Const(item["ruleset"]),hasNList+leftPars)
-                hasMList=[isabelle.Const("M")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
+                arg1=Fun(Const("env"),[Const("N")])
+                arg2=Const("M")
+                hasNList=[Const("N")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
+                arg3=Fun(Const(ruleSet1.rule.name),hasNList+leftPars) if item["ruleset"]!=item["answer"] else \
+                    Fun(Const(item["ruleset"]),hasNList+leftPars)
+                hasMList=[Const("M")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
                 if abstracted and absItem["answer"]!="skipRule":
                     thisAbstractr=prot.abs_rule_map[absItem["answer"]]
                     thisAbstractr=thisAbstractr.rule if isinstance(thisAbstractr,murphi.MurphiRuleSet) else thisAbstractr
-                    absRuleHasNList=[isabelle.Const("N")] if hasParamExpr(thisAbstractr.cond) or any(hasParamCmd(c) for c in thisAbstractr.cmds) else [] 
-                    absRuleHasMList=[isabelle.Const("M")] if hasParamExpr(thisAbstractr.cond) or any(hasParamCmd(c) for c in thisAbstractr.cmds) else [] 
+                    absRuleHasNList=[Const("N")] if hasParamExpr(thisAbstractr.cond) or any(hasParamCmd(c) for c in thisAbstractr.cmds) else [] 
+                    absRuleHasMList=[Const("M")] if hasParamExpr(thisAbstractr.cond) or any(hasParamCmd(c) for c in thisAbstractr.cmds) else [] 
                     
                 else:
                     absRuleHasNList=[]   
                     absRuleHasMList=[]
                 
-                right=isabelle.Fun(isabelle.Const(absItem["answer"]),absRuleHasMList+absPars) if (absItem["answer"]!="skipRule") and abstracted else \
-                    isabelle.Fun(isabelle.Const(absItem["answer"]),hasMList+absPars) if (absItem["answer"]!="skipRule") else \
-                    isabelle.Const("skipRule")
-                conclusion=isabelle.eq(isabelle.Fun(isabelle.Const("absTransfRule"),[arg1,arg2,arg3]),right)
+                right=Fun(Const(absItem["answer"]),absRuleHasMList+absPars) if (absItem["answer"]!="skipRule") and abstracted else \
+                    Fun(Const(absItem["answer"]),hasMList+absPars) if (absItem["answer"]!="skipRule") else \
+                    Const("skipRule")
+                conclusion=isabelle.eq(Fun(Const("absTransfRule"),[arg1,arg2,arg3]),right)
 
                 
                 if absItem["answer"].startswith("ABS_"):
                     thisPara1= absRuleHasNList
                 else:
-                    thisPara1=[isabelle.Const("N")]
-                absRulesPredForAbsRules=isabelle.Fun(isabelle.Const(absItem["answer"]+"s"),thisPara1)  if (absItem["answer"]!="skipRule") else \
-                    isabelle.Set(isabelle.Const("skipRule"))
+                    thisPara1=[Const("N")]
+                absRulesPredForAbsRules=Fun(Const(absItem["answer"]+"s"),thisPara1)  if (absItem["answer"]!="skipRule") else \
+                    isabelle.Set(Const("skipRule"))
                 if (absItem["answer"]!="skipRule") and abstracted:
                     pass
                 if (absItem["answer"]!="skipRule"):
@@ -1374,29 +1378,29 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
                 if absItem["answer"].startswith("ABS_"):
                     thisPara= absRuleHasMList
                 else:
-                    thisPara=[isabelle.Const("M")]
-                absRulesPredForAbsRulesM=isabelle.Fun(isabelle.Const(absItem["answer"]+"s"),thisPara)  if (absItem["answer"]!="skipRule") else \
-                    isabelle.Set(isabelle.Const("skipRule"))
+                    thisPara=[Const("M")]
+                absRulesPredForAbsRulesM=Fun(Const(absItem["answer"]+"s"),thisPara)  if (absItem["answer"]!="skipRule") else \
+                    isabelle.Set(Const("skipRule"))
                 tmpabsRuleDefListM1.append(absRulesPredForAbsRulesM)
-                absLemmas.append(isabelle.IsabelleLemma(assms=assms,conclusion=conclusion,inLemmas=True))
+                absLemmas.append(IsabelleLemma(assms=assms,conclusion=conclusion,inLemmas=True))
                 unfolds.append(absItem["answer"])
             absRuleDefList1.append(isabelle.Tuple(isabelle.UN(tmpabsRuleDefList1)))
             simpadds = ["Let_def"]
-            absLemma = isabelle.IsabelleLemmas(name="abs_"+ruleSet1.rule.name,lemmas=absLemmas,proof=[isabelle.AutoProof(unfolds=unfolds,simpadds=simpadds)])
+            absLemma = IsabelleLemmas(name="abs_"+ruleSet1.rule.name,lemmas=absLemmas,proof=[isabelle.AutoProof(unfolds=unfolds,simpadds=simpadds)])
             res.append(absLemma)
-            absAllLemmaOnItemAssm = isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
+            absAllLemmaOnItemAssm = Op("<",Const("M"),Const("N"))
             if len(ruleSet1.var_decls) == 2:
                 tmpabsRuleDefListM1[1], tmpabsRuleDefListM1[2] = tmpabsRuleDefListM1[2], tmpabsRuleDefListM1[1]
 
-            absAllLemmaOnItemPred=isabelle.eq(isabelle.Op("`", \
-            isabelle.Fun(isabelle.Const("absTransfRule"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), \
-            isabelle.Const("M")]),isabelle.Fun(isabelle.Const(ruleSet1.rule.name+"s"),[isabelle.Const("N")])), \
+            absAllLemmaOnItemPred=isabelle.eq(Op("`", \
+            Fun(Const("absTransfRule"),[Fun(Const("env"),[Const("N")]), \
+            Const("M")]),Fun(Const(ruleSet1.rule.name+"s"),[Const("N")])), \
                 isabelle.Tuple(isabelle.UNLeft(tmpabsRuleDefListM1)))
             thisUnfolds=[None if isinstance(k,isabelle.Set) else k.fun.name for k in tmpabsRuleDefListM1]
             if None in thisUnfolds:
                 thisUnfolds.remove(None)
             absLemmasOnSetItemProof=isabelle.IsabelleApplyRuleProof(name="absGen",unfolds=thisUnfolds) if len(ruleSet1.var_decls)==1 else isabelle.IsabelleApplyRuleProof(name="absGen2",unfolds=thisUnfolds)
-            absLemmasOnSetItem=isabelle.IsabelleLemma(name="Abs_"+ruleSet1.rule.name+"s", assms=[absAllLemmaOnItemAssm], conclusion=absAllLemmaOnItemPred, \
+            absLemmasOnSetItem=IsabelleLemma(name="Abs_"+ruleSet1.rule.name+"s", assms=[absAllLemmaOnItemAssm], conclusion=absAllLemmaOnItemPred, \
                 proof=[absLemmasOnSetItemProof,isabelle.AutoProof(usings=["abs_"+ruleSet1.rule.name])]) 
             absLemmasOnSets.append(absLemmasOnSetItem)
         else:
@@ -1411,9 +1415,9 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             paraNums = len(vars) - 1 if hasForall else len(vars)
 
             # Generate definition for strengthening lemmas for this rule
-            typ = isabelle.FunType(isabelle.nat, isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula))))
-            val=isabelle.List(*tuple(isabelle.Fun(isabelle.Const(lemma+"'"), [isabelle.Const("N")]) for lemma in item["strengthen"]))
-            defLemma=isabelle.Definition(name="lemmasFor_"+rule.name, \
+            typ = FunType(isabelle.nat, isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula))))
+            val=isabelle.List(*tuple(Fun(Const(lemma+"'"), [Const("N")]) for lemma in item["strengthen"]))
+            defLemma=Definition(name="lemmasFor_"+rule.name, \
             typ=typ, val=val,args=["N"])
 
             # Generate r_ref
@@ -1424,30 +1428,30 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             oldRuleName = rule.name
 
             # Generate lemmas on r_strengthen
-            oldhasNList = [isabelle.Const("N")] if hasParamExpr(r_ref.cond) or any(hasParamCmd(c) for c in  r_ref.cmds) else []        
-            hasNList = [isabelle.Const("N")] if hasParamExpr (r_ref.cond) or any(hasParamCmd(c) for c in  r_ref.cmds) else []
+            oldhasNList = [Const("N")] if hasParamExpr(r_ref.cond) or any(hasParamCmd(c) for c in  r_ref.cmds) else []        
+            hasNList = [Const("N")] if hasParamExpr (r_ref.cond) or any(hasParamCmd(c) for c in  r_ref.cmds) else []
             
-            left1=isabelle.Fun(isabelle.Const("strengthenRuleByFrmL2"), [\
-                isabelle.Fun(isabelle.Const("map2'"),[isabelle.Fun(isabelle.Const("lemmasFor_"+oldRuleName),[isabelle.Const("N")]),isabelle.Const("j"),isabelle.Const("i")]), \
-                isabelle.Fun(isabelle.Const(oldRuleName), oldhasNList)])
+            left1=Fun(Const("strengthenRuleByFrmL2"), [\
+                Fun(Const("map2'"),[Fun(Const("lemmasFor_"+oldRuleName),[Const("N")]),Const("j"),Const("i")]), \
+                Fun(Const(oldRuleName), oldhasNList)])
                 
-            right1=isabelle.Fun(isabelle.Const(r_ref.name),hasNList)
+            right1=Fun(Const(r_ref.name),hasNList)
             eq1=isabelle.eq(left1,right1)
             lemmas_def=" ".join(lemma+"_def" for lemma in item["strengthen"])
             proof=isabelle.AutoProof(unfolds=[("lemmasFor_%s_def %s %s_def %s_ref")%(oldRuleName,lemmas_def,oldRuleName,oldRuleName)])
-            lemma1= isabelle.IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
+            lemma1= IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
 
             #generate lemmas on r_StrengthRel
-            pred2=isabelle.Fun(isabelle.Const("strengthenRel"), [ \
-                isabelle.Fun(isabelle.Const(oldRuleName+"s"),oldhasNList), \
-                isabelle.Fun(isabelle.Const("set"), [isabelle.Fun(isabelle.Const("InvS"),[isabelle.Const("N")])]), \
-                isabelle.Fun(isabelle.Const(oldRuleName+"_refs"), oldhasNList),
-                isabelle.Const("N") \
+            pred2=Fun(Const("strengthenRel"), [ \
+                Fun(Const(oldRuleName+"s"),oldhasNList), \
+                Fun(Const("set"), [Fun(Const("InvS"),[Const("N")])]), \
+                Fun(Const(oldRuleName+"_refs"), oldhasNList),
+                Const("N") \
                 ])
             proof21=isabelle.blastProof(usings=["strengthenRefl"], unfolds=["%ss_def %s_refs_def %s_def %s_ref"%(oldRuleName,oldRuleName,oldRuleName,oldRuleName)])
-            lemma2=isabelle.IsabelleLemma(name=oldRuleName+"StrengthRel",assms=[], conclusion=pred2,proof=[proof21]) 
-            predOfLemma=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%oldRuleName)),[isabelle.Const("N")])
-            predOfLemma1=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%oldRuleName+"'")),[isabelle.Const("N")])
+            lemma2=IsabelleLemma(name=oldRuleName+"StrengthRel",assms=[], conclusion=pred2,proof=[proof21]) 
+            predOfLemma=Fun(Const(("lemmasFor_%s"%oldRuleName)),[Const("N")])
+            predOfLemma1=Fun(Const(("lemmasFor_%s"%oldRuleName+"'")),[Const("N")])
             
             #abstract r_ref
             absRule=[]
@@ -1499,65 +1503,65 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             unfolds=[r_ref.name]
             tmpabsRuleDefList1=[]  #for definition of rule ABS_rules
             tmpabsRuleDefListM1=[] #for lemma abs_Idle_refs
-            hasNList=[isabelle.Const("N")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
-            hasMList=[isabelle.Const("M")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
+            hasNList=[Const("N")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
+            hasMList=[Const("M")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
 
-            right=isabelle.Fun(isabelle.Const(r_ref.name),hasMList)
-            arg1=isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")])
-            arg2=isabelle.Const("M")
-            arg3=isabelle.Fun(isabelle.Const(r_ref.name),hasMList) 
-            conclusion=isabelle.eq(isabelle.Fun(isabelle.Const("absTransfRule"),[arg1,arg2,arg3]),right)
+            right=Fun(Const(r_ref.name),hasMList)
+            arg1=Fun(Const("env"),[Const("N")])
+            arg2=Const("M")
+            arg3=Fun(Const(r_ref.name),hasMList) 
+            conclusion=isabelle.eq(Fun(Const("absTransfRule"),[arg1,arg2,arg3]),right)
                 
-            absRulesPredForAbsRules=(isabelle.Fun(isabelle.Const(r_ref.name+"s"),hasNList)) 
+            absRulesPredForAbsRules=(Fun(Const(r_ref.name+"s"),hasNList)) 
             absRuleDefList.append(absRulesPredForAbsRules)            
             tmpabsRuleDefList1.append(absRulesPredForAbsRules)
-            absRulesPredForAbsRulesM=isabelle.Fun(isabelle.Const(r_ref.name+"s"),hasMList) 
+            absRulesPredForAbsRulesM=Fun(Const(r_ref.name+"s"),hasMList) 
 
             tmpabsRuleDefListM1.append(absRulesPredForAbsRulesM)
-            assms=[isabelle.Op("<=",isabelle.Const("M"),isabelle.Const("N")) ]
-            absLemmas.append(isabelle.IsabelleLemma(assms=assms,conclusion=conclusion,inLemmas=True))
+            assms=[Op("<=",Const("M"),Const("N")) ]
+            absLemmas.append(IsabelleLemma(assms=assms,conclusion=conclusion,inLemmas=True))
                 
             unfolds.append(absItem["answer"])
 
             absRuleDefList1.append(isabelle.Tuple(isabelle.UN(tmpabsRuleDefList1)))
             simpadds=["Let_def"]
-            absLemma=isabelle.IsabelleLemmas(name="abs_"+rule.name,lemmas=absLemmas,proof=[isabelle.AutoProof(unfolds=unfolds, simpadds=simpadds)])
+            absLemma=IsabelleLemmas(name="abs_"+rule.name,lemmas=absLemmas,proof=[isabelle.AutoProof(unfolds=unfolds, simpadds=simpadds)])
             res.append(absLemma)
-            absAllLemmaOnItemAssm=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-            absAllLemmaOnItemPred=isabelle.eq(isabelle.Op("`", \
-            isabelle.Fun(isabelle.Const("absTransfRule"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), \
-            isabelle.Const("M")]),isabelle.Fun(isabelle.Const(r_ref.name+"s"),hasNList)), \
+            absAllLemmaOnItemAssm=Op("<",Const("M"),Const("N"))
+            absAllLemmaOnItemPred=isabelle.eq(Op("`", \
+            Fun(Const("absTransfRule"),[Fun(Const("env"),[Const("N")]), \
+            Const("M")]),Fun(Const(r_ref.name+"s"),hasNList)), \
                 absRulesPredForAbsRulesM )
             thisUnfolds=[None if isinstance(k,isabelle.Set) else k.fun.name for k in tmpabsRuleDefListM1]
             if None in thisUnfolds:
                 thisUnfolds.remove(None)
             absLemmasOnSetItemProof=isabelle.IsabelleApplyRuleProof(name="absGen",unfolds=thisUnfolds)
-            absLemmasOnSetItem=isabelle.IsabelleLemma(name="Abs_"+rule.name+"s", assms=[absAllLemmaOnItemAssm], conclusion=absAllLemmaOnItemPred, \
+            absLemmasOnSetItem=IsabelleLemma(name="Abs_"+rule.name+"s", assms=[absAllLemmaOnItemAssm], conclusion=absAllLemmaOnItemPred, \
                 proof=[isabelle.AutoProof(unfolds=[r_ref.name+"s", r_ref.name])]) 
             absLemmasOnSets.append(absLemmasOnSetItem)
 
     predOfInvS=isabelle.List(*(InvSList))
-    oneLemmasType=isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula)))
-    typeOfInvS=isabelle.FunType(isabelle.nat,isabelle.ListType(oneLemmasType))
-    defOfInvS=isabelle.Definition(name="InvS",typ=typeOfInvS,args=["N"],val=predOfInvS)
+    oneLemmasType=isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula)))
+    typeOfInvS=FunType(isabelle.nat,isabelle.ListType(oneLemmasType))
+    defOfInvS=Definition(name="InvS",typ=typeOfInvS,args=["N"],val=predOfInvS)
     res.append(defOfInvS)
     deriveAllLLemmaProof=[isabelle.AutoProof(unfolds=["deriveRule_def deriveForm_def deriveStmt"] \
         +deriveAllLLemmaProofUnfolds1)]
     symProtAllLemmaProof=[isabelle.AutoProof(usings=symProtAllLemmaProofUsings2+["symParaRuleInfSymRuleSet","symParaRuleInfSymRuleSet2"])]
-    deriveAllLLemmas=isabelle.IsabelleLemmas("deriveAllRef",deriveAllLLemmaist,proof=deriveAllLLemmaProof)
-    symProtAllLemmas=isabelle.IsabelleLemmas("symProtAllRef",symProtAllLemmaList,proof=symProtAllLemmaProof)
+    deriveAllLLemmas=IsabelleLemmas("deriveAllRef",deriveAllLLemmaist,proof=deriveAllLLemmaProof)
+    symProtAllLemmas=IsabelleLemmas("symProtAllRef",symProtAllLemmaList,proof=symProtAllLemmaProof)
     res1.append(deriveAllLLemmas)
     res1.append(symProtAllLemmas)
-    typ = isabelle.FunType(isabelle.nat, isabelle.setType(isabelle.rule))
+    typ = FunType(isabelle.nat, isabelle.setType(isabelle.rule))
     
-    def_ref_rules=isabelle.Definition(name="rule_refs",typ=typ,val=isabelle.UN(refRulesDefList),args=["N"])
+    def_ref_rules=Definition(name="rule_refs",typ=typ,val=isabelle.UN(refRulesDefList),args=["N"])
     res.append(def_ref_rules)
     lenOfSpec=len(strengthenSpec)
-    pred2=isabelle.Fun(isabelle.Const("strengthenRel"), [ \
-              isabelle.Fun(isabelle.Const("rules"),[isabelle.Const("N")]), \
-              isabelle.Fun(isabelle.Const("set"), [isabelle.Fun(isabelle.Const("InvS"),[isabelle.Const("N")])]), \
-              isabelle.Fun(isabelle.Const("rule_refs"), [isabelle.Const("N")]),
-              isabelle.Const("N") \
+    pred2=Fun(Const("strengthenRel"), [ \
+              Fun(Const("rules"),[Const("N")]), \
+              Fun(Const("set"), [Fun(Const("InvS"),[Const("N")])]), \
+              Fun(Const("rule_refs"), [Const("N")]),
+              Const("N") \
               ])
     proof21=isabelle.IsabelleApplyRuleProof(name="strenRelUnion",unfolds=["rules", "rule_refs"])
     proof22s=[
@@ -1569,25 +1573,25 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
     lastProofs=[isabelle.blastProof(introITag="intro", \
     intros=["%sStrengthRel"%(item["ruleset"])]) \
         for item in strengthenSpec[lenOfSpec -2:(lenOfSpec)]]
-    lemma2=isabelle.IsabelleLemma(name="StrengthRelRules2Rule_refs",assms=[], conclusion=pred2,
+    lemma2=IsabelleLemma(name="StrengthRelRules2Rule_refs",assms=[], conclusion=pred2,
     proof=[proof21]+proofs+lastProofs) 
     res1.append(lemma2) 
-    absRuleDefList.append(isabelle.Set(isabelle.Const("skipRule")))
+    absRuleDefList.append(isabelle.Set(Const("skipRule")))
     absRuleSetPred=isabelle.UN(absRuleDefList)
-    absRuleDef=isabelle.Definition(name="ABS_rules",typ=isabelle.FunType(isabelle.nat,isabelle.setType(isabelle.rule)), \
+    absRuleDef=Definition(name="ABS_rules",typ=FunType(isabelle.nat,isabelle.setType(isabelle.rule)), \
             val=absRuleSetPred,args=["N"],is_simp=True  )  
     absRuleSetPred1=isabelle.UN(absRuleDefList1)
-    absRuleDef1=isabelle.Definition(name="ABS_rules'",typ=isabelle.FunType(isabelle.nat,isabelle.setType(isabelle.rule)), \
+    absRuleDef1=Definition(name="ABS_rules'",typ=FunType(isabelle.nat,isabelle.setType(isabelle.rule)), \
             val=absRuleSetPred1,args=["N"],is_simp=True )  #ABS_rules':absRuleDef1<-absRuleSetPred1<-absRuleDefList1<-tmpabsRuleDefList1<-absRulesPredForAbsRules
-    ABS_rules_eqLemmaCon=isabelle.eq(isabelle.Fun(isabelle.Const("ABS_rules"),[isabelle.Const("M")]), \
-        isabelle.Fun(isabelle.Const("ABS_rules'"),[isabelle.Const("M")]))
-    ABS_rules_eqLemma=isabelle.IsabelleLemma(name="ABS_rules_eq_rules'", assms=[], \
+    ABS_rules_eqLemmaCon=isabelle.eq(Fun(Const("ABS_rules"),[Const("M")]), \
+        Fun(Const("ABS_rules'"),[Const("M")]))
+    ABS_rules_eqLemma=IsabelleLemma(name="ABS_rules_eq_rules'", assms=[], \
     conclusion=ABS_rules_eqLemmaCon,proof=[isabelle.AutoProof()]) 
-    absAllLemmaAssm=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-    absAllLemmaPred=isabelle.eq(isabelle.Op("`", \
-        isabelle.Fun(isabelle.Const("absTransfRule"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), \
-        isabelle.Const("M")]),isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")])), \
-             isabelle.Fun(isabelle.Const("ABS_rules"),[isabelle.Const("M")]))
+    absAllLemmaAssm=Op("<",Const("M"),Const("N"))
+    absAllLemmaPred=isabelle.eq(Op("`", \
+        Fun(Const("absTransfRule"),[Fun(Const("env"),[Const("N")]), \
+        Const("M")]),Fun(Const("rule_refs"),[Const("N")])), \
+             Fun(Const("ABS_rules"),[Const("M")]))
     proof1=isabelle.substProof(rules=["ABS_rules_eq_rules'"])
     proof2=isabelle.introProof(unfolds=["rule_refs", "ABS_rules'"],rules=["image_UnI"])
     ruleNames3=getAllProtRuleNames()
@@ -1595,7 +1599,7 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
     ruleNames31=getAllProtRuleSetNames()
     ruleNames31=["Abs_"+k+"_refs" for  k in ruleNames31]
     proof3=isabelle.AutoProof(simpadds=ruleNames3+ruleNames31)
-    absAllLemma=isabelle.IsabelleLemma(name="ABS_all",assms=[absAllLemmaAssm],conclusion=absAllLemmaPred,proof= \
+    absAllLemma=IsabelleLemma(name="ABS_all",assms=[absAllLemmaAssm],conclusion=absAllLemmaPred,proof= \
         [proof1,proof2,proof3])
     return defOfabsRules+res+res1+absLemmasOnSets+[absRuleDef,absRuleDef1,ABS_rules_eqLemma,absAllLemma]
 
@@ -1620,14 +1624,14 @@ lemma "strengthenRel (rules N)  (set (InvS N)) (rules2 N) N "
   apply (intro image_UnI) by auto
   '''
 
-#genallLemmas'
-def genAllInvariantsPrime(prot: murphi.MurphiProtocol):
+def genAllInvariantsPrime(prot: murphi.MurphiProtocol) -> IsabelleLemmas:
+    """Generate all lemmas for primed invariants."""
     res = []
     unfoldsForsymInvsLemma = []
     lemmasForsymInvsLemma = []
     proofsForsymInvsLemma = []
 
-    for k, val in prot.lemma_map.items():
+    for _, val in prot.lemma_map.items():
         extLemma = extMurphiInvariant(val)
         res.append(extLemma.genLemma1())
         res.append(extLemma.genabsTransfLemma())
@@ -1638,9 +1642,9 @@ def genAllInvariantsPrime(prot: murphi.MurphiProtocol):
         proofsForsymInvsLemma.append(proof)
         res.append(extLemma.genSafeAndderiveForm())
 
-    res.append(isabelle.IsabelleLemmas(
+    res.append(IsabelleLemmas(
         name="symInvs",
-        lemmas=lemmasForsymInvsLemma, \
+        lemmas=lemmasForsymInvsLemma,
         proof=[isabelle.AutoProof(unfolds=unfoldsForsymInvsLemma)] + proofsForsymInvsLemma
     ))
 
@@ -1667,51 +1671,51 @@ lemma absProtSim:
   subgoal for r'''
 
 def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
-    res=[]
-    lemmasFor_List=[]
-    InvSList1=[]
-    nameOflemmasFors1=[]
-    for item in str_data:# for k,val in prot._map.items():
-        try:
-            r=prot.ori_rule_map[item["ruleset"]]
-            extRs=extMurphiRuleSet(r,item["strengthen"])
+    res = []
+    lemmasFor_List = []
+    InvSList1 = []
+    nameOflemmasFors1 = []
+    for item in str_data:
+        if "ruleset" in item:
+            r: murphi.MurphiRuleSet = prot.ori_rule_map[item["ruleset"]]
+            extRs = extMurphiRuleSet(r, item["strengthen"])
             res.append(extRs.genStrengthenLemmasDef1(item))
-            res.append((extRs.genLemmastrengthenVsObsLs())) 
+            res.append(extRs.genLemmastrengthenVsObsLs())
             res.append(extRs.genFitenvLemma())
-            if ("lemmasFor_"+item["ruleset"]) not in lemmasFor_List:
-                lemmasFor_List.append("lemmasFor_"+item["ruleset"])
-            predOfLemma1=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%item["ruleset"]+"'")),[isabelle.Const("N")])
+            if "lemmasFor_" + item["ruleset"] not in lemmasFor_List:
+                lemmasFor_List.append("lemmasFor_" + item["ruleset"])
+            predOfLemma1 = Fun(Const("lemmasFor_%s'" % item["ruleset"]),
+                                        [Const("N")])
             InvSList1.append(predOfLemma1)
-        except (KeyError):
-            r=prot.ori_rule_map[item["rule"]]
-            extRs=extMurphiRule(r)
-            #extLemma.test()
+        else:
+            r: murphi.MurphiRule = prot.ori_rule_map[item["rule"]]
+            extRs = extMurphiRule(r)
             res.append(extRs.genStrengthenLemmasDef1(item))
-            res.append((extRs.genLemmastrengthenVsObsLs())) 
+            res.append(extRs.genLemmastrengthenVsObsLs()) 
             res.append(extRs.genFitenvLemma())
-            if ("lemmasFor_"+item["rule"]) not in lemmasFor_List:
-                lemmasFor_List.append("lemmasFor_"+item["rule"])
-            predOfLemma1=isabelle.Fun(isabelle.Const(("lemmasFor_%s"%item["rule"]+"'")),[isabelle.Const("N")])
+            if "lemmasFor_" + item["rule"] not in lemmasFor_List:
+                lemmasFor_List.append("lemmasFor_" + item["rule"])
+            predOfLemma1=Fun(Const("lemmasFor_%s'" % item["rule"]),
+                                      [Const("N")])
             InvSList1.append(predOfLemma1)
          
-        #nameOflemmasFors()
-    nameOfLemmas1=[]
-    for k, decl in prot.lemma_map.items():
-        nameOfLemmas1.append(k+"'")
+    nameOfLemmas1 = []
+    for k in prot.lemma_map:
+        nameOfLemmas1.append(k + "'")
 
     nameOflemmasFors1=[n+"'" for n in lemmasFor_List]
     predOfInvS1=isabelle.List(*(InvSList1))
-    oneLemmasType=isabelle.ListType(isabelle.FunType(isabelle.nat,isabelle.FunType(isabelle.nat,isabelle.formula)))
-    typeOfInvS=isabelle.FunType(isabelle.nat,isabelle.ListType(oneLemmasType))
-    defOfInvS1=isabelle.Definition(name="InvS'",typ=typeOfInvS,args=["N"],val=predOfInvS1)
+    oneLemmasType=isabelle.ListType(FunType(isabelle.nat,FunType(isabelle.nat,isabelle.formula)))
+    typeOfInvS=FunType(isabelle.nat,isabelle.ListType(oneLemmasType))
+    defOfInvS1=Definition(name="InvS'",typ=typeOfInvS,args=["N"],val=predOfInvS1)
     res.append(defOfInvS1)
     
-    assms=[isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")]))]   
-    conclusion=isabelle.Fun(isabelle.Const("wellFormedRule") ,[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),isabelle.Const("N"),isabelle.Const("r")])
+    assms=[Op(":",Const("r"),Fun(Const("rule_refs"),[Const("N")]))]   
+    conclusion=Fun(Const("wellFormedRule") ,[Fun(Const("env"),[Const("N")]),Const("N"),Const("r")])
     simpOnSymRules1=list(r+"_refs_def" for r in prot.ori_rule_map.keys())
     simpOnSymRules2=list("sym"+r+"_ref" for r in prot.ori_rule_map.keys())
     proof=isabelle.AutoProof(simpadds=["rule_refs_def  "]+simpOnSymRules1+simpOnSymRules2)
-    res.append(isabelle.IsabelleLemma(name="wellFormedRule_refs",assms=assms,conclusion=conclusion,proof=[proof]))
+    res.append(IsabelleLemma(name="wellFormedRule_refs",assms=assms,conclusion=conclusion,proof=[proof]))
     
     '''lemma SafeAndderiveCLemmas : 
                   "[|M < N;M = 1;l <= 1; pinvL: set (InvS' N); pf : set pinvL; l≤ 1 
@@ -1721,23 +1725,23 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     using SafeAndderiveFormLemma_1 apply(auto      )    
  
     done'''
-    cond1=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-    cond2=isabelle.Op("=",isabelle.Const("M"),isabelle.Const("1"))
-    cond3=isabelle.Op("<=",isabelle.Const("l"),isabelle.Const("M"))
-    cond31=isabelle.Op("<=",isabelle.Const("k"),isabelle.Const("M"))
-    cond4=isabelle.Op(":",isabelle.Const("pinvL"),isabelle.Fun(isabelle.Const("set"),[(isabelle.Fun(isabelle.Const("InvS'"),[isabelle.Const("N")]))]))
-    cond5=isabelle.Op(":",isabelle.Const("pf"),isabelle.Fun(isabelle.Const("set"),[isabelle.Const("pinvL")]))
-    pred1=isabelle.Fun(isabelle.Const("safeForm"), \
-            [isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("M"), \
-            isabelle.Fun(isabelle.Const("pf"),[isabelle.Const("k"),isabelle.Const("l")])])
-    pred2=isabelle.Fun(isabelle.Const("deriveForm"), \
-            [isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),   \
-            isabelle.Fun(isabelle.Const("pf"),[isabelle.Const("k"),isabelle.Const("l")])])
+    cond1=Op("<",Const("M"),Const("N"))
+    cond2=Op("=",Const("M"),Const("1"))
+    cond3=Op("<=",Const("l"),Const("M"))
+    cond31=Op("<=",Const("k"),Const("M"))
+    cond4=Op(":",Const("pinvL"),Fun(Const("set"),[(Fun(Const("InvS'"),[Const("N")]))]))
+    cond5=Op(":",Const("pf"),Fun(Const("set"),[Const("pinvL")]))
+    pred1=Fun(Const("safeForm"), \
+            [Fun(Const("env"),[Const("N")]), Const("M"), \
+            Fun(Const("pf"),[Const("k"),Const("l")])])
+    pred2=Fun(Const("deriveForm"), \
+            [Fun(Const("env"),[Const("N")]),   \
+            Fun(Const("pf"),[Const("k"),Const("l")])])
     unfolds=["InvS'"]+nameOflemmasFors1
     usings=["SafeAndderiveForm"+n for n in nameOfLemmas1]
-    res.append(isabelle.IsabelleLemma(
+    res.append(IsabelleLemma(
         assms=[cond1,cond2,cond3,cond31,cond4,cond5],
-        conclusion=isabelle.Op("&",pred1,pred2),
+        conclusion=Op("&",pred1,pred2),
         name="SafeAndderiveAll",
         proof=[isabelle.AutoProof(unfolds=unfolds,usings=usings)]))
 
@@ -1745,50 +1749,50 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     "symProtRules' N (rules N)"
     using symProtAll rules_def symProtRulesUnion by presburger'''
     name="rulesIsSym"
-    pred=isabelle.Fun(isabelle.Const("symProtRules'"),[isabelle.Const("N"), \
-        isabelle.Fun(isabelle.Const("rules"),[isabelle.Const("N")])])
+    pred=Fun(Const("symProtRules'"),[Const("N"), \
+        Fun(Const("rules"),[Const("N")])])
     proof=[isabelle.IsabelleApplyRuleProof(name="symProtRulesUnion, blast intro:symProtAll",unfolds=["rules"],plus="+"),
     isabelle.blastProof(unfolds=["rules"],intros=["symProtAll"],introITag="intro")]
-    res.append(isabelle.IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
+    res.append(IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
 
     name="rule_refsIsSym"
-    pred=isabelle.Fun(isabelle.Const("symProtRules'"),[isabelle.Const("N"), \
-        isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")])])
+    pred=Fun(Const("symProtRules'"),[Const("N"), \
+        Fun(Const("rule_refs"),[Const("N")])])
     proof = [isabelle.IsabelleApplyRuleProof(name="symProtRulesUnion, blast intro:symProtAllRef",
                                              unfolds=["rule_refs"], plus="+"),
              isabelle.blastProof(unfolds=["rule_refs"], intros=["symProtAllRef"], introITag="intro")]
-    res.append(isabelle.IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
+    res.append(IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
     
     '''lemma rules2WellTyped:
     "r \\<in> rules2 N \\<Longrightarrow> deriveRule (env N) r"
     unfolding rules2_def'''
     name="rules2WellTyped"
-    assm=isabelle.Op(":",isabelle.Const("r"),isabelle.Fun(isabelle.Const("rule_refs"),[isabelle.Const("N")]))
-    pred=isabelle.Fun(isabelle.Const("deriveRule"),[ \
-        isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]), isabelle.Const("r")])
+    assm=Op(":",Const("r"),Fun(Const("rule_refs"),[Const("N")]))
+    pred=Fun(Const("deriveRule"),[ \
+        Fun(Const("env"),[Const("N")]), Const("r")])
     proof=isabelle.AutoProof(unfolds=["rule_refs"],usings=["deriveAllRef"])
-    res.append(isabelle.IsabelleLemma(name="rule_refsWellTyped",assms=[assm],conclusion=pred,proof=[proof]))
+    res.append(IsabelleLemma(name="rule_refsWellTyped",assms=[assm],conclusion=pred,proof=[proof]))
 
     #generate the lemma invOnStateOfN1:
     '''"reachableUpTo (allInitSpecs N) (rule_refs N) k s ⟹
     fitEnv s (env N)"'''
     name="ReachStafitEnv"
-    assm=isabelle.Fun(isabelle.Const("reachableUpTo"), [(isabelle.Fun(isabelle.Const("allInitSpecs"),[isabelle.Const("N")])), \
-         isabelle.Fun(isabelle.Const("rule_refs"), [isabelle.Const("N")]), isabelle.Const("k"), isabelle.Const("s")] )
-    conclusion=isabelle.Fun(isabelle.Const("fitEnv"), \
-        [isabelle.Const("s"), isabelle.Fun(isabelle.Const("env"), [isabelle.Const("N")])])
+    assm=Fun(Const("reachableUpTo"), [(Fun(Const("allInitSpecs"),[Const("N")])), \
+         Fun(Const("rule_refs"), [Const("N")]), Const("k"), Const("s")] )
+    conclusion=Fun(Const("fitEnv"), \
+        [Const("s"), Fun(Const("env"), [Const("N")])])
     '''proof1=isabelle.IsabelleApplyRuleProof(name="invIntro", \
         rule_tac="?fs=\" (allInitSpecs N)\"  and rs=\"(rule_refs N)\" and k=\"k\"")'''
     proof1=isabelle.IsabelleApplyEruleProof(name="invIntro1")
     proof21= isabelle.IsabelleApplyRuleProof(unfolds=["fitEnv"],name="allI")
     proof22=isabelle.IsabelleApplyRuleProof(name="impI")
-    proof23=isabelle.casetacProof(goal=isabelle.Const("v"))
+    proof23=isabelle.casetacProof(goal=Const("v"))
     initSpecsOnGlobal=list(filter(lambda x:x.isGlobal,initSpecs))
     initSpecsOnParam=list(filter(lambda x: not(x.isGlobal),initSpecs))
     
     proofs5=[]
     for spec in initSpecsOnGlobal:
-        pred=isabelle.Op("=",isabelle.Const("x1"),isabelle.Const("''"+spec.assignVar+"''"))
+        pred=Op("=",Const("x1"),Const("''"+spec.assignVar+"''"))
         proofs5.append(isabelle.casetacProof(pred))
         proofs5.append(spec.genInitSubgoalProof())
         proofs5.append(isabelle.AutoProof(goalNum="1"))
@@ -1796,7 +1800,7 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof25=isabelle.subgoalProof(fors= ["v" ,"x1"],proofs=proofs5+[isabelle.AutoProof()])
     proofs6=[]
     for spec in initSpecsOnParam:
-        pred=isabelle.Op("=",isabelle.Const("x21"),isabelle.Const("''"+spec.assignVar+"''"))
+        pred=Op("=",Const("x21"),Const("''"+spec.assignVar+"''"))
         proofs6.append(isabelle.casetacProof(pred))
         proofs6.append(spec.genInitSubgoalProof())
         proofs6.append(isabelle.AutoProof(goalNum="1"))
@@ -1805,20 +1809,20 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof2=isabelle.subgoalProof(fors=["s0"],proofs=[proof21,proof22,proof23,proof25,proof26]+[isabelle.AutoProof()])
     autoIntros=["Un_iff"]+["lemma"+k+"_fitEnv" for k in prot.ori_rule_map.keys()]
     proof3=isabelle.subgoalProof(fors=["r","sk"],proofs=[isabelle.AutoProof(unfolds=["rule_refs"],introITag="intro",intros=autoIntros)])
-    lemma=isabelle.IsabelleLemma(assms=[assm],conclusion=conclusion,name=name,proof=[proof1,proof2,proof3])
+    lemma=IsabelleLemma(assms=[assm],conclusion=conclusion,name=name,proof=[proof1,proof2,proof3])
     #generate the main lemma apply(rule_tac ?fs=" (allInitSpecs N)"  and rs="(rule_refs N)" and k="k" in invIntro)
     res.append(lemma)
     name="absProtSim1"
-    assm1=isabelle.Op("<",isabelle.Const("M"),isabelle.Const("N"))
-    assm2=isabelle.Op("=",isabelle.Const("M"),isabelle.Const("1"))
-    assm3=isabelle.Fun(isabelle.Const("isProtObsInvSet"),[isabelle.Fun(isabelle.Const("ABS_rules"),[isabelle.Const("M")]), \
-        isabelle.Op("`",isabelle.Fun(isabelle.Const("absTransfForm"),[isabelle.Fun(isabelle.Const("env"),[isabelle.Const("N")]),isabelle.Const("M")]), \
-            isabelle.Fun(isabelle.Const("allInitSpecs"),[isabelle.Const("N")])), \
-        isabelle.Fun(isabelle.Const("set"),[isabelle.Fun(isabelle.Const("InvS'"),[isabelle.Const("N")])]), isabelle.Const("M"), \
-        isabelle.Fun(isabelle.Const("env"), [isabelle.Const("N")])    ])
-    conclusion=isabelle.Fun(isabelle.Const("isParamProtInvSet"),[isabelle.Fun(isabelle.Const("rules"),[isabelle.Const("N")]), \
-        isabelle.Fun(isabelle.Const("allInitSpecs"),[isabelle.Const("N")]), \
-        isabelle.Fun(isabelle.Const("set"),[isabelle.Fun(isabelle.Const("InvS"),[isabelle.Const("N")])]), isabelle.Const("N")    ])
+    assm1=Op("<",Const("M"),Const("N"))
+    assm2=Op("=",Const("M"),Const("1"))
+    assm3=Fun(Const("isProtObsInvSet"),[Fun(Const("ABS_rules"),[Const("M")]), \
+        Op("`",Fun(Const("absTransfForm"),[Fun(Const("env"),[Const("N")]),Const("M")]), \
+            Fun(Const("allInitSpecs"),[Const("N")])), \
+        Fun(Const("set"),[Fun(Const("InvS'"),[Const("N")])]), Const("M"), \
+        Fun(Const("env"), [Const("N")])    ])
+    conclusion=Fun(Const("isParamProtInvSet"),[Fun(Const("rules"),[Const("N")]), \
+        Fun(Const("allInitSpecs"),[Const("N")]), \
+        Fun(Const("set"),[Fun(Const("InvS"),[Const("N")])]), Const("N")    ])
     proof1= isabelle.IsabelleApplyRuleProof(name="CMP", \
         rule_tac="?rs2.0 = \"rule_refs N\" and env=\"env N\" and S=\"set (InvS N)\" and S'=\"set (InvS' N)\" and M=M and absRules=\"ABS_rules M\"")
     proof2=isabelle.subgoalProof(fors=["r"],proofs=[isabelle.AutoProof(usings=["wellFormedRule_refs"])])
@@ -1860,7 +1864,7 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     using assms(2) by auto
   subgoal
     using assms(3) by auto'''
-    res.append(isabelle.IsabelleLemma(name="absProtSim",assms=[assm1,assm2,assm3],conclusion=conclusion,
+    res.append(IsabelleLemma(name="absProtSim",assms=[assm1,assm2,assm3],conclusion=conclusion,
     proof=[proof1,proof2,proof3,proof4,proof5,proof6,proof7,proof8,proof9,proof10,proof12,proof13, \
         proof14,proof16]+proof17s))
     return res

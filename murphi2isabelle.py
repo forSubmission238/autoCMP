@@ -1,6 +1,6 @@
 
 import json
-from typing import Iterable, List
+from typing import Iterable, List, Optional, Tuple
 
 import murphi
 import murphiparser
@@ -35,11 +35,13 @@ def translateBooleans():
     ]
 
 def destruct_var(e: murphi.MurphiExpr, vars: List[str]):
+    """Deconstruct Murphi variable into field and index parts."""
     if isinstance(e, murphi.VarExpr):
         assert e.name not in vars, "destruct_var: %s not in %s" % (e.name, vars)
         return [e.name], None
     elif isinstance(e, murphi.ArrayIndex):
         names, idx = destruct_var(e.v, vars)
+        assert isinstance(e.idx, murphi.VarExpr)
         return names, e.idx.name
     elif isinstance(e, murphi.FieldName):
         names, idx = destruct_var(e.v, vars)
@@ -48,6 +50,7 @@ def destruct_var(e: murphi.MurphiExpr, vars: List[str]):
         raise NotImplementedError("destruct var on %s" % e)
 
 def translateVar(v: murphi.MurphiExpr, vars: List[str]):
+    """Translate Murphi variable into Isabelle term."""
     names, idx = destruct_var(v, vars)
     if idx is None:
         return isabelle.Ident(".".join(names))
@@ -55,6 +58,7 @@ def translateVar(v: murphi.MurphiExpr, vars: List[str]):
         return isabelle.Para(".".join(names), idx)
 
 def translateExp(e: murphi.MurphiExpr, vars: List[str]):
+    """Translate Murphi expression into Isabelle term."""
     if isinstance(e, murphi.UnknownExpr):
         raise NotImplementedError
     elif isinstance(e, murphi.BooleanExpr):
@@ -73,6 +77,7 @@ def translateExp(e: murphi.MurphiExpr, vars: List[str]):
         raise NotImplementedError
 
 def translateIsabelleExp(e: murphi.MurphiExpr, vars: List[str]):
+    """Translate Murphi expression into Isabelle term, alternate form."""
     if isinstance(e, murphi.UnknownExpr):
         raise NotImplementedError
     elif isinstance(e, murphi.BooleanExpr):
@@ -85,12 +90,13 @@ def translateIsabelleExp(e: murphi.MurphiExpr, vars: List[str]):
     elif isinstance(e, murphi.VarExpr) and e.name in vars:
         return isabelle.index(e.name)
     elif isinstance(e, (murphi.VarExpr, murphi.ArrayIndex, murphi.FieldName)):
-        return (translateVar(e, vars))
+        return translateVar(e, vars)
     else:
         print("translateExp: %s" % e)
         raise NotImplementedError
 
 def translateForm(e: murphi.MurphiExpr, vars: List[str]):
+    """Translate Murphi formula into Isabelle terms."""
     if isinstance(e, murphi.BooleanExpr):
         if e.val:
             return Const("chaos")
@@ -134,7 +140,12 @@ def translateForm(e: murphi.MurphiExpr, vars: List[str]):
         print("translateForm: %s" % e)
         raise NotImplementedError
 
-def hasParamExpr(e: murphi.MurphiExpr):
+def hasParamExpr(e: murphi.MurphiExpr) -> bool:
+    """Whether a Murphi expression contains parameters.
+    
+    This is the case of the expression contains "Other" or forall expression.
+    """
+
     if isinstance(e, (murphi.VarExpr, murphi.ArrayIndex, murphi.FieldName)):
         return False
     elif isinstance(e, (murphi.UnknownExpr, murphi.BooleanExpr)):
@@ -151,7 +162,8 @@ def hasParamExpr(e: murphi.MurphiExpr):
         print("hasParamExpr on %s" % e)
         raise NotImplementedError
 
-def hasParamCmd(cmd: murphi.MurphiCmd):
+def hasParamCmd(cmd: murphi.MurphiCmd) -> bool:
+    """Whether a Murphi command contains parameters."""
     if isinstance(cmd, murphi.UndefineCmd):
         return False
     elif isinstance(cmd, murphi.AssignCmd):
@@ -166,10 +178,10 @@ def hasParamCmd(cmd: murphi.MurphiCmd):
             return True
         return False
     else:
-        print("hasParamCmd on %s" % cmd)
-        raise NotImplementedError
+        raise NotImplementedError("hasParamCmd on %s" % cmd)
 
-def translateVar1(v: murphi.MurphiExpr, vars: List[str]):
+def translateVar1(v: murphi.MurphiExpr, vars: List[str]) -> Tuple[str, Optional[str]]:
+    """Translate each Murphi variable to Isabelle variable and index"""
     names, idx = destruct_var(v, vars)
     if idx is None:
         return ".".join(names), None

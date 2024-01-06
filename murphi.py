@@ -124,8 +124,8 @@ class RecordType(MurphiType):
         return isinstance(other, RecordType) and self.typ_decls == other.typ_decls
 
 class MurphiTypeDecl:
+    """Murphi type declaration."""
     def __init__(self, name: str, typ: MurphiType):
-        """Murphi type declaration."""
         assert isinstance(name, str) and isinstance(typ, MurphiType)
         self.name = name
         self.typ = typ
@@ -141,6 +141,7 @@ class MurphiTypeDecl:
             self.typ == other.typ
 
 class MurphiVarDecl:
+    """Murphi variable declaration."""
     def __init__(self, name, typ):
         assert isinstance(name, str) and isinstance(typ, MurphiType)
         self.name = name
@@ -166,6 +167,7 @@ class MurphiExpr:
 
 
 class UnknownExpr(MurphiExpr):
+    """Unknown expression in Murphi."""
     def __init__(self, s):
         assert isinstance(s, str)
         self.s = s
@@ -195,6 +197,7 @@ class UnknownExpr(MurphiExpr):
             raise AssertionError("elaborate: unrecognized name %s" % self.s)
 
 class BooleanExpr(MurphiExpr):
+    """Boolean expression in Murphi."""
     def __init__(self, val):
         self.val = val
 
@@ -214,6 +217,7 @@ class BooleanExpr(MurphiExpr):
         return isinstance(other, BooleanExpr) and self.val == other.val
 
 class EnumValExpr(MurphiExpr):
+    """Enum values in Murphi."""
     def __init__(self, enum_type, enum_val):
         self.enum_type = enum_type
         self.enum_val = enum_val
@@ -232,6 +236,7 @@ class EnumValExpr(MurphiExpr):
             self.enum_val == other.enum_val
 
 class VarExpr(MurphiExpr):
+    """Variable in Murphi."""
     def __init__(self, name: str, typ: MurphiType):
         assert isinstance(name, str) and isinstance(typ, MurphiType)
         self.name = name
@@ -250,6 +255,7 @@ class VarExpr(MurphiExpr):
         return isinstance(other, VarExpr) and self.name == other.name and self.typ == other.typ
 
 class FieldName(MurphiExpr):
+    """Field access in Murphi."""
     def __init__(self, v: MurphiExpr, field: str):
         assert isinstance(v, MurphiExpr)
         assert isinstance(field, str)
@@ -272,6 +278,7 @@ class FieldName(MurphiExpr):
         return FieldName(self.v.elaborate(prot, bound_vars), self.field)
 
 class ArrayIndex(MurphiExpr):
+    """Array indexing expression in Murphi."""
     def __init__(self, v: MurphiExpr, idx: MurphiExpr):
         self.v = v
         self.idx = idx
@@ -292,6 +299,7 @@ class ArrayIndex(MurphiExpr):
         return ArrayIndex(self.v.elaborate(prot, bound_vars), self.idx.elaborate(prot, bound_vars))
 
 class ForallExpr(MurphiExpr):
+    """Forall expression in Murphi."""
     def __init__(self, var_decl: MurphiVarDecl, expr: MurphiExpr):
         self.var_decl = var_decl
         self.var, self.typ = self.var_decl.name, self.var_decl.typ
@@ -329,8 +337,13 @@ priority_map = {
 }
 
 class OpExpr(MurphiExpr):
+    """Operator in Murphi.
+    
+    Currently we support comparison and boolean operators.
+    
+    """
     def __init__(self, op: str, expr1: MurphiExpr, expr2: MurphiExpr):
-        assert isinstance(op, str) and op in ("+",'=', '!=', '&', '|', '->')
+        assert isinstance(op, str) and op in ("+", '=', '!=', '&', '|', '->')
         assert isinstance(expr1, MurphiExpr), "OpExpr: expr1 %s has type %s" % (expr1, type(expr1))
         assert isinstance(expr2, MurphiExpr), "OpExpr: expr2 %s has type %s" % (expr2, type(expr2))
         self.op = op
@@ -375,6 +388,7 @@ class OpExpr(MurphiExpr):
         return OpExpr(self.op, self.expr1.elaborate(prot, bound_vars), self.expr2.elaborate(prot, bound_vars))
 
 class NegExpr(MurphiExpr):
+    """Negation expression in Murphi."""
     def __init__(self, expr: MurphiExpr):
         self.expr = expr
 
@@ -402,6 +416,7 @@ class MurphiCmd:
         return self
 
 class Skip(MurphiCmd):
+    """Skip command in Murphi."""
     def __init__(self):
         pass
 
@@ -415,6 +430,7 @@ class Skip(MurphiCmd):
         return isinstance(other, Skip)
 
 class UndefineCmd(MurphiCmd):
+    """Undefine command in Murphi."""
     def __init__(self, var: MurphiExpr):
         assert isinstance(var, MurphiExpr)
         self.var = var
@@ -432,6 +448,7 @@ class UndefineCmd(MurphiCmd):
         return UndefineCmd(self.var.elaborate(prot, bound_vars))
 
 class AssignCmd(MurphiCmd):
+    """Assignment command in Murphi."""
     def __init__(self, var: MurphiExpr, expr: MurphiExpr):
         assert isinstance(var, MurphiExpr)
         assert isinstance(expr, MurphiExpr)
@@ -451,6 +468,7 @@ class AssignCmd(MurphiCmd):
         return AssignCmd(self.var.elaborate(prot, bound_vars), self.expr.elaborate(prot, bound_vars))
 
 class ForallCmd(MurphiCmd):
+    """Forall command in Murphi."""
     def __init__(self, var_decl: MurphiVarDecl, cmds: Iterable[MurphiCmd]):
         self.var_decl = var_decl
         self.var, self.typ = self.var_decl.name, self.var_decl.typ
@@ -477,6 +495,7 @@ class ForallCmd(MurphiCmd):
         return res
 
 class IfCmd(MurphiCmd):
+    """If-then-else command in Murphi."""
     def __init__(self, args: Iterable[MurphiExpr | Iterable[MurphiCmd]]):
         assert len(args) >= 2, "IfCmd: input args has %s elements" % len(args)
         self.args = args
@@ -519,6 +538,7 @@ class IfCmd(MurphiCmd):
         return IfCmd(new_args)
 
 class StartState:
+    """Specification of starting state in Murphi."""
     def __init__(self, name: str, cmds: Iterable[MurphiCmd]):
         self.name = name
         self.cmds = tuple(cmds)
@@ -543,6 +563,7 @@ class MurphiDecl:
 
 
 class MurphiRule:
+    """Representation of rules in Murphi."""
     def __init__(self, name: str, cond: MurphiExpr, cmds: Iterable[MurphiCmd]):
         assert isinstance(name, str)
         assert isinstance(cond, MurphiExpr)
@@ -577,6 +598,7 @@ class MurphiRule:
 
 
 class MurphiRuleSet:
+    """Rulesets in Murphi."""
     def __init__(self, var_decls: Iterable[MurphiVarDecl], rule: MurphiRule):
         assert all(isinstance(var_decl, MurphiVarDecl) for var_decl in var_decls)
         assert isinstance(rule, MurphiRule)
@@ -604,6 +626,7 @@ class MurphiRuleSet:
         return res
 
 class MurphiInvariant:
+    """Invariants in Murphi."""
     def __init__(self, name: str, inv: MurphiExpr):
         assert isinstance(name, str)
         assert isinstance(inv, MurphiExpr)
@@ -628,6 +651,7 @@ class MurphiInvariant:
 
 
 class MurphiProtocol:
+    """Internal representation of a Murphi protocol."""
     def __init__(self, consts: Iterable[MurphiConstDecl],
                  types: Iterable[MurphiTypeDecl],
                  vars: Iterable[MurphiVarDecl],

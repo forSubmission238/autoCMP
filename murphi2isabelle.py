@@ -436,8 +436,8 @@ def translateStartState(prot: murphi.MurphiProtocol):
 
     return res, initSpecs
 
-#generate environment definitions, and lemmas, declarations
 def translateEnvByStartState(prot):
+    """Generate environment definitions, and lemmas, declarations"""
     eqIdents=[]
     eqParas=[]
     cmpPara=Fun(Const("Para"),[Const("n"),Const("i")])
@@ -583,6 +583,7 @@ def check_ite_assign_cmd(c):
                     return (cond, c1.var, c1.expr, c2.expr)
 
 def translateCmd(cmd: murphi.MurphiCmd, vars: List[str]):
+    """Translate a Murphi command."""
     if isinstance(cmd, murphi.Skip):
         return Const("skip")
     elif isinstance(cmd, murphi.AssignCmd):
@@ -624,6 +625,7 @@ def translateCmd(cmd: murphi.MurphiCmd, vars: List[str]):
         raise NotImplementedError
     
 def translateCmds(cmds: Iterable[murphi.MurphiCmd], vars: List[str]):
+    """Translate a list of Murphi commands."""
     isa_cmds = []
     for cmd in cmds:
         isa_cmd = translateCmd(cmd, vars)
@@ -637,6 +639,7 @@ def translateRuleTerm(rule: murphi.MurphiRule, vars: List[str]):
     return Op("|>", isa_cond, isa_cmds)
 
 def translateRule(rule: murphi.MurphiRule):
+    """Translate Murphi rule."""
     isa_rule = translateRuleTerm(rule, [])
     typ = isabelle.rule
     args = []
@@ -646,6 +649,7 @@ def translateRule(rule: murphi.MurphiRule):
     return Definition(rule.name, typ, isa_rule, args=args, is_equiv=True)
 
 def translateRuleSet(ruleset: murphi.MurphiRuleSet):
+    """Translate Murphi ruleset."""
     typ = isabelle.rule
     vars = []
     if hasParamExpr(ruleset.rule.cond) or any(hasParamCmd(c) for c in ruleset.rule.cmds):
@@ -658,10 +662,11 @@ def translateRuleSet(ruleset: murphi.MurphiRuleSet):
     return Definition(ruleset.rule.name, typ, isa_rule, args=vars, is_equiv=True)
 
 
+"""
+Generate definition of rs, and lemma items on deriveRule, symProts, and terms rs N in rules
+-- such as Trys deriveAll lemmas such as r ∈ Trys N ⟹ deriveRule (env N) r
 
-#generate def of rs, and  lemma items on deriveRule, symProts, and terms rs N  in rules--such as Trys
-#deriveAll lemmas such as r ∈ Trys N ⟹ deriveRule (env N) r
-'''definition Trys :: "nat \\<Rightarrow> rule set" where
+definition Trys :: "nat \\<Rightarrow> rule set" where
   "Trys N \\<equiv> oneParamCons N Try"
   definition NI_Remote_Get_Put_refs :: "nat \\<Rightarrow> rule set" where [rules_simp]:
   "NI_Remote_Get_Put_refs N \\<equiv> twoParamsCons N (NI_Remote_Get_Put_ref N)
@@ -685,10 +690,10 @@ lemma symProtAll:
 
 definition rules :: "nat \\<Rightarrow> rule set" where
   "rules N \\<equiv> Trys N \\<union> Crits N \\<union> Exits N \\<union> Idles N"
-
-  "'''
+"""
 
 def translateRuleSets(ruleset: murphi.MurphiRuleSet):
+    """Translate list of rulsets."""
     typ = isabelle.rule
     vars = []
     if "N" in (decl.name for decl in ruleset.var_decls):
@@ -917,7 +922,7 @@ def genInvariantSymLemma(inv: murphi.MurphiInvariant) -> IsabelleLemma:
         ]
     )
 
-'''
+"""
 lemma symInvs:
   "symParamForm2 N (Lemma_1 N)"
   "symParamForm2 N (Lemma_2a N)"
@@ -938,7 +943,8 @@ lemma symInvs:
     unfolding symParamForm2_def by auto
   subgoal apply (intro symParamForm2Imply symParamFormForallExcl2)
     unfolding symParamForm2_def by auto
-  done'''    
+  done
+"""
 
 def genSymLemmas(prot: murphi.MurphiProtocol):
     res = []
@@ -1140,7 +1146,9 @@ class extMurphiRule:
         )
 
 
-'''generate items on strengthening and abstraction, firstly generate strengthened rule and abstract resultings
+"""
+Generate items on strengthening and abstraction, first generate strengthened rule
+and abstract the results. 
 
 lemma Idle_strengthen:
   "strengthenRuleByFrmL2 (map2' (lemmasFor_Idle N) j i) (Idle i) = Idle_ref N i"
@@ -1163,8 +1171,7 @@ definition lemmasFor_Idle' :: "nat \\<Rightarrow> (nat \\<Rightarrow> nat \\<Rig
 
 definition InvS :: "nat \\<Rightarrow> (nat \\<Rightarrow> nat \\<Rightarrow> formula) list list" where
   "InvS N \\<equiv> [lemmasFor_Idle N]"
-'''
-
+"""
 
 class extMurphiRuleSet:
     def __init__(self, decl, strengthen=None):
@@ -1181,9 +1188,11 @@ class extMurphiRuleSet:
     def __eq__(self, other):
         return isinstance(other, extMurphiRuleSet) and self.decl == other.decl
 
-    '''lemma strengthenVsObsLs_lemmasFor_NI_InvAck1:
-    "strengthenVsObsLs (lemmasFor_NI_InvAck1 N) (lemmasFor_NI_InvAck1' N) N"
-     by (auto simp add: strengthenVsObsLs_def lemmasFor_NI_InvAck1_def lemmasFor_NI_InvAck1'_def)'''
+    """
+    lemma strengthenVsObsLs_lemmasFor_NI_InvAck1:
+      "strengthenVsObsLs (lemmasFor_NI_InvAck1 N) (lemmasFor_NI_InvAck1' N) N"
+      by (auto simp add: strengthenVsObsLs_def lemmasFor_NI_InvAck1_def lemmasFor_NI_InvAck1'_def)
+    """
 
     def genLemmastrengthenVsObsLs(self):
         name="strengthenVsObsLs_lemmasFor_"+self.decl.rule.name
@@ -1278,9 +1287,9 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
                 lemmaC = prot.lemma_map[lemma].inv
                 r_ref = abstract.strengthen(r_ref,lemmaC)
             oldRuleName=ruleset.rule.name
-            #r_ref.name=ruleset.rule.name+"_ref"
             ruleSet1=murphi.MurphiRuleSet(var_decls=ruleset.var_decls,rule=r_ref)
-            #generate lemmas on r_strengthen
+
+            # Generate lemmas on r_strengthen
             oldhasNList=[Const("N")] if hasParamExpr(ruleset.rule.cond) or any(hasParamCmd(c) for c in ruleset.rule.cmds) else []
         
             hasNList=[Const("N")] if hasParamExpr(ruleSet1.rule.cond) or any(hasParamCmd(c) for c in ruleSet1.rule.cmds) else []
@@ -1300,7 +1309,8 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             lemmas_def=" ".join(lemma+"_def" for lemma in item["strengthen"])
             proof=isabelle.AutoProof(unfolds=[("lemmasFor_%s_def %s %s_def %s_ref")%(oldRuleName,lemmas_def,oldRuleName,oldRuleName)])
             lemma1= IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
-            #generate lemmas on r_StrengthRel
+
+            # Generate lemmas on r_StrengthRel
             pred2=Fun(Const("strengthenRel"), [ \
                 Fun(Const(oldRuleName+"s"),[Const("N")]), \
                 Fun(Const("set"), [Fun(Const("InvS"),[Const("N")])]), \
@@ -1316,7 +1326,7 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             predOfLemma=Fun(Const(("lemmasFor_%s"%oldRuleName)),[Const("N")])
             predOfLemma1=Fun(Const(("lemmasFor_%s"%oldRuleName+"'")),[Const("N")])
             
-            #abstract r_ref
+            # Abstract r_ref
             absRule=[]
             absRules=[]
             suffix=""
@@ -1375,34 +1385,35 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             res.append(lemma1)
             res1.append(lemma2)
             
-            '''for absr in absRules:
-                res.append(translateRuleSet(absr))
-                defA,lemmaA1,lemmaA2,termA,unfoldsA,usingsA=translateRuleSets(absr)
-                res.append(defA)'''
-            '''generate1. lemmas on abstraction for r_refs by json:
-            2. definitions for    ABS_rules,  ABS_rules' 
-            "abstract":[{"cond":{"i": false},"answer":"ABS_Idle"},{"cond":{"i": true},"answer":"ABS_Idle"}]
-            lemma abs_Idle_ref
-            "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
-            "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+            """
+            Generate
+            
+            1. lemmas on abstraction for r_refs by json:
+            2. definitions for ABS_rules, ABS_rules' 
+
+            lemma abs_Idle_ref:
+                "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
+                "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+
             definition ABS_rules :: "nat \\<Rightarrow> rule set" where [simp]:
-            "ABS_rules M \\<equiv>
-            Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
+                "ABS_rules M \\<equiv>
+                Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
 
             definition ABS_rules' :: "nat \\<Rightarrow> rule set" where [simp]:
-            "ABS_rules' M \\<equiv>
-            ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
-            ((Crits M) \\<union> {ABS_Crit}) \\<union>
-            ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
-            ((Idle_refs M) \\<union> {ABS_Idle M})"
+                "ABS_rules' M \\<equiv>
+                ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+                ((Crits M) \\<union> {ABS_Crit}) \\<union>
+                ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+                ((Idle_refs M) \\<union> {ABS_Idle M})"
 
             lemma ABS_rules_eq_rules':
-            "ABS_rules M = ABS_rules' M"
-            by auto"'''
+                "ABS_rules M = ABS_rules' M"
+                by auto"
+            """
             absLemmas=[]
             unfolds=[ruleSet1.rule.name]
-            tmpabsRuleDefList1=[]  #for definition of rule ABS_rules
-            tmpabsRuleDefListM1=[] #for lemma abs_Idle_refs
+            tmpabsRuleDefList1=[]  # for definition of rule ABS_rules
+            tmpabsRuleDefListM1=[] # for lemma abs_Idle_refs
             for absItem in item["abstract"]:
                 cond=absItem["cond"]
                 assms=[Op("<=",Const("M"),Const("N")) ]
@@ -1518,7 +1529,7 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             proof=isabelle.AutoProof(unfolds=[("lemmasFor_%s_def %s %s_def %s_ref")%(oldRuleName,lemmas_def,oldRuleName,oldRuleName)])
             lemma1= IsabelleLemma(name=oldRuleName+"_strengthen",assms=[], conclusion=eq1,proof=[proof]) 
 
-            #generate lemmas on r_StrengthRel
+            # Generate lemmas on r_StrengthRel
             pred2=Fun(Const("strengthenRel"), [ \
                 Fun(Const(oldRuleName+"s"),oldhasNList), \
                 Fun(Const("set"), [Fun(Const("InvS"),[Const("N")])]), \
@@ -1530,7 +1541,7 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             predOfLemma=Fun(Const(("lemmasFor_%s"%oldRuleName)),[Const("N")])
             predOfLemma1=Fun(Const(("lemmasFor_%s"%oldRuleName+"'")),[Const("N")])
             
-            #abstract r_ref
+            # Abstract r_ref
             absRule=[]
             absRules=[]
             suffix=""
@@ -1544,7 +1555,6 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             InvSList.append(predOfLemma)
             InvS1List.append(predOfLemma1)
             res.append(defLemma)
-            '''res.append(translateRuleSet(ruleSet1))'''
             
             res.append(translateRule(r_ref))
             res.append(genRuleSymLemma(r_ref))
@@ -1552,34 +1562,35 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
             res.append(lemma1)
             res1.append(lemma2)
             
-            '''for absr in absRules:
-                res.append(translateRuleSet(absr))
-                defA,lemmaA1,lemmaA2,termA,unfoldsA,usingsA=translateRuleSets(absr)
-                res.append(defA)'''
-            '''generate1. lemmas on abstraction for r_refs by json:
-            2. definitions for    ABS_rules,  ABS_rules' 
-            "abstract":[{"cond":{"i": false},"answer":"ABS_Idle"},{"cond":{"i": true},"answer":"ABS_Idle"}]
-            lemma abs_Idle_ref
-            "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
-            "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+            """
+            Generate
+            
+            1. lemmas on abstraction for r_refs by json:
+            2. definitions for ABS_rules,  ABS_rules' 
+
+            lemma abs_Idle_ref:
+                "M \\<le> N \\<Longrightarrow> i \\<le> M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = Idle_ref M i"
+                "M \\<le> N \\<Longrightarrow> i > M \\<Longrightarrow> absTransfRule (env N) M (Idle_ref N i) = ABS_Idle M
+
             definition ABS_rules :: "nat \\<Rightarrow> rule set" where [simp]:
-            "ABS_rules M \\<equiv>
-            Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
+                "ABS_rules M \\<equiv>
+                Trys M \\<union> Crits M \\<union> {ABS_Crit} \\<union> Exits M \\<union> Idle_refs M \\<union> {ABS_Idle M} \\<union> {chaos \\<triangleright> skip}"
 
             definition ABS_rules' :: "nat \\<Rightarrow> rule set" where [simp]:
-            "ABS_rules' M \\<equiv>
-            ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
-            ((Crits M) \\<union> {ABS_Crit}) \\<union>
-            ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
-            ((Idle_refs M) \\<union> {ABS_Idle M})"
+                "ABS_rules' M \\<equiv>
+                ((Trys M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+                ((Crits M) \\<union> {ABS_Crit}) \\<union>
+                ((Exits M) \\<union> {chaos \\<triangleright> skip}) \\<union>
+                ((Idle_refs M) \\<union> {ABS_Idle M})"
 
             lemma ABS_rules_eq_rules':
-            "ABS_rules M = ABS_rules' M"
-            by auto"'''
+                "ABS_rules M = ABS_rules' M"
+                by auto
+            """
             absLemmas=[]
             unfolds=[r_ref.name]
-            tmpabsRuleDefList1=[]  #for definition of rule ABS_rules
-            tmpabsRuleDefListM1=[] #for lemma abs_Idle_refs
+            tmpabsRuleDefList1=[]  # for definition of rule ABS_rules
+            tmpabsRuleDefListM1=[] # for lemma abs_Idle_refs
             hasNList=[Const("N")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
             hasMList=[Const("M")] if hasParamExpr(rule.cond) or any(hasParamCmd(c) for c in rule.cmds) else []
 
@@ -1680,7 +1691,7 @@ def genStrengthenLemmas(prot: murphi.MurphiProtocol, strengthenSpec):
         [proof1,proof2,proof3])
     return defOfabsRules+res+res1+absLemmasOnSets+[absRuleDef,absRuleDef1,ABS_rules_eqLemma,absAllLemma]
 
-'''
+"""
 defOfabsRule is for one definition ABS_rs::"nat =>rule set"
 defOfabsRules is a list of defOfabsRule.
 
@@ -1699,7 +1710,7 @@ lemma "strengthenRel (rules N)  (set (InvS N)) (rules2 N) N "
   apply (subst ABS_rules_eq_rules')
   unfolding rules2_def ABS_rules'_def
   apply (intro image_UnI) by auto
-  '''
+"""
 
 def genAllInvariantsPrime(prot: murphi.MurphiProtocol) -> IsabelleLemmas:
     """Generate all lemmas for primed invariants."""
@@ -1728,7 +1739,7 @@ def genAllInvariantsPrime(prot: murphi.MurphiProtocol) -> IsabelleLemmas:
     return res
 
 
-'''lemma wellFormedRules:
+"""lemma wellFormedRules:
   "r \\<in> rules N \\<Longrightarrow> wellFormedRule (env N) N r"
   unfolding wellFormedRule.simps
   by (auto simp add: rules_def rules_simp
@@ -1745,8 +1756,9 @@ lemma absProtSim:
            reachableUpTo (allInitSpecs N) (rules N) k s \\<longrightarrow>
            i \\<le> N \\<longrightarrow> j \\<le> N \\<longrightarrow> formEval (f i j) s" 
   apply (rule_tac ?rs2.0 = "rules2 N" and env="env N" and S="set (InvS N)" and S'="set (InvS' N)" and M=M and absRules="ABS_rules M" in CMP1)
-  subgoal for r'''
-
+  subgoal for r
+"""
+  
 def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     res = []
     lemmasFor_List = []
@@ -1794,14 +1806,14 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof=isabelle.AutoProof(simpadds=["rule_refs_def  "]+simpOnSymRules1+simpOnSymRules2)
     res.append(IsabelleLemma(name="wellFormedRule_refs",assms=assms,conclusion=conclusion,proof=[proof]))
     
-    '''lemma SafeAndderiveCLemmas : 
-                  "[|M < N;M = 1;l <= 1; pinvL: set (InvS' N); pf : set pinvL; l≤ 1 
-     |] 
+    """
+    lemma SafeAndderiveCLemmas:
+      "[|M < N;M = 1;l <= 1; pinvL: set (InvS' N); pf : set pinvL; l≤ 1 |] 
                  ==> safeForm (env N) M (pf 0 l) & deriveForm (env N) (pf  0 l)"
-    unfolding InvS'_def lemmasFor_Try'_def lemmasFor_Crit'_def lemmasFor_Idle'_def lemmasFor_Exit'_def
-    using SafeAndderiveFormLemma_1 apply(auto      )    
- 
-    done'''
+        unfolding InvS'_def lemmasFor_Try'_def lemmasFor_Crit'_def lemmasFor_Idle'_def lemmasFor_Exit'_def
+        using SafeAndderiveFormLemma_1 apply auto
+        done
+    """
     cond1=Op("<",Const("M"),Const("N"))
     cond2=Op("=",Const("M"),Const("1"))
     cond3=Op("<=",Const("l"),Const("M"))
@@ -1822,9 +1834,11 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
         name="SafeAndderiveAll",
         proof=[isabelle.AutoProof(unfolds=unfolds,usings=usings)]))
 
-    '''lemma rulesIsSym:
-    "symProtRules' N (rules N)"
-    using symProtAll rules_def symProtRulesUnion by presburger'''
+    """
+    lemma rulesIsSym:
+        "symProtRules' N (rules N)"
+        using symProtAll rules_def symProtRulesUnion by presburger
+    """
     name="rulesIsSym"
     pred=Fun(Const("symProtRules'"),[Const("N"), \
         Fun(Const("rules"),[Const("N")])])
@@ -1840,9 +1854,11 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
              isabelle.blastProof(unfolds=["rule_refs"], intros=["symProtAllRef"], introITag="intro")]
     res.append(IsabelleLemma(assms=[],name=name,conclusion=pred,proof=proof))
     
-    '''lemma rules2WellTyped:
-    "r \\<in> rules2 N \\<Longrightarrow> deriveRule (env N) r"
-    unfolding rules2_def'''
+    """
+    lemma rules2WellTyped:
+        "r \\<in> rules2 N \\<Longrightarrow> deriveRule (env N) r"
+        unfolding rules2_def
+    """
     name="rules2WellTyped"
     assm=Op(":",Const("r"),Fun(Const("rule_refs"),[Const("N")]))
     pred=Fun(Const("deriveRule"),[ \
@@ -1850,16 +1866,15 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof=isabelle.AutoProof(unfolds=["rule_refs"],usings=["deriveAllRef"])
     res.append(IsabelleLemma(name="rule_refsWellTyped",assms=[assm],conclusion=pred,proof=[proof]))
 
-    #generate the lemma invOnStateOfN1:
-    '''"reachableUpTo (allInitSpecs N) (rule_refs N) k s ⟹
-    fitEnv s (env N)"'''
+    #Generate the lemma invOnStateOfN1:
+    """
+    "reachableUpTo (allInitSpecs N) (rule_refs N) k s ⟹ fitEnv s (env N)"
+    """
     name="ReachStafitEnv"
     assm=Fun(Const("reachableUpTo"), [(Fun(Const("allInitSpecs"),[Const("N")])), \
          Fun(Const("rule_refs"), [Const("N")]), Const("k"), Const("s")] )
     conclusion=Fun(Const("fitEnv"), \
         [Const("s"), Fun(Const("env"), [Const("N")])])
-    '''proof1=isabelle.IsabelleApplyRuleProof(name="invIntro", \
-        rule_tac="?fs=\" (allInitSpecs N)\"  and rs=\"(rule_refs N)\" and k=\"k\"")'''
     proof1=isabelle.IsabelleApplyEruleProof(name="invIntro1")
     proof21= isabelle.IsabelleApplyRuleProof(unfolds=["fitEnv"],name="allI")
     proof22=isabelle.IsabelleApplyRuleProof(name="impI")
@@ -1887,7 +1902,8 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     autoIntros=["Un_iff"]+["lemma"+k+"_fitEnv" for k in prot.ori_rule_map.keys()]
     proof3=isabelle.subgoalProof(fors=["r","sk"],proofs=[isabelle.AutoProof(unfolds=["rule_refs"],introITag="intro",intros=autoIntros)])
     lemma=IsabelleLemma(assms=[assm],conclusion=conclusion,name=name,proof=[proof1,proof2,proof3])
-    #generate the main lemma apply(rule_tac ?fs=" (allInitSpecs N)"  and rs="(rule_refs N)" and k="k" in invIntro)
+
+    # Generate the main lemma
     res.append(lemma)
     name="absProtSim1"
     assm1=Op("<",Const("M"),Const("N"))
@@ -1923,27 +1939,10 @@ def genAllRuleSetStuff(prot: murphi.MurphiProtocol, str_data, initSpecs):
     proof16=isabelle.subgoalProof(proofs=[proof161]+proof162s)   
     proof17s=[isabelle.IsabelleApplyRuleProof(name="equivRuleSetReflex"),
               isabelle.AutoProof(usings=["ABS_all"])]
-    '''
-     apply (rule equivRuleSetReflex)
-    using ABS_all 
-    subgoal
-    unfolding InvS_def InvS'_def
-    using strengthenVsObsLs_lemmasFor_Idle by auto'''
 
-   
-    '''unfolding InvS_def lemmasFor_Idle_def  
-    using symInvs by auto
-  subgoal
-    using rulesIsSym by auto
-  subgoal StrengthRelRules2Rule_refs
-    using symPreds by auto
-  subgoal 
-    using assms(2) by auto
-  subgoal
-    using assms(3) by auto'''
     res.append(IsabelleLemma(name="absProtSim",assms=[assm1,assm2,assm3],conclusion=conclusion,
     proof=[proof1,proof2,proof3,proof4,proof5,proof6,proof7,proof8,proof9,proof10,proof12,proof13, \
-        proof14,proof16]+proof17s))
+           proof14,proof16]+proof17s))
     return res
 
 def translateProtocol(prot: murphi.MurphiProtocol, str_data):

@@ -1,6 +1,7 @@
 import murphi
 
 class DontCareExpr(murphi.MurphiExpr):
+    """Unknown expression in Murphi"""
     def __init__(self):
         pass
 
@@ -14,6 +15,7 @@ class DontCareExpr(murphi.MurphiExpr):
         return "DontCareExpr()"
 
 def safeVar(e, limits):
+    """Check safe condition on variable."""
     if isinstance(e, murphi.VarExpr):
         return True
     elif isinstance(e, murphi.FieldName):
@@ -26,6 +28,7 @@ def safeVar(e, limits):
         raise NotImplementedError("safeVar on %s" % e)
 
 def safeExp(e, limits):
+    """Check safe condition on expressions."""
     if isinstance(e, murphi.BooleanExpr):
         return True
     elif isinstance(e, murphi.EnumValExpr):
@@ -52,6 +55,7 @@ def safeExp(e, limits):
         raise NotImplementedError("safeExp on %s" % e)
 
 def safeForm(e, limits):
+    """Check safe condition on formulas."""
     if isinstance(e, murphi.OpExpr):
         if e.op in ('=', '!='):
             return safeExp(e.expr1, limits) and safeExp(e.expr2, limits)
@@ -69,6 +73,7 @@ def safeForm(e, limits):
         raise NotImplementedError("safeForm on %s" % e)
 
 def boundVar(e, i):
+    """Check bound condition on variables."""
     if isinstance(e, murphi.VarExpr):
         return True
     elif isinstance(e, murphi.FieldName):
@@ -79,6 +84,7 @@ def boundVar(e, i):
         raise NotImplementedError("boundVar on %s" % e)
 
 def boundExp(e, i):
+    """Check bound condition on expressions."""
     if isinstance(e, murphi.BooleanExpr):
         return True
     elif isinstance(e, murphi.EnumValExpr):
@@ -100,6 +106,7 @@ def boundExp(e, i):
         raise NotImplementedError("boundExp on %s" % e)
 
 def boundForm(e, i):
+    """Check bound condition on formulas."""
     if isinstance(e, murphi.OpExpr):
         if e.op in ('=', '!='):
             return boundVar(e.expr1, i) and boundExp(e.expr2, i)
@@ -117,6 +124,7 @@ def boundForm(e, i):
         raise NotImplementedError("boundForm on %s" % e)
 
 def boundStatement(cmd, i):
+    """Check bound condition on statements."""
     if isinstance(cmd, murphi.Skip):
         return True
     elif isinstance(cmd, murphi.AssignCmd):
@@ -140,6 +148,7 @@ def boundStatement(cmd, i):
         return NotImplementedError("boundStatement on %s" % cmd)
 
 def absTransfConst(e, limits):
+    """Abstraction of a constant."""
     if isinstance(e, murphi.BooleanExpr):
         return e
     elif isinstance(e, murphi.EnumValExpr):
@@ -156,6 +165,7 @@ def absTransfConst(e, limits):
         raise NotImplementedError("absTransfConst on %s" % e)
 
 def absTransfVar(e, limits):
+    """Abstraction of a variable."""
     if isinstance(e, murphi.VarExpr):
         if isinstance(e.typ, murphi.VarType) and e.typ.name == "NODE":
             return absTransfConst(e, limits)
@@ -180,6 +190,7 @@ def absTransfVar(e, limits):
         raise NotImplementedError("absTransfVar on %s" % e)
 
 def absTransfExp(e, limits):
+    """Abstraction of an expression."""
     if isinstance(e, murphi.BooleanExpr):
         return absTransfConst(e, limits)
     elif isinstance(e, murphi.EnumValExpr):
@@ -207,6 +218,7 @@ def check_forall_exclude_form(e):
                 return assm.expr2.name, concl
 
 def absTransfForm(e, limits):
+    """Abstraction of a formula."""
     if isinstance(e, murphi.OpExpr):
         if e.op == '=':
             abs_e1, abs_e2 = absTransfExp(e.expr1, limits), absTransfExp(e.expr2, limits)
@@ -284,6 +296,7 @@ def check_forall_exclude_cmd(c):
                 return cond.expr2.name, cmds
 
 def absTransfStatement(cmd, limits):
+    """Abstraction of a statement."""
     if isinstance(cmd, murphi.Skip):
         return cmd
     elif isinstance(cmd, murphi.AssignCmd):
@@ -337,6 +350,7 @@ def absTransfStatement(cmd, limits):
         raise NotImplementedError("absTransfStatement on %s" % cmd)
 
 def absTransfStatements(cmds, limits):
+    """Abstraction of a list of statements."""
     res = []
     for cmd in cmds:
         abs_cmd = absTransfStatement(cmd, limits)
@@ -345,6 +359,7 @@ def absTransfStatements(cmds, limits):
     return res
 
 def topTransfForm(e, limits):
+    """Top-level abstraction transform"""
     f = absTransfForm(e, limits)
     if isinstance(f, DontCareExpr):
         return murphi.BooleanExpr(True)
@@ -352,6 +367,7 @@ def topTransfForm(e, limits):
         return f
 
 def absTransfRule(rule, limits, suffix=""):
+    """Abstraction of a rule."""
     abs_cond = topTransfForm(rule.cond, limits)
     abs_cmds = absTransfStatements(rule.cmds, limits)
     if len(abs_cmds) == 0:
@@ -387,6 +403,7 @@ def destruct_lemma(lemma: murphi.MurphiExpr):
         return [], split_conj(lemma.expr1), lemma.expr2
 
 def strengthen(rule: murphi.MurphiRule, lemma: murphi.MurphiExpr):
+    """Strengthening procedure."""
     _, _, concl = destruct_lemma(lemma)
     cond_assms = split_conj(rule.cond)
     new_cond = list_conj(cond_assms + [concl])
